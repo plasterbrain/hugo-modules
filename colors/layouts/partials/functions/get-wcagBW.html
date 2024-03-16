@@ -1,0 +1,26 @@
+{{- /*
+	MODULE: UTILITIES/COLORS
+	Function: get-wcagBW
+	---
+	Returns one of two options (e.g. black or white hex codes) depending on luminance
+	value of the given RGB color.
+
+	@link https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
+	---
+	Params:
+	- .Color		RGB slice (red, blue, green)
+	- .Options	Slice of choices for the resulting color in the order of
+							(option for light bgs, option for dark bgs). The default is
+							hex codes for black and white.
+	---
+	Returns
+	- [string]	Option corresponding to luminance test result.
+*/ -}}
+
+{{- $color := .Color -}}
+{{- $options := .Options | default (slice "#000000" "#ffffff") -}}
+{{- $key := delimit $color "" -}}
+
+{{- $lum := partialCached "functions/rgbToRL.html" $color $key -}}
+{{- $choice := int (le $lum 0.179) -}}
+{{- return index $options $choice -}}

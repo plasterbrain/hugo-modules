@@ -1,0 +1,11 @@
+{{- /*
+	MODULE: IMAGES
+	Head Setup
+	---
+	For use in site `<head>` to load image module js.
+	---
+*/ -}}
+
+{{- with (resources.Get "dist/lozad.min.js") }}
+		<script defer src="{{- .RelPermalink -}}"></script>
+{{- end -}}

@@ -1,0 +1,35 @@
+{{- /*
+	oEmbed iframe
+	Generated for each post.
+*/ -}}
+
+<!DOCTYPE html>
+<html lang="{{- site.LanguageCode | safeHTMLAttr -}}">
+	<head>
+		<title>{{- (print .Title site.Params.TitleSep site.Title) -}}</title>
+		<base target="_top" />
+		<style></style>
+		<meta name="robots" content="noindex, follow" />
+		<link rel="canonical" href="{{ .Permalink }}" />
+  </head>
+	<body class="embed">
+		<figure aria-labelledby="embed--title">
+			<figcaption id="embed--title" class="fig--caption">
+				<a href="{{ .Permalink }}" target="_top">
+				<span class="sr-only">{{ i18n "embedLabel" }}</span>
+				{{- .Title -}}
+			</a>
+			</figcaption>
+			<blockquote class="embed--summary">
+				{{ .Summary }}...
+			</blockquote>
+			<footer class="embed--footer">
+				<a href="{{ .Site.BaseURL }}" target="_top">
+					<img src="/favicon-32x32.png" width="32" height="32" alt=""
+						class="embed--icon" />
+					<cite>{{- .Site.Title -}}</cite>
+				</a>
+			</footer>
+		</figure>
+	</body>
+</html>

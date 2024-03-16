@@ -1,0 +1,11 @@
+[module]
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+
+[outputformats]
+  [outputFormats.oembed]
+    name="oembed"
+    baseName="oembed"
+    isPlainText = true
+    mediatype="application/json"

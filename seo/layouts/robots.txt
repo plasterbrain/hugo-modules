@@ -1,0 +1,40 @@
+{{- /*
+	MODULE: SEO
+	Robots.txt
+	---
+	What it says on the tin. Note site.Params.Seo.IsPrivate is handled by robots
+	tags on each page rather than here. Non-production environments disallow all
+	as a blanket "safety" measure, but you should probably block access to your
+	staging website with a password or firewall!
+
+	@link https://www.searchenginejournal.com/how-to-block-google-staging-site/327697/
+*/ -}}
+
+{{- $n := "" -}}
+{{- if not hugo.IsProduction -}}
+{{- $n = "#" -}}
+User-agent: *
+Disallow: /
+{{- end }}
+
+{{- if site.Params.Seo.NoAI }}
+{{$n}}User-agent: CCBot
+{{$n}}User-agent: GPTBot
+{{$n}}User-agent: img2dataset
+{{$n}}Disallow: /
+{{- end }}
+
+{{$n}}User-agent: 008
+{{$n}}User-agent: voltron
+{{$n}}User-agent: Bytespider
+{{$n}}Disallow: /
+
+{{$n}}User-agent: bingbot
+{{$n}}User-agent: SemrushBot
+{{$n}}Crawl-delay: 30
+
+{{ if not site.Params.Seo.IsPrivate -}}
+{{- with .Sitemap.Filename }}
+{{$n}}Sitemap: {{ path.Join site.BaseURL . }}
+{{- end }}
+{{- end }}

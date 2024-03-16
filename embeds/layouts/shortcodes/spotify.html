@@ -1,0 +1,80 @@
+<!--
+	MODULE: EMBEDS
+	(Shortcode) Spotify Player
+	---
+  Attempts to turn a Spotify URL into an embedded player. Normally Spotify only
+	allows for 30-second previews, but if you go through the API hurtles you can
+	get a full player working. You'll need to create an "app" in the dashboard
+	and get an OAuth access token from Spotify's Web API console to use before
+	building your Hugo site. (The token lasts an hour.)
+
+	You should set `site.Params.Api.SpotifyAccess` to your token value.
+
+  @link https://developer.spotify.com/console/get-track/
+  @link https://developer.spotify.com/documentation/embeds/guides/creating-an-embed/
+	---
+  Params:
+	- 0		"Open Spotify" URL (not URI) of the content to embed.
+-->
+
+{{- $target := urls.Parse (.Get 0) -}}
+{{- $path := $target.Path -}}
+{{- $type := path.Dir $path -}}
+{{- /* Change e.g. "track/" to "tracks/". API endpoints use plural nouns. */ -}}
+{{- $apiTarget := path.Join (print $type "s") (path.Base $path) -}}
+
+{{- $bearer := print "Bearer " site.Params.Api.SpotifyAccess -}}
+
+{{- with getJSON (print
+	"https://api.spotify.com/v1" $apiTarget) (dict
+		"Authorization" $bearer
+		"Content-Type" "application/json") }}
+  {{- $album := . -}}
+  {{- $cover := dict -}}
+  {{- $release := "" -}}
+  {{- $artists := slice -}}
+  {{- range .artists -}}
+    {{ $type := cond (eq .type "/artist") (printf " (%s)" .type) "" | humanize }}
+    {{- $artists = $artists | append (printf "<a href='%s'>%s%s</a>" .external_urls.spotify .name $type) -}}
+  {{- end -}}
+  {{- if eq $type "/track" -}}
+    {{- $album = .album -}}
+  {{- end -}}
+  {{- with $album -}}
+    {{- $cover = index .images 0 -}}
+    {{- $release = dateFormat "2006" .release_date -}}
+  {{- end -}}
+  <figure class="embed player" style="border-radius:12px;height:152px;" class="p-2">
+    <figcaption class="embed--caption">
+      <a href="{{- $target -}}">
+				{{- $spotify := "spotify" -}}
+				{{- with partialCached "functions/get-icon.html"
+					(dict "Icon" $spotify) $spotify -}}
+					{{- . | safeHTML -}}
+				{{- end -}}
+        {{- .name -}}
+      </a>
+      <span>
+        {{- "" -}}({{- $release -}}) &middot; {{ delimit $artists ", " -}}
+      </span>
+    </figcaption>
+
+		{{- "" -}}
+    <button data-target="{{- .id -}}" class="embed--button player--button js-only has-text-right" style="background-image: url('{{- $cover.url | safeCSS -}}');" aria-label='{{- i18n "clickToLoad" (i18n "track" 1) -}}'>
+      {{- $play := "play" -}}
+			{{- with partialCached "functions/get-icon.html"
+				(dict "Icon" $play) $play -}}
+				{{- . | safeHTML -}}
+			{{- end -}}
+    </button>
+
+		{{- "" -}}
+    <iframe id="{{- .id -}}" title="{{- .name -}}" data-src='{{- print "https://open.spotify.com/embed" $path "?utm_source=oembed" -}}' height="152" width="100%" style="border-radius:12px;display:none;" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </figure>
+{{- else }}
+  {{- with getJSON
+		"https://open.spotify.com/oembed?" (querify
+		"url" $target) -}}
+  	{{ . }}
+  {{- end -}}
+{{- end }}

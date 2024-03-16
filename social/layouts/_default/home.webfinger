@@ -1,0 +1,38 @@
+{{- /*
+	MODULE: SOCIALS
+	---
+	Webfinger file to alias all usernames at this site.BaseURL to your Mastodon!
+
+	@link https://guide.toot.as/guide/use-your-own-domain/
+*/ -}}
+
+{{- with site.Params.Social.Mastodon }}
+	{{- $username := .Username -}}
+	{{- $server := .Server -}}
+	{{- $alias := .Alias -}}
+	{{- if and $username $alias $server -}}
+		{
+			"subject": "acct:{{- $username -}}@{{- $server -}}",
+			"aliases": [
+				"https://{{- $server -}}/@{{- $username -}}",
+				"https://{{- $server -}}/users/{{- $username -}}"
+			],
+			"links": [
+				{
+					"rel": "http://webfinger.net/rel/profile-page",
+					"type": "text/html",
+					"href": "https://{{- $server -}}/@{{- $username -}}"
+				},
+				{
+					"rel": "self",
+					"type": "application/activity+json",
+					"href": "https://{{- $server -}}/users/{{- $username -}}"
+				},
+				{
+					"rel": "http://ostatus.org/schema/1.0/subscribe",
+					"template": "https://{{- $server -}}/authorize_interaction?uri={uri}"
+				}
+			]
+		}
+	{{- end -}}
+{{- end -}}

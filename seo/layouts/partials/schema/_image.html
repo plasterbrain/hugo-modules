@@ -1,0 +1,36 @@
+{{- /*
+  MODULE: SEO
+  JSON-LD Schema: Image
+  ---
+  Returns image metadata schema that can be used as the value of "image".
+
+  @link https://developers.google.com/search/docs/appearance/structured-data/image-license-metadata
+  ---
+  Params:
+  - .Image		Hugo image object.
+	- .Credit		Credit/copyright text.
+	- .License	License info page or SPDX identifier.
+*/ -}}
+
+{{- $json := dict
+	"@type" "ImageObject"
+	"contentUrl" .Image.Permalink
+	"width" .Image.Width
+	"height" .Image.Height
+-}}
+{{- with .Credit -}}
+	{{- $json = merge $json (dict
+		"creditText" (. | htmlUnescape | safeHTML | plainify)
+	) -}}
+{{- end -}}
+{{- with .License -}}
+	{{- $json = merge $json (dict
+		"license" (. | htmlUnescape | safeHTML | plainify)
+	) -}}
+{{- end -}}
+
+{{- /* For e.g. a webcomic site:
+	$json = merge $json (dict
+		"creator" (partialCached "schema/_author.html" . "default")) */ -}}
+
+{{- return $json -}}

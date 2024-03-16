@@ -1,0 +1,36 @@
+{{- /*
+	MODULE: IMAGES
+	Function: get-imageWCAGTextColor
+	---
+	Gets WCAG black/white result for an image's dominant color.
+	---
+	Params:
+	- .Image			Image object to get a LQIP for.
+	- .Options		Choices for black/white text color, see COLORS module. If not set
+								it will use a slice of hex codes for black and white.
+	---
+	Returns:
+	- [any]				Value of .Options corresponding to L value of dominant color
+*/ -}}
+
+{{- $image := .Image -}}
+{{- $useFull := .UseFull -}}
+{{- $options := .Options -}}
+{{- $result := "#000000" -}}
+{{- if $options -}}
+	{{- $result = index $options 0 -}}
+{{- end -}}
+
+{{- if not $useFull -}}
+	{{- $image = partial "functions/get-placeholder.html"
+		(dict "Image" .Image "AsString" false) -}}
+{{- end -}}
+{{- with $image -}}
+	{{- $color := first 1 .Colors -}}
+	{{- $color = delimit $color "" -}}
+	{{- $rgb := partialCached "functions/hexToRGB.html" $color $color -}}
+	{{- $result = partialCached "functions/get-wcagBW.html"
+		(dict "Color" $rgb "Options" $options) $color -}}
+{{- end -}}
+{{- return $result -}}
+

@@ -1,0 +1,21 @@
+#---
+# MODULE: PATREON_AUTH0
+#---
+
+[params.patreon]
+campaignID = "" # https://www.patreon.com/api/campaigns/{ID}
+tiers = [1678896, 1678901, 1678920] #@TODO integers might break stuff
+
+[params.auth0]
+domain = ""
+client = ""
+
+[outputFormats]
+[outputFormats.auth_config]
+	name = "auth_config"
+	baseName = "auth_config"
+	mediaType = "application/json"
+	notAlternative = "true"
+
+[outputs]
+home = [ "HTML", "RSS", "auth_config"]

@@ -1,0 +1,14 @@
+{{- /*
+	MODULE: IMAGES
+	Footer Setup
+	---
+	Example code for the end of `<body>` to start lazy loading module.
+	---
+*/ -}}
+
+<script>
+	document.addEventListener("DOMContentLoaded", function(){
+		const observer = lozad();
+		observer.observe();
+	});
+</script>

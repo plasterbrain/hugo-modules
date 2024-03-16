@@ -1,0 +1,30 @@
+{{- /*
+	MODULE: SOCIALS
+	(Partial) Social Site Meta
+	---
+
+	@link https://indieauth.com/openid
+	@TODO only on homepage?
+	@TODO pgp
+*/ -}}
+{{- $siteUrl := urls.Parse site.BaseURL -}}
+
+{{- with site.Params.Socials.RelMe -}}
+	{{- range . }}
+		{{- with (index  .) }}
+			<link rel="me" href="{{- . | safeURL -}}">
+		{{- end }}
+	{{- end -}}
+{{- end }}
+{{- if and site.Params.Social.UseBridgyFed (eq $siteUrl.Scheme "https") }}
+	<link rel="me" href="https://fed.brid.gy/r/{{- site.BaseURL -}}">
+{{- end }}
+
+{{- if site.Params.Social.UseOpenID }}
+	<link rel="openid.delegate" href="{{- site.BaseURL -}}" />
+	<link rel="openid.server" href="https://openid.indieauth.com/openid" />
+{{- end }}
+
+{{- if site.Params.Social.UseWebmentions }}
+	<link rel="webmention" href="https://webmention.io/{{- $siteUrl.Hostname -}}/webmention">
+{{- end -}}

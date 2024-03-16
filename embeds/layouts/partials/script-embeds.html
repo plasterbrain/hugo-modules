@@ -1,0 +1,8 @@
+{{- with resources.Get "src/embeds.js" -}}
+	{{- $js := . | js.Build (dict
+		"targetPath" "dist/embeds.min.js"
+		"minify" true) -}}
+	<script>
+		{{ $js.Content | safeJS }}
+	</script>
+{{- end -}}

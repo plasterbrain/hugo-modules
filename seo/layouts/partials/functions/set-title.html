@@ -1,0 +1,18 @@
+{{- /*
+	MODULE: SEO
+	Function: set-title
+	---
+	Sets site.Scratch fields "Title" and "OGTitle". You can set the value as a
+	slice of strings, and they'll be delimited with `site.Params.Seo.TitleSep`,
+	ex: "Top 10 Ways to Make Pie | plasterbrain".
+
+	"Title" is for the browser tab and search engines.
+
+	"OGTitle" uses .Page.Params.OGTitle and is for social media.
+	---
+	Params:
+	- .	Page context
+*/ -}}
+
+{{- $.Scratch.Set "Title" (slice .Title site.Title) -}}
+{{- $.Scratch.Set "OGTitle" (.Page.Params.OGTitle | default .Title) -}}

@@ -1,0 +1,32 @@
+{{- /*
+	MODULE: SEO
+	Function: set-cover
+	---
+	Sets site.Scratch field "OGCover" to the social media cover image. It will
+	look for the page's `OGCover` and then `Cover` params.
+
+	If no cover exists, it will create a generic cover image for the page using
+	`.LinkTitle` and `site.params.Seo.ThemeColor`. You can disable this behavior
+	on a per-page basis with `.Params.NoCustomCover` or across the whole site with
+	`site.Params.Seo.UseCustomCovers = false`. If custom covers are disabled, the
+	template will attempt to use `site.Params.OGCover` as a fallback image.
+	---
+	Params:
+	- .	Page context
+*/ -}}
+
+{{- $useCustom := and site.Params.Seo.UseCustomCovers (not .Params.NoCustomCover) }}
+
+{{- $cover := .Params.OGCover | default .Params.Cover -}}
+{{- if not $useCustom -}}sdf
+	{{- $cover = $cover | default site.Params.OGCover -}}
+{{- end -}}
+{{- with $cover -}}
+	{{- with resources.Get . -}}
+		{{- $.Scratch.Set "OGCover" . -}}
+	{{- end -}}
+{{- else -}}
+	{{- if $useCustom -}}
+		{{- $.Scratch.Set "OGCover" (partial "functions/get-ogCover.html" .) -}}
+	{{- end -}}
+{{- end -}}

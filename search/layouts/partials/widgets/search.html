@@ -1,0 +1,83 @@
+{{- /*
+	Widgets: Search
+	---
+	@link https://duckduckgo.com/params
+
+	@TODO test no icon, custom icon
+	@TODO customize colors!
+	@TODO Google option... -_-
+*/ -}}
+{{- $buttonLabel := i18n "searchWidget" | default "Search" -}}
+{{- $buttonLabelClass := "" -}}
+
+{{- $icon := resources.Get (site.Params.Search.Icon | default "menus/search.svg") -}}
+{{- with $icon -}}
+	{{- if eq (path.Ext .Permalink) ".svg" -}}
+  	{{- $icon = $icon.Content -}}
+	{{- else -}}
+		{{- $icon = printf `
+		<img src="%s" alt="" width="%s" height="%s" %s>`
+		.RelPermalink .Width .Height
+		(`style="max-height: 2em; width: auto;"` | safeHTML )
+		-}}
+	{{- end -}}
+	{{/* Visually hide the text if we have an icon. */}}
+	{{- $buttonLabelClass = `class="is-sr-only"` -}}
+{{- else -}}
+	{{/* Fail printf gracefully */}}
+	{{- $icon = "" -}}
+{{- end -}}
+
+{{- $button := print `
+	<button id="search--submit" type="submit" aria-labelledby="search--label"  class="button is-info">
+		<span id="search--label" ` ($buttonLabelClass | safeHTML) `>`
+			($buttonLabel | safeHTML)
+		`</span>`
+		($icon | safeHTML)
+	`</button>` -}}
+
+{{- $queryPlaceholder := site.Params.Search.Placeholder | default "" -}}
+{{- $queryLabel := print `
+	<label for="search--query" class="is-sr-only">`
+		($queryPlaceholder | safeHTML)
+	`</label>` -}}
+
+{{- if and (.Template) (templates.Exists (path.Join "partials" .Template)) -}}
+	{{- partial .Template -}}
+{{- else -}}
+	{{- $page := site.Params.Search.Page | default "search" -}}
+	{{- $page = path.Join site.BaseURL $page -}}
+	<form id="search" role="search" data-turbo="false"
+	action="{{ $page }}" method="GET"
+	class="js-only">
+		<div role="presentation" class="field has-addons">
+			<div role="presentation" class="control">
+				{{- $queryLabel | safeHTML -}}
+				<input id="search--query" name="s" type="search" required placeholder="{{- $queryPlaceholder | safeHTMLAttr -}}" class="input" value="">
+			</div>
+			<div role="presentation" class="control">
+				{{- $button | safeHTML -}}
+			</div>
+		</div>
+	</form>
+{{- end -}}
+
+{{- /* Duck Duck Go fallback if Javascript is disabled */ -}}
+<noscript>
+	<form id="search" role="search" tabindex="-1" action="https://duckduckgo.com/" method="GET">
+		{{- i18n "searchWidgetNoJs" | safeHTML -}}
+		<input id="search--query" name="q" type="search" required placeholder="{{- $queryPlaceholder | safeHTMLAttr -}}" class="input">
+		<input type="hidden" name="sites" value="{{- site.BaseURL | safeURL -}}">
+		<input type="hidden" name="ku" value="1">
+		<input type="hidden" name="kz" value="-1">
+		<input type="hidden" name="kac" value="-1">
+		<input type="hidden" name="kv" value="1">
+		<input type="hidden" name="kaa" value="#f7f3c3">
+		<input type="hidden" name="kj" value="#314ed3">
+		<input type="hidden" name="k9" value="#ffffff">
+		<input type="hidden" name="k7" value="#263FB1">
+		<input type="hidden" name="k8" value="#ffffff">
+		<input type="hidden" name="k9" value="#ffd500">
+		{{- $button | safeHTML -}}
+	</form>
+</noscript>

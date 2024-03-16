@@ -1,0 +1,60 @@
+# ---
+# MODULE: EMBEDS
+# ---
+
+[clickToLoad]
+	other = "Click to load this {{ . }}"
+[clickToLoadNoJS]
+	other = "View {{ .Title }} on {{ .Site }}"
+[mediaAlbum]
+	one = "album"
+	other = "albums"
+[mediaTitle] # Used by multiple media widgets
+	other = "{{ .Title }} · {{ .Artist }}"
+[mediaTrack]
+	one = "track"
+	other = "tracks"
+[mediaVideo]
+	one = "video"
+	other = "videos"
+
+[bandcamp]
+	other = "Bandcamp"
+[bandcampTitleGeneric]
+	other = "Embedded Bandcamp content"
+
+[gamePlatforms]
+	one = "Platform"
+	other = "Platforms"
+
+[itch]
+	other = "itch.io"
+[itchByline] # Phrase is lowercase, though username *may* be title case
+	other = "by {{ . }}"
+[itchBuy]
+	other = "Buy Now"
+[itchDownload]
+	other = "Download Now"
+[itchPlay]
+	other = "Play on {{ .Itch }}"
+[itchPrice]
+	other = "{{ . }} or more" # e.g. "$10.99 or more"
+
+[steamBuy]
+	other = "Buy on Steam"
+[steamByline]
+	other = "Released {{ .Date }} · {{ .Author }}"
+[steamComingSoon]
+	other = "Coming soon"
+[steamTitle]
+	other = 'Buy {{ .Title }} <span style="color: #9e9e9e">on Steam</span>'
+
+[youtube]
+	other = "YouTube"
+
+[linux]
+	other = "Linux"
+[macos]
+	other = "macOS"
+[windows]
+	other = "Windows"

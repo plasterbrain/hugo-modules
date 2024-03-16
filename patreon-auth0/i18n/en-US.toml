@@ -1,0 +1,29 @@
+#---
+# MODULE: PATREON
+#---
+
+[patreon]
+	other = "Patreon"
+[accountSignOut]
+	other = "Sign out"
+[accountSignedInAs]
+	other = "Signed in as"
+[accountUpgrade] #verb
+	other = "Upgrade"
+
+[patreonAccountInfo]
+	other = "Basic Account Info"
+[patreonInfoStart] # Label for a date
+	other = "Member since:"
+[patreonInfoRenew]
+	other = "Renews:" # Label for a date
+[patreonSettingsGeneral]
+	other = "Manage account"
+[patreonSettingsEmail]
+	other = "Notification settings"
+[patreonSettingsPledges]
+	other = "Edit pledges"
+[patreonSettingsBilling]
+	other = "Billing history"
+[patreonSettingsPayment]
+	other = "Add payment method"

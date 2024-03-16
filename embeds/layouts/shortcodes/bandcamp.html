@@ -1,0 +1,117 @@
+{{- /*
+	MODULE: EMBEDS
+	(Shortcode) Bandcamp Widget
+	---
+  Converts WordPress/Jetpack Bandcamp shortcode to a light-theme widget. (We
+	use the WP shortcode because the iframe embed as-is screws up formatting when
+	used as a golang parameter).
+
+	You can use `site.Params.Embeds.BandcampColor` to set a default accent color.
+
+	@link https://github.com/Automattic/jetpack/blob/2447e267e40f2d133a5c15c2320b776e4c395ec8/projects/plugins/jetpack/modules/shortcodes/bandcamp.php
+
+	@IDEA Save remote album image
+	@TODO Iframe id same as button?
+	---
+	Params:
+  - 0  WordPress shortcode, e.g. "[bandcamp size=small album=1]"
+  - 1  Bandcamp page name subdomain (e.g. "plasterbrain" 😇).
+*/ -}}
+
+{{- $shortcode := .Get 0 -}}
+{{- $shortcode = strings.Trim $shortcode "[]" -}}
+{{- $params := dict -}}
+{{- range (findRE "([^\\s]*)=([^\\s]*)" $shortcode) -}}
+	{{- $pair := split . "=" -}}
+	{{- $params = merge $params (dict (index $pair 0) (index $pair 1)) -}}
+{{- end -}}
+
+{{- $btnStyle := "" -}}
+{{- $height := (index $params "height") | default "120" -}}
+{{- $width := (index $params "width") | default "100%" -}}
+{{- if not (strings.HasSuffix $width "%") -}}
+	{{- $width = print $width "px" -}}
+{{- end -}}
+{{ $style := printf `style="width: %s; height: %spx;"` $width $height -}}
+
+{{- $size := index $params "size" | default "large" | anchorize -}}
+{{- if eq $size "small" -}}
+	{{- $btnStyle = printf `style="width: %[1]spx; height:%[1]spx;"` $height -}}
+	{{- /* Upstream bug: missing tracklist screws up slim player */ -}}
+	{{- if not (index $params "tracklist") }}
+		{{- /* Tracklist is normally only specified when it's false */ -}}
+		{{- $params = merge $params (dict "tracklist" "true") -}}
+	{{- end -}}
+{{- end -}}
+{{ $embedClass := printf `class="embed player embed-%s"` $size -}}
+
+{{- /*
+	Secret Bandcamp API 👀
+	@link https://stackoverflow.com/questions/65085046/how-do-i-pull-album-art-thumbnail-from-bandcamp#answer-69481878
+	@link https://gist.github.com/Romern/cd7f1e9a742d27eb3ac104201f6ae87c
+
+	Example calls:
+	@link http://bandcamp.com/api/mobile/24/tralbum_details?band_id=4180852708&tralbum_id=1417416030&tralbum_type=t
+	@link http://bandcamp.com/api/mobile/24/tralbum_details?band_id=4180852708&tralbum_id=2260189425&tralbum_type=a */ -}}
+{{- $url := "https://bandcamp.com/" -}}
+{{- $title := default (i18n "bandcampTitleGeneric") -}}
+{{- $artwork := "" -}}
+{{- $artwork := "" -}}
+{{- $artist := .Get 1 | anchorize -}}
+{{- if $artist -}}
+	{{- /* Fetch the "band" ID from a search */ -}}
+	{{- $url = printf "https://bandcamp.com/search?q=%s" $artist -}}
+	{{- with (getJSON
+		"https://bandcamp.com/api/fuzzysearch/1/app_autocomplete?" (querify
+			"q" $artist)) -}}
+		{{- $typeName := (i18n "mediaAlbum" 1) -}}
+		{{- with index (index . "results") 0 -}}
+			{{- $bandId := .id | anchorize -}}
+			{{- $type := "a" -}}
+
+			{{- $tralbum := (index $params "album") -}}
+			{{- with (index $params "track") -}}
+				{{- /* This is a track widget */ -}}
+				{{- $tralbum = . -}}
+				{{- $type = "t" -}}
+				{{- $typeName = (i18n "mediaTrack" 1) -}}
+			{{- end -}}
+
+			{{- with (getJSON "http://bandcamp.com/api/mobile/24/tralbum_details?"
+							(querify "band_id" $bandId "tralbum_type" $type "tralbum_id" $tralbum)) -}}
+				{{- $url = .bandcamp_url -}}
+				{{- $title = (i18n "mediaTitle" (dict "Title" (.title | safeHTML) "Artist" (.tralbum_artist | safeHTML))) -}}
+				{{- $artwork = printf "http://f4.bcbits.com/img/a%d_5.jpg"
+					(.art_id | int) -}}
+			{{- else -}}
+				{{- /* Generic title e.g. "Album by plasterbrain" */ -}}
+				{{- $title = i18n "bandcampTitle"
+					(dict "Title" $typeName "Artist" $artist) -}}
+			{{- end -}}
+		{{ end }}
+	{{- end -}}
+{{- end -}}
+
+{{- $accentColor := site.Params.Embeds.BandcampColor | default "0687f5" -}}
+{{- $accentColor = replace $accentColor "#" "" | anchorize -}}
+{{- $q := print "/transparent=true/bgcol=ffffff/linkcol=" $accentColor -}}
+{{- range
+	(slice "album" "track" "tracklist" "size" "package" "artwork" "minimal") -}}
+	{{- $key := . -}}
+	{{- with index $params . -}}
+		{{- $q = print $q "/" $key "=" . -}}
+	{{- end -}}
+{{- end -}}
+{{- $src := print "https://bandcamp.com/EmbeddedPlayer/" $q -}}
+{{- $iframe := printf `<iframe title="%s" data-src='%s' seamless allowfullscreen class="hidden" %s></iframe>` $title $src ($style | safeHTMLAttr) -}}
+
+{{- partial "_media-embed.html" (dict
+	"Link" $url
+	"Id" ($title | anchorize)
+	"iframe" $iframe
+	"Thumbnail" $artwork
+	"Title" $title
+	"Icon" "bandcamp-wordmark"
+	"Class" $embedClass
+	"Style" $style
+) -}}

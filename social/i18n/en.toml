@@ -1,0 +1,21 @@
+[shareDefault]
+	other = "Share"
+[shareFacebook]
+	other = "Share"
+[shareTumblr]
+	other = "Share"
+[shareTwitter]
+	other = "Tweet"
+[shareMastodon]
+	other = "Toot"
+
+[socialSpotify]
+	other = "Spotify"
+[socialApple]
+	other = "Apple Music"
+[socialBandcamp]
+	other = "Bandcamp"
+[socialYoutube]
+	other = "YouTube"
+[socialSoundcloud]
+	other = "SoundCloud"

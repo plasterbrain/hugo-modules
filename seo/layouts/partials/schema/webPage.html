@@ -1,0 +1,27 @@
+{{- /*
+  MODULE: SEO
+  JSON-LD Schema: WebPage
+  ---
+  Returns schema dictionary for a generic web page.
+  ---
+  Params:
+  - .  Page context
+*/ -}}
+
+{{- $id := .Permalink -}}
+{{- $json := (dict
+	"@type" "WebPage"
+	"@id" $id
+	"url" ($.Scratch.Get "Canonical")
+	"name" ($.Scratch.Get "Title")
+	"isPartOf" (dict
+		"@id" (print site.Home.Permalink "#website"))
+	"datePublished" (.PublishDate.Format "2006-01-02T15:04:05Z0700")
+	"dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z0700")
+	"inLanguage" site.LanguageCode
+	"potentialAction" (slice (dict
+		"@type" "ReadAction"
+		"target" $id)))
+-}}
+
+{{- return $json -}}

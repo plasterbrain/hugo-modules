@@ -1,0 +1,30 @@
+{{- /*
+
+	@link https://www.rapidtables.com/convert/color/rgb-to-hsl.html
+*/ -}}
+
+{{- $rgb := apply . "div" "." 255.0 -}}
+{{- $cmax := math.Max $rgb -}}
+{{- $cmin := math.Min $rgb -}}
+{{- $delta := sub $cmax $cmin -}}
+
+{{- $hue := 0 -}}
+{{- $sat := 0 -}}
+{{- $light := div (add $cmax $cmin) 2 -}}
+
+{{- if gt $delta 0 -}}
+	{{- $r := index $rgb 0 -}}
+	{{- $g := index $rgb 1 -}}
+	{{- $b := index $rgb 2 -}}
+	{{- if eq $cmax $r -}}
+		{{- $hue = mod (div (sub $g $b) $delta) 6 -}}
+	{{- else if eq $cmax $g -}}
+		{{- $hue = add (div (sub $b $r) $delta) 2 -}}
+	{{- else -}}
+		{{- $hue = add (div (sub $r $g) $delta) 4 -}}
+	{{- end -}}
+	{{- $hue = mul $hue 60 -}}
+
+	{{- $sat = div $delta (sub 1 (math.Abs (sub 1 (mul 2 $light)))) -}}
+{{- end -}}
+{{- return slice $hue $sat $light -}}

@@ -1,0 +1,47 @@
+{{- /*
+  MODULE: SEO
+  (Unused, untested) JSON-LD Schema: CollectionPage
+  ---
+  Returns schema dictionary for a listing/archive page.
+  ---
+  Params:
+  - .  Page context
+*/ -}}
+{{- $id := .Permalink -}}
+{{- $json := dict
+	"@id" $id
+	"url" ($.Scratch.Get "Canonical")
+	"name" ($.Scratch.Get "OGTitle")
+	"description" ($.Scratch.Get "Description")
+	"isPartOf" (print site.Home.Permalink "#website")
+	"inLanguage" site.LanguageCode
+-}}
+
+{{- $type := slice "CollectionPage" -}}
+{{- if eq .Params.Layout "search" -}}
+	{{- $type = $type | append "SearchResultsPage" -}}
+{{- end -}}
+{{- $json = merge $json (dict
+	"type" $type
+) -}}
+
+{{- $cover := $.Scratch.Get "OGCover" -}}
+{{- if $cover -}}
+	{{- $imageId := print .Permalink "#primaryimage" -}}
+
+	{{- $image := partialCached "schema/_image.html" (dict
+		"Image" $cover
+		"License" .Params.CoverLicense
+		"Credit" .Params.CoverCredit
+	) $cover.RelPermalink -}}
+	{{ $image = merge $image (dict
+		"@id" $imageId
+	) -}}
+
+	{{- $json = merge $json (dict
+		"image" $image
+		"primaryImageOfPage" (dict "@id" $imageId)
+	) -}}
+{{- end -}}
+
+{{- return $json -}}

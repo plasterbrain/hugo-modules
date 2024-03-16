@@ -1,0 +1,55 @@
+{{- /*
+	MODULE: COLORS
+	Function: hexToRGB
+	@author julianoaklein
+	---
+	Converts a hex color string to a list of RGB values.
+
+	@link https://discourse.gohugo.io/t/convert-hex-to-rgb/29130/3
+	---
+	Params:
+	- .		Hex color string
+*/ -}}
+
+{{- $rgb := slice -}}
+{{- $hex := strings.TrimPrefix "#" . -}}
+
+{{- if findRE `^([a-f0-9]{6})$` $hex 1 -}}
+	{{- /* 6-letter hex */ -}}
+	{{- $hex = split $hex "" -}}
+{{- else if findRE `^([a-f0-9]{3})$` $hex 1 -}}
+	{{- /* Double the values of 3-letter hex... dw about it */ -}}
+	{{- $hex2 := split $hex "" -}}
+	{{- $hex = slice
+		(index $hex2 0) (index $hex2 0)
+		(index $hex2 1) (index $hex2 1)
+		(index $hex2 2) (index $hex2 2) -}}
+{{- else -}}
+	{{- /* Invalid hex */ -}}
+	{{- warnf "Failed to convert hex code `#%s` to RGB." -}}
+	{{- $hex = slice -}}
+	{{- $rgb := slice 0 0 0 -}}
+{{- end -}}
+
+{{- if $hex -}}
+	{{- $conv := slice
+		"0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f" -}}
+	{{- $val := 0 -}}
+	{{- range $i, $c := $hex -}}
+		{{- $mod := mod $i 2 -}}
+		{{- $dec := 0 -}}
+
+		{{- range $j, $v := $conv -}}
+			{{- if eq $v $c -}}
+				{{- $dec = $j -}}
+			{{- end -}}
+		{{- end -}}
+
+		{{- $val = add $val (mul $dec (cond (eq $mod 0) 16 1)) -}}
+		{{- if $mod -}}
+			{{- $rgb = $rgb | append $val -}}
+			{{- $val = 0 -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+{{- return $rgb -}}

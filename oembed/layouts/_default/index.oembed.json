@@ -1,0 +1,13 @@
+{{- $title := replace .Title `"` "" | plainify -}}
+{
+    "version": "1.0",
+    "provider_name": "{{- site.Title | htmlEscape | plainify -}}",
+    "provider_url": "{{- site.BaseURL -}}",
+    "author_name": "{{- site.Author.Name | htmlEscape | plainify -}}",
+    "author_url": "{{- site.Params.Pages.About | plainify -}}",
+    "title": "{{- $title -}}",
+    "type": "rich",
+    "width": 600,
+    "height": 338,
+    "html": "<iframe src=\"{{ .Permalink }}iframe.html\" width=\"600\" height=\"338\" title=\"{{ $title }}\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\" class=\"hugo-embedded-content wp-embedded-content\"><\\/iframe>\n"
+}

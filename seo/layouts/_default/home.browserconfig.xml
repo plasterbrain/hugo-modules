@@ -1,0 +1,28 @@
+{{- /*
+	MODULE: SEO
+	Browserconfig.xml
+	---
+	(Unused, untested) Sets up browserconfig for Windows 8 + IE 11. Assumes your
+	MS tile icons are named "mstile-*.png", after RealFaviconGenerator.
+
+	(You may want to switch syntax highlighting language to HTML for this file.)
+
+	@link https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/dn255024(v=vs.85)
+	@link https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/dn320426(v=vs.85)
+*/ -}}
+
+{{- $favPath := site.Params.Seo.FaviconPath | default `favicon/` -}}
+
+{{- "<" | safeHTML }}?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+	<msapplication>
+	{{- with resources.Match (path.Join $favPath `**mstile-*.png`) }}
+		<tile>
+			{{- range . }}
+				<square{{- .Width -}}x{{- .Height -}}logo src="{{- .RelPermalink -}}"/>
+				<TileColor>{{- site.Params.ThemeColor | default "#fff" -}}</TileColor>
+			{{- end }}
+		</tile>
+	{{- end }}
+	</msapplication>
+</browserconfig>

@@ -1,0 +1,47 @@
+{{- /*
+	MODULE: SEO
+	Web App Manifest
+	---
+	Sets up a minimalist PWA web app manifest file using Hugo's JSON function.
+
+	(You may want to switch syntax highlighting language to HTML for this file.)
+
+	@link https://web.dev/add-manifest/
+	@link https://web.dev/learn/pwa/web-app-manifest/
+*/ -}}
+
+{{- $json := dict
+	"name" (site.Title | htmlUnescape | safeHTML | plainify | safeJS)
+	"lang"	(site.LanguageCode)
+-}}
+
+{{- $icons := slice -}}
+{{- $favPath := site.Params.Seo.FaviconPath | default "" -}}
+{{- with resources.Match
+	(path.Join $favPath `**android-chrome*.png`) -}}
+	{{- range . -}}
+		{{- $icons = $icons | append (dict
+			"src" .RelPermalink
+			"sizes" (print .Width "x" .Height)
+			"type" "image/png"
+		) -}}
+	{{- end -}}
+{{- end -}}
+{{- $json = merge $json (dict
+"icons" $icons
+) -}}
+
+{{- with .Site.Params.Seo.ThemeColor -}}
+	{{- $color := . | htmlUnescape | safeHTML | plainify | safeJS -}}
+	{{- $json = merge $json (dict
+		"theme_color" $color
+	) -}}
+{{- end -}}
+{{- with .Site.Params.Seo.BackgroundColor -}}
+	{{- $color := . | htmlUnescape | safeHTML | plainify | safeJS -}}
+	{{- $json = merge $json (dict
+		"background_color" $color
+	) -}}
+{{- end -}}
+
+{{- $json | jsonify (dict "indent" "    ") -}}

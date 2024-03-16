@@ -1,0 +1,44 @@
+{{- /*
+	MODULE: IMAGES
+	Function: get-background
+	---
+	Returns attributes to add an image background with LQIP to an element,
+	formatted for use with Lozad.js.
+
+	@link https://github.com/ApoorvSaxena/lozad.js#lozadjs----
+	---
+	Params:
+	- .Image	Image object to use as background image
+	- .Small
+	---
+	Returns:
+	- [string] `style` and `data-background-image` attributes
+*/ -}}
+
+{{- $image := .Image -}}
+{{- $small := .Small | default false -}}
+{{- $placeholder := partialCached "functions/get-placeholder.html" (dict
+	"Image" $image "Small" $small) (print .Image.RelPermalink (cond $small "-small" ""))
+-}}
+{{- $style := printf `style="background-color: %s; background-image: url('%s');"` (index $image.Colors 0) $placeholder -}}
+
+{{- $webp := $image -}}
+{{- $notWebp := $image -}}
+{{- $filename := replace (path.Clean $image.RelPermalink) (path.Ext $image.RelPermalink) "" -}}
+{{- $size := printf "%dx%d" $image.Width $image.Height -}}
+{{- if $small -}}
+	{{- $filename = print $filename "-sm" -}}
+	{{- $size = "500x" -}}
+{{- end -}}
+
+{{- /*with $image.Resize (print $size " png") }}
+	{{- $notWebp = . | resources.Copy (print $filename ".png") -}}
+	{{- $notWebp = $notWebp.RelPermalink }}
+{{- end */}}
+{{- with $image.Resize (print $size " webp") }}
+	{{- $webp = . | resources.Copy (print $filename ".webp") -}}
+	{{- $webp = $webp.RelPermalink }}
+{{- end }}
+{{- $src := printf `data-background-image="%s"` $webp -}}
+
+{{- return print $src " " $style -}}

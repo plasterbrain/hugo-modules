@@ -1,0 +1,11 @@
+# ---
+# MODULE: SEO
+# ---
+
+[OGWrittenBy]
+	other = "Written by"
+[OGReadingTime]
+	other = "Est. reading time"
+[OGMinutes] # ex. "Est. reading time: 3 minutes"
+	one = "{{- . }} minute"
+	other = "{{- . }} minutes"

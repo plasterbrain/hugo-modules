@@ -1,0 +1,117 @@
+{{/*
+	MODULE: IMAGES
+	Image
+	---
+	Turns an image resource (or URL) into a `picture` element with LQIP, webp and
+	PNG fallback.
+
+	@TODO TESTING!
+
+	Params:
+	.Image	The image to show. Hugo Image or path as a string.
+	.Alt		Alt text, default blank.
+	.Lazy		Whether to lazy load the image, default true.
+	.Class	Class attribute value for the `picture` as a slice.
+	.Atts		Additional atts for `<img>`, a slice of strings
+	.Width	Width of the image, default `.Width` if `.Image` is a resource. If
+					specified without .Height, the aspect ratio is preserved.
+	.Height	Height of the image, default `.Height` if `.Image` is a resource. If
+					specified without .Width, the aspect ratio is preserved.
+*/}}
+{{- $image := .Image -}}
+{{- $alt := .Alt | htmlUnescape | safeHTML | plainify -}}
+{{- $lazy := .Lazy | default true -}}
+{{- $class := .Class | default slice -}}
+{{- $name := .Name | default false -}}
+{{- $customAtts := .Atts -}}
+{{- $width := .Width -}}
+{{- $height := .Height -}}
+
+{{- with $image -}}
+	{{- $sources := slice -}}
+	{{- /* Source used for the image element, which may become a LQIP */ -}}
+	{{- $imgSrc := .RelPermalink -}}
+	{{- /* Source for `data-iesrc` for Lozad's picture polyfill */ -}}
+	{{- $ieSrc := .RelPermalink -}}
+
+	{{- $filetype := path.Ext .RelPermalink -}}
+
+	{{- $isResource := eq (printf "%T" .) "*resources.resourceAdapter" -}}
+	{{- if $isResource -}}
+		{{- $newImage := $image -}}
+		{{- if or $width $height -}}
+			{{- $width = string ($width | default "") -}}
+			{{- $height = string ($height | default "") -}}
+		{{- else -}}
+			{{- $width = $image.Width -}}
+			{{- $height = $image.Height -}}
+		{{- end -}}
+
+		{{- $filename := $name -}}
+		{{- if not $name -}}
+			{{- $filename = path.Clean .RelPermalink -}}
+			{{- $filename = strings.TrimSuffix $filetype $filename -}}
+		{{- end -}}
+
+		{{- $path := .RelPermalink -}}
+
+		{{- /* LQIP */ -}}
+		{{- $imgSrc = partialCached "functions/get-placeholder.html" (dict "Image" .) .RelPermalink -}}
+
+		{{- $sources = cond (eq $filetype "avif") (slice $image) (slice) -}}
+		{{- range (slice "webp" "png") -}}
+			{{- $ext := . -}}
+			{{- with $newImage.Resize (print $width "x" $height " " $ext) -}}
+				{{- $newImage = . | resources.Copy (print $filename "." $ext) -}}
+				{{- $sources = $sources | append $newImage -}}
+			{{- end -}}
+		{{- end -}}
+		{{- /* Update dimensions in case one was auto */ -}}
+		{{- $width = string $newImage.Width -}}
+		{{- $height = string $newImage.Height -}}
+	{{- end -}}
+
+	{{- $isGif := eq $filetype ".gif" -}}
+	{{- if $isGif -}}
+		{{- $class = $class | append "gif" -}}
+	{{- end -}}
+	{{- $class = $class | uniq -}}
+
+	{{- /* --- IMG Attributes --- */ -}}
+	{{- $imgAtts := slice
+		(printf `src="%s"` ($imgSrc | safeURL))
+		(printf `alt="%s"` $alt)
+		| append $customAtts
+	-}}
+	{{ if $lazy -}}
+		{{- $imgAtts = $imgAtts | append
+			`loading="lazy"`
+			`decoding="async"`
+		-}}
+	{{- end -}}
+	{{- if $width -}}
+		{{- $imgAtts = $imgAtts | append (printf `width="%s"` $width) -}}
+	{{- end -}}
+	{{- if $height -}}
+		{{- $imgAtts = $imgAtts | append (printf `height="%s"` $height) -}}
+	{{- end -}}
+
+	{{- $pictureAtts := slice -}}
+	{{- if $lazy -}}
+		{{- $class = $class | append "lozad" | uniq -}}
+		{{- $pictureAtts = $pictureAtts | append (slice
+			(printf `data-iesrc="%s"` $ieSrc)
+			(printf `data-alt="%s"` $alt)
+		) -}}
+	{{- end -}}
+	{{- if $class -}}
+		{{- $pictureAtts = $pictureAtts | append (printf `class="%s"` (delimit $class " ")) -}}
+	{{- end -}}
+
+	<picture{{ with $pictureAtts }} {{ delimit . " " | safeHTMLAttr }}{{- end -}}>
+		{{- range $sources }}
+			<source srcset="{{- .RelPermalink | safeURL -}}" type="{{- .MediaType.Type -}}" {{ if $isGif -}}media="prefers-reduced-motion"{{- end -}}>
+		{{- end -}}
+		<img{{ with $imgAtts }} {{ delimit . " " | safeHTMLAttr -}}{{- end -}}>
+	</picture>
+{{- end -}}

@@ -1,0 +1,146 @@
+{{- /*
+	MODULE: SOCIAL
+	(Partial) Share Buttons
+	---
+	Returns everything you need to add share links/buttons to the current page.
+	Set `site.Params.Social.ShareLinks` to the names/order of networks you want
+	this partial to return.
+
+	@link https://developer.twitter.com/en/docs/twitter-for-websites/tweet-button/guides/web-intent
+	@link https://www.tumblr.com/docs/en/share_button
+
+	@IDEA Tumblr Post types
+	---
+	Params:
+	- .		Page context
+
+	Returns
+	- [buttons]
+		- "Network"	Slug of the social network this is for
+		- "Label"		Human-readable button label
+		- "Style"		Style tag with background/text colors for this button
+		- "Icon"		SVG markup of the network's icon.
+		- "Link"			Share link with all the fun query parameters
+		- "JS"			Javascript `onclick` handler to open a pop-up of `url`.
+*/ -}}
+
+{{- $useList := uniq site.Params.Social.ShareLinks -}}
+{{- $page := . -}}
+
+{{- /* --- Format Post Data --- */ -}}
+{{- $title := $.Scratch.Get "OGTitle" | default .Title -}}
+{{- $title = $title | htmlUnescape | safeHTML | plainify -}}
+{{- $description := $.Scratch.Get "OGDescription" | default .Description -}}
+{{- $description = $description | htmlUnescape | safeHTML | plainify -}}
+{{- $permalink := $.Scratch.Get "Canonical" | default .Permalink -}}
+{{- $permalink = strings.TrimRight "/" $permalink -}}
+{{- $white := "#fff" -}}
+{{- $black := "#000" -}}
+
+{{- $shareLinks := slice -}}
+{{- range $useList -}}
+	{{- $network := . -}}
+	{{- $params := slice -}}
+
+	{{- if eq $network "twitter" -}}
+		{{- /* (Passed to `querify`, so args are a slice and not a map.) */ -}}
+		{{- $twitterArgs := slice "text" $title "url" $permalink -}}
+
+		{{- with site.Params.Social.Profiles.Twitter -}}
+			{{- $author := replaceRE "^https?://twitter.com/*" "$1" . -}}
+			{{- $twitterArgs = $twitterArgs | append "via" $author -}}
+		{{- end -}}
+
+		{{- with $page.Params.Twitter.Tags -}}
+			{{- $tags := delimit . "," -}}
+			{{- $twitterArgs = $twitterArgs | append "hashtags" $tags -}}
+		{{- end -}}
+
+		{{- with $page.Params.Twitter.Related -}}
+			{{- $related := delimit . "," -}}
+			{{- $twitterArgs = $twitterArgs | append "related" $related -}}
+		{{- end -}}
+
+		{{- $params = (slice
+			"https://twitter.com/intent/tweet"
+			$twitterArgs
+			"#1da1f2" $white) -}}
+	{{- else if eq $network "tumblr" -}}
+		{{- $tumblrArgs := slice
+			"title" $title
+			"content" $permalink
+			"caption" $description
+			"canonicalUrl" $permalink
+			"posttype" "link"
+			"shareSource" "tumblr_share_button" -}}
+		{{- with $page.Params.Tumblr.Tags -}}
+			{{- $tags := delimit . "," -}}
+			{{- $tumblrArgs = $tumblrArgs | append "tags" $tags -}}
+		{{- end -}}
+		{{- $params = (slice
+			"https://www.tumblr.com/widgets/share/tool"
+			$tumblrArgs
+			"#35465c" $white) -}}
+	{{- else if eq $network "mastodon" -}}
+		{{- /* Example:
+				Top 10 Ways to Make Pie
+				Love pie, but tired of ovens? We've got 9 other strategies for you to
+				get your fix this summer.
+				https://plasterbrain.com/pie */ -}}
+		{{- $mastodonText := $permalink -}}
+		{{- with $description -}}
+			{{- $mastodonText = print . "\n" $mastodonText -}}
+		{{- end -}}
+		{{- with $title -}}
+			{{- $mastodonText = print . "\n" $mastodonText -}}
+		{{- end -}}
+		{{- $params = (slice
+			"https://s2f.kytta.dev/"
+			(slice "text" $mastodonText)
+			"#6364FF" $white) -}}
+	{{- else if eq $network "facebook" -}}
+		{{- $params = (slice
+			"https://www.facebook.com/sharer/sharer.php"
+			(slice "u" $permalink)
+			"#1877f2" $white) -}}
+	{{- else if eq $network "reddit" -}}
+		{{- $params = (slice
+			"https://reddit.com/submit"
+			(slice "url" $permalink "title" $title)
+			"#ff4500" "white") -}}
+	{{- else if eq $network "hn" -}}
+		{{- $params = (slice
+			"https://news.ycombinator.com/submitlink"
+			(slice "u" $permalink "t" $title)
+			"#ff4000" "white") -}}
+	{{- end -}}
+
+	{{- $url := print (index $params 0) "?" (querify (index $params 1)) -}}
+	{{- /* Toot/Share2Fedi doesn't like plus signs for encoding spaces. */ -}}
+	{{- $url = replace $url "+" "%20" -}}
+
+	{{- $js := printf `window.open('%s','popup','width=540,height=600')` $url -}}
+
+	{{- $label := i18n (print "share" ($network | humanize)) | default (i18n "shareDefault") -}}
+
+	{{- $icon := "" -}}
+	{{- if templates.Exists "partials/functions/get-icon.html" }}
+		{{- with partialCached "functions/get-icon.html"
+			(dict "Icon" $network) $network -}}
+			{{- $icon = . -}}
+		{{- end -}}
+	{{- end }}
+
+	{{- $style := printf `style="background-color: %s; color: %s;"` (index $params 2) (index $params 3) -}}
+
+	{{- $shareLinks = $shareLinks | append (dict
+	"Network" $network
+	"Label" $label
+	"Style" $style
+	"Icon" $icon
+	"Link" $url
+	"JS" $js
+	) -}}
+{{- end -}}
+
+{{- return $shareLinks -}}

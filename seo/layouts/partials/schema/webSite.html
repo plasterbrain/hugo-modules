@@ -1,0 +1,50 @@
+{{- /*
+  MODULE: SEO
+  JSON-LD Schema: WebSite
+  ---
+  Returns schema dictionary for the website as a whole. This adds compatibility
+	with Google's "site name" and site search box features, and should only be
+	called on the homepage.
+
+	You should set `site.Params.Pages.Search` set to the relative link to your
+	search results page and use "q" as the name of your search query parameter.
+
+	@link https://developers.google.com/search/docs/appearance/structured-data/sitelinks-searchbox
+	@link https://developers.google.com/search/docs/appearance/site-names
+
+	@TODO alternateName should support lists (ex. ["name", "name2"])
+	---
+	Params:
+	- .  Page context
+*/ -}}
+
+{{- $id := .Permalink -}}
+{{- $json := dict
+	"@type" "WebSite"
+	"@id" (print $id "#website")
+	"name" (site.Title | htmlUnescape | safeHTML | plainify)
+	"description" (site.Params.Description | htmlUnescape | safeHTML | plainify)
+	"url" ($.Scratch.Get "Canonical")
+	"inLanguage" site.LanguageCode
+-}}
+
+{{- with site.Params.Seo.SiteAlternateName -}}
+	{{- $json = merge $json (dict
+		"alternateName" .
+	) -}}
+{{- end -}}
+
+{{- with site.Params.Pages.Search -}}
+  {{- with site.GetPage . -}}
+    {{- $json := merge $json (dict
+			"potentialAction" (slice (dict
+				"@type" "SearchAction"
+				"target" (dict
+					"@type" "EntryPoint"
+					"urlTemplate" (path.Join site.BaseURL . "?q={search_term_string}"))
+				"query-input" "required name=search_term_string"))
+    ) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return $json -}}

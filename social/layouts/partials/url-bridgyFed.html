@@ -1,0 +1,7 @@
+{{- /*
+	Don't place this link inside `.e-content`.
+*/ -}}
+
+{{- if and site.Params.Social.UseBridgyFed (not .Params.Noindex) -}}
+	<a class="hidden u-bridgy-fed" aria-hidden="true" href="https://fed.brid.gy/"></a>
+{{- end }}

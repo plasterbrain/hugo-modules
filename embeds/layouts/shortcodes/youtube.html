@@ -1,0 +1,62 @@
+{{- /*
+	MODULE: EMBEDS
+	(Shortcode) YouTube Video
+	---
+  Turns a YouTube link into a thumbnail that loads a video iframe on click.
+
+	@TODO Check that this works, it was wonky on Misfortune.tv
+	---
+  Params:
+	- 0 	YouTube video link
+*/ -}}
+
+{{- $url := .Get 0 -}}
+{{- $thumbnail := .Get 1 -}}
+{{- with getJSON
+		"https://www.youtube.com/oembed?" (querify
+			"format" "json"
+			"url" $url) -}}
+	{{- $id := strings.TrimPrefix "https://www.youtube.com/watch?v=" $url -}}
+	{{- $lang := site.Language.Lang | first 2 -}}
+	{{- $playerArgs := slice
+		"feature" "omebed"
+		"autoplay" 1
+		"hl" $lang
+		"cc_lang_pref" $lang
+		"cc_load_policy" 1
+		"modestbranding" 1
+		"rel" 0 -}}
+	{{- $iframe := .html -}}
+	{{- $iframe = replaceRE `src="https://www.youtube.com/embed/(?:.)*?feature=oembed"` (printf
+		`data-src="https://www.youtube-nocookie.com/embed/%s?%s" id="%s" class="hidden w-full h-full"` $id (querify $playerArgs) $id) $iframe 1 -}}
+
+	{{- $_thumbnail := $thumbnail -}}
+	{{- $thumbnail = .thumbnail_url -}}
+	{{- if $_thumbnail -}}
+		{{- $thumbnail = $_thumbnail -}}
+		{{- if not (urls.Parse $_thumbnail).IsAbs -}}
+			{{- $_thumbnail = path.Join
+				(site.Params.Embeds.ThumbnailPath | default "") $_thumbnail -}}
+			{{- with resources.GetMatch $_thumbnail -}}
+				{{- .Publish -}}
+				{{- $thumbnail = .RelPermalink -}}
+			{{- end -}}
+		{{- end -}}
+	{{- end -}}
+
+	{{- $icon := cond (site.Params.Embeds.ShowWordmarks | default true) "youtube-wordmark" "" -}}
+	{{- $class := "" -}}
+	{{- with site.Params.Embeds.YoutubeClass -}}
+		{{- $class = printf `class="%s"` . -}}
+	{{- end -}}
+
+	{{- partial "_media-embed.html" (dict
+		"Link" $url
+		"Id" $id
+		"iframe" $iframe
+		"Thumbnail" $thumbnail
+		"Title" .title
+		"Icon" $icon
+		"Class" $class
+		) -}}
+{{- end }}

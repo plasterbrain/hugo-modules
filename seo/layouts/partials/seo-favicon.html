@@ -1,0 +1,40 @@
+{{- /*
+	MODULE: SEO
+	Partial: (Head) Favicon Meta Tags
+	---
+	Adds meta tags for various favicon formats.
+
+	@link https://evilmartians.com/chronicles/how-to-favicon-in-2021-six-files-that-fit-most-needs
+	@link https://realfavicongenerator.net/faq
+	@link https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+*/ -}}
+
+{{- $favPath := site.Params.Seo.FaviconPath | default "" }}
+		<link rel="icon" href="/favicon.ico" sizes="any">
+{{- with resources.Match (path.Join $favPath "**favicon*.png") -}}
+	{{- range . }}
+		<link rel="icon" type="image/png" href="{{- .RelPermalink -}}" sizes="{{- .Width -}}x{{- .Height -}}">
+	{{- end }}
+{{- end -}}
+
+{{- with resources.Match (path.Join $favPath "**apple-touch-icon.png") -}}
+	{{- range . }}
+		<link rel="apple-touch-icon" type="image/png" href="{{- .RelPermalink -}}" sizes="{{- .Width -}}x{{- .Height -}}">
+	{{- end }}
+{{- end -}}
+
+{{- with resources.GetMatch (path.Join $favPath "**favicon.svg") -}}
+	<link rel="icon" type="image/svg+xml" href="{{- .RelPermalink -}}">
+{{- end -}}
+
+{{- $darkTheme := site.Params.Seo.ThemeColorDark -}}
+{{- with site.Params.Seo.ThemeColor }}
+		<meta name="theme-color" content="{{- . | htmlUnescape | safeHTML | plainify -}}" {{ if $darkTheme -}}media="(prefers-color-scheme: light)"{{- end -}}>
+{{- end }}
+{{- with $darkTheme }}
+		<meta name="theme-color" content="{{- . | htmlUnescape | safeHTML | plainify -}}" {{ if $darkTheme -}}media="(prefers-color-scheme: dark)"{{- end -}}>
+{{- end }}
+
+{{- with site.Home.OutputFormats.Get "webappmanifest" }}
+		<link rel="manifest" href="{{- .RelPermalink -}}">
+{{- end -}}

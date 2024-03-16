@@ -1,0 +1,43 @@
+{{- /*
+	MODULE: SEO
+	Function: get-ogCover
+	@requires hugo-modules/colors
+	---
+	Creates a basic Open Graph cover for the given page.
+
+	@TODO Allow custom base template/bg image
+	@TODO Favicon overlay?
+	@TODO Custom font
+	---
+	Params:
+	- .	Page context
+	---
+	Returns
+	- [string]	Path to the page's generated OG cover image
+*/ -}}
+{{- $cover := "" -}}
+
+{{- /* Tries to create a solid background from your theme color. */ -}}
+{{- $bg := partialCached "functions/get-themeBg.html" . "default" -}}
+{{- if $bg -}}
+	{{- $textColor := "#ffffff" -}}
+	{{- with site.Params.Seo.ThemeColor -}}
+		{{- $key := delimit . "" -}}
+		{{- $rgb := partialCached "functions/hexToRGB.html" . $key -}}
+		{{- $textColor = partialCached "functions/get-wcagBW.html"
+		(dict "Color" $rgb) $key -}}
+	{{- end -}}
+	{{- $title := .LinkTitle | plainify -}}
+	{{- $cover = $bg.Filter (images.Text $title (dict
+		"color" $textColor
+		"size" 60
+		"linespacing" 2
+		"x" (div $bg.Width 3)
+		"y" (div $bg.Height 2.5)
+	)) -}}
+
+	{{- /* Rename the image */ -}}
+	{{- $permalink := printf "assets/images/og/%s.jpg" (.LinkTitle | anchorize) -}}
+	{{- $cover = resources.Copy $permalink $cover -}}
+{{- end -}}
+{{- return $cover -}}

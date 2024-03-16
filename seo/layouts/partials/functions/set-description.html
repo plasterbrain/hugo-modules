@@ -1,0 +1,15 @@
+{{- /*
+	MODULE: SEO
+	Function: set-description
+	---
+	Sets site Scratch fields "description" and "OGDescription".
+
+	---
+	Params:
+	- .	Page context
+*/ -}}
+
+{{- $description := .Params.Description | default .Summary | default site.Params.Description -}}
+{{- $ogDescription := .Params.OGDescription | default $description -}}
+{{- $.Scratch.Set "Description" $description -}}
+{{- $.Scratch.Set "OGDescription" $ogDescription -}}

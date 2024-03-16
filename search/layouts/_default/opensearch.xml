@@ -1,0 +1,31 @@
+{{- /*
+	@TODO favicon
+	@TODO languages
+*/ -}}
+{{- `<?xml version="1.0" encoding="UTF-8"?>` | safeHTML -}}
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+	{{- with site.Params.Seo.ShortTitle }}
+	<!-- Max 16 characters. -->
+	<ShortName>{{- . | plainify -}}</ShortName>
+	<!-- Max 48 characters. -->
+	<LongName>{{- site.Title | plainify -}}</LongName>
+	{{- else }}
+  <ShortName>{{- site.Title | plainify -}}</ShortName>
+	{{- end }}
+	<!-- Max 1024 characters. -->
+  <Description>{{- site.Params.Description | default (i18n "defaultSearchDesc") | plainify -}}</Description>
+  <Url type="text/html"
+       template="{{- site.Params.Search.URL -}}?q={searchTerms}&amp;pw={startPage?}"/>
+  <Image height="64" width="64" type="image/png"></Image>
+  <Image height="16" width="16" type="image/vnd.microsoft.icon">
+		{{- path.Join site.BaseURL "favicon.ico" -}}
+	</Image>
+  <Query role="example" searchTerms="cat" />
+	{{- if site.Params.Seo.IsPrivate }}
+  <SyndicationRight>limited</SyndicationRight>
+	{{- end }}
+	{{- if site.Params.Seo.IsNSFW }}
+	  <AdultContent>true</AdultContent>
+	{{- end }}
+  <Language>{{- site.LanguageCode -}}</Language>
+</OpenSearchDescription>

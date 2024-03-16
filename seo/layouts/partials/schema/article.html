@@ -1,0 +1,59 @@
+{{- /*
+  MODULE: SEO
+  JSON-LD Schema: Article
+  ---
+  Returns schema dictionary for an article.
+
+  @link https://developers.google.com/search/docs/appearance/structured-data/article
+  @link https://developers.google.com/search/docs/appearance/publication-dates
+
+  @IDEA Param to override locked content class
+  @IDEA Param to choose between BlogPosting/Article/NewsArticle
+  ---
+  Params:
+  - .  Page context
+*/ -}}
+
+{{- $id := .Permalink -}}
+{{- $json := merge (dict
+	"@type" "BlogPosting"
+	"@id" (print .Permalink "#article")
+	"isPartOf" (dict "@id" $id)
+	"mainEntityOfPage" (dict "@id" $id)
+	"headline" ($.Scratch.Get "OGTitle" | htmlUnescape | safeHTML | plainify)
+	"wordCount" .WordCount
+	"copyrightYear" (.PublishDate.Format "2006")
+	"datePublished" (.PublishDate.Format "2006-01-02T15:04:05Z0700")
+	"dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z0700")
+	"inLanguage" site.LanguageCode)
+	(partialCached "schema/_author.html" . "default")
+-}}
+
+{{- with .Params.Keywords -}}
+  {{- $json = merge $json (dict
+		"keywords" .) -}}
+{{- end -}}
+
+{{- $cover := $.Scratch.Get "OGCover" -}}
+{{- if $cover -}}
+	{{- $json = merge $json (dict
+		"image" (partialCached "schema/_image.html" (dict
+			"Image" $cover
+			"License" .Params.CoverLicense
+			"Credit" .Params.CoverCredit
+		) $cover.RelPermalink)
+	) -}}
+{{- end -}}
+
+{{- if .Page.Params.Paywall -}}
+	{{- $json = merge $json (dict
+		"isAccessibleForFree" "False"
+		"hasPart" (dict
+			"@type" "WebPageElement"
+			"isAccessibleForFree" "False"
+			"cssSelector" ".locked"
+		)
+	) -}}
+{{- end -}}
+
+{{- return $json -}}

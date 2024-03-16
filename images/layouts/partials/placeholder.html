@@ -1,0 +1,20 @@
+{{- /*
+	MODULE: IMAGES
+	Placeholder
+	---
+	Decorative LQIP element. Depending on your lazy-loading solution you
+	may not need this as a separate element, but here it is anyway.
+	---
+	Params:
+	- .Image		Image object to create a placeholder element for.
+*/ -}}
+
+{{- $image := .Image -}}
+{{- $atts := slice `alt=""` -}}
+{{- with .Class -}}{{- $atts = $atts | append . -}}{{- end -}}
+{{- with .Width }}{{ $atts = $atts | append (printf `width="%d"` .) }}{{ end -}}
+{{ with .Height }}{{ $atts = $atts | append (printf `height="%d"` .) }}{{ end }}
+{{- $placeholder := partialCached "functions/get-placeholder.html" (dict
+	"Image" $image) $image.RelPermalink
+-}}
+<img src="{{- $placeholder | safeURL -}}" {{ delimit $atts " " | safeHTMLAttr }}>

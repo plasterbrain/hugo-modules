@@ -1,0 +1,49 @@
+{{- /*
+  MODULE: SEO
+  JSON-LD Schema: Author (Internal)
+  ---
+  Returns some author data that can be used as the value of "Author" or
+  "Creator". If the site has no author name, the site name will be used instead.
+*/ -}}
+
+{{- $author := site.Title -}}
+{{- with site.Author }}
+  {{- with site.Author.Name -}}
+    {{- $author = . -}}
+  {{- end -}}
+{{- end -}}
+{{- $author = $author | htmlUnescape | safeHTML | plainify -}}
+
+{{- $json := (dict
+	"@type" "Person"
+	"name" $author
+) -}}
+
+{{- with site.Params.Pages.About }}
+  {{- $page := . }}
+  {{- /* Can be internal or external */ -}}
+  {{- with site.GetPage . -}}
+    {{- $page = .Permalink -}}
+  {{- end -}}
+
+	{{- $json = merge $json (dict
+		"url" ($page | htmlUnescape | safeHTML | plainify | safeJS)
+	) -}}
+{{- end -}}
+
+{{- /* with site.Author.Avatar -}}
+  {{- $json = merge $json (dict
+    "image" .
+  ) -}}
+{{- end -}}
+{{- with site.Params.Socials -}}
+	{{- $sameAs := slice -}}
+	{{- range $site, $URL := . -}}
+			{{- $sameAs = $sameAs | append $URL -}}
+	{{- end -}}
+	{{- $json = merge $json (dict
+    "sameAs" $sameAs
+  ) -}}
+{{- end */ -}}
+
+{{- return $json -}}

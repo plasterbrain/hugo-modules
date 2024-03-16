@@ -1,0 +1,40 @@
+#---
+# MODULE: SOCIALS
+#---
+
+[params.social]
+useWebmentions = false
+useOpenID = false
+useBridgyFed = false
+shareLinks = ["twitter", "facebook", "mastodon"]
+
+# Create rel="me" link tags for `.Social.Profiles` keys:
+relMe = [] # ex. ["twitter", "github"]
+
+[params.social.profiles]
+#email = ""
+#facebook = ""
+#github = ""
+#gonkle = ""
+#instagram = ""
+#keybase = ""
+#microblog = ""
+#twitter = ""
+
+#[params.social.profiles.mastodon]
+#username = ""
+#server = ""
+# Let users discover you as any username @ your Hugo site's domain name.
+#alias = true
+
+# Example:
+# @TODO pgp
+[outputs]
+home = [ "HTML", "RSS", "webfinger"]
+
+[outputFormats]
+[outputFormats.webfinger]
+	baseName = "webfinger"
+	mediatype = "application/octet-stream"
+	path = ".well-known"
+	notAlternative = true

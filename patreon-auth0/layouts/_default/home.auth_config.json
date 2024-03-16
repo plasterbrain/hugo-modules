@@ -1,0 +1,6 @@
+{
+	"domain": "{{ $.Site.Params.auth0.domain }}",
+	"clientId": "{{ $.Site.Params.auth0.client }}",
+	"sessionCheckExpiryDays": 90,
+	"audience": "https://gated/api"
+}

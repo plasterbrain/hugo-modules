@@ -1,0 +1,35 @@
+{{- /*
+	MODULE: SEO
+	Function: get-themeBg
+	@requires hugo-modules/colors
+	---
+	Creates a solid-color background image based on `site.Params.ThemeColor` to be
+	used when generating OG banners. It's saved as "images/og/_og-bg.jpg".
+	---
+	Returns
+	- [resource]	Cover background
+*/ -}}
+
+{{- $return := false -}}
+{{- $temp := "partials/functions/%s.html" -}}
+{{- $pixel := resources.Get "1x1.png" -}}
+{{- if or
+	(not $pixel)
+	(not (templates.Exists (printf $temp "hexToRGB")))
+	(not (templates.Exists (printf $temp "rgbToHSL"))) -}}
+{{- else -}}
+	{{- $pixel = $pixel.Resize "1200x630 jpg" -}}
+	{{- $hsl := false -}}
+	{{- with site.Params.Seo.ThemeColor -}}
+		{{- $key := . -}}
+		{{- $rgb := partialCached "functions/hexToRGB.html" . $key -}}
+		{{- $key = delimit $rgb "" -}}
+		{{- $hsl = partialCached "functions/rgbToHSL.html" $rgb $key -}}
+	{{- end -}}
+
+	{{- with $hsl -}}
+		{{- $pixel = $pixel.Filter (images.Colorize (index . 0) (mul (index . 1) 100.0) 100) -}}
+	{{- end -}}
+	{{- $return = resources.Copy "assets/images/og/_og-bg.jpg" $pixel -}}
+{{- end -}}
+{{- return $return -}}

@@ -1,0 +1,15 @@
+{{- /*
+	MODULE: SEO
+	Partial: (Head) Page Meta Tags
+	---
+	Contains SEO and similar metadata that remains the same across the site.
+*/ -}}
+
+{{- with site.Params.Seo.OGSite }}
+		<meta property="og:site" content="{{- . | htmlUnescape | safeHTML | plainify -}}">
+{{- end }}
+		<meta property="og:locale" content="{{- site.LanguageCode -}}">
+{{- partialCached "seo-favicon.html" . "default" -}}
+{{- if site.Params.Seo.NoAI }}
+		<meta name="CCBot" content="nofollow">
+{{- end -}}

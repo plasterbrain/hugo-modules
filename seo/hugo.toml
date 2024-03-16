@@ -1,0 +1,46 @@
+#---
+# MODULE: SEO
+#---
+
+[params.author]
+name = "Author"
+
+[params.seo]
+isPrivate = false # Hide site from search engines
+noAI = true				# Attempt to block AI scraping
+
+titleSeparator = " | "
+OGSite = "" 							# Used for OG:Site
+#OGCover = ""
+UseCustomCovers = true
+
+# https://moz.com/learn/seo/title-tag
+maxTitleChars = 60
+# https://www.authorityhacker.com/headlines/#longer-headlines-perform-better
+maxOGTitleChars = 70
+# https://yoast.com/meta-descriptions/
+maxDescChars = 155
+# https://ogtester.com/blog/what-is-maximum-length-of-og-title-and-og-description
+maxOGDescChars = 85
+
+useSchema = true	# Output JSON-LD schema for some Google search features
+siteAlternateName = ""	# For certain Google JSON-LD schema
+
+themeColor = "#fff"				# Browser toolbar color
+#themeColorDark = "#000"	# Browser toolbar color with dark OS theme
+backgroundColor = "#fff"	# Browser fill color when PWA loads
+#faviconPath = "favicon/"
+
+[outputs]
+home = [ "HTML", "RSS", "webappmanifest", "ai"]
+
+[outputFormats]
+[outputFormats.browserconfig]
+	name = "browserconfig"
+	baseName = "browserconfig"
+	mediaType = "application/xml"
+	notAlternative = "true"
+[outputFormats.ai]
+	baseName = "ai"
+	mediaType = "text/plain"
+	notAlternative = "true"

@@ -1,0 +1,41 @@
+{{- /*
+	Widget: Letterboxd Feed
+	@author plasterbrain <hello@plasterbrain.com>
+	@license MIT
+	---
+	Grabs and displays your recently-watched films from Letterboxd! Neat! It uses
+	feed2json to convert Letterboxd RSS to be parsed here.
+
+	@link https://www.toptal.com/developers/feed2json/
+
+	- Set site.Params.letterboxd to your letterboxd username.
+	- You should also add a i18n entry called "titleLetterboxd"!
+*/ -}}
+{{- $boxdUrl := printf "https://letterboxd.com/%s/rss/"
+	(site.Params.letterboxd | default "crew") -}}
+{{- $jsonURL := print
+		"https://www.toptal.com/developers/feed2json/convert?url=" $boxdUrl -}}
+{{- $titleId := "letterboxd--title" | anchorize -}}
+<section aria-labelledby="{{ $titleId }}" class="col-span-3">
+	<h2 id="{{- $titleId -}}">
+		{{- i18n "titleLetterboxd" | default "Recently Watched" | safeHTML -}}
+	</h2>
+	<ol class="" role="list">
+		{{ with getJSON $jsonURL }}
+			{{- with (index . "items") -}}
+				{{- range (first 8 .) -}}
+					<li>
+						{{- /* RSS feed returns some garbage we don't need. */ -}}
+						{{- $cover := replace .content_html `<p><img src="` "" -}}
+						{{- $watchedOn := `"\/><\/p> <p>Watched on (.*?).</p>` -}}
+						{{- $endString := findRE $watchedOn .content_html -}}
+						{{- $cover = replace $cover (index $endString 0) "" -}}
+						<a href="{{ .url | safeURL }}">
+							<img src="{{- $cover | safeURL -}}" loading="lazy" alt="" width="200">
+						</a>
+					</li>
+				{{- end }}
+			{{- end }}
+		{{- end }}
+	</ol>
+</section>

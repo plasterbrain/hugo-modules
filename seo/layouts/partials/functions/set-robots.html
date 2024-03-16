@@ -1,0 +1,40 @@
+{{- /*
+	MODULE: SEO
+	Function: set-robots
+	---
+	Sets site.Scratch field "Robots" to the content value of a robots meta tag.
+  If the site is not set to private, it will look to see if this page has
+  `noindex` and `nofollow` parameters enabled.
+
+	The best way to override this on a per-layout basis is to use cascades with
+	the `noindex` and `nofollow` parameters rather than override this template.
+
+	@link https://gohugo.io/content-management/front-matter/#front-matter-cascade
+	@link https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
+	---
+	Params:
+	- .	Page context
+*/ -}}
+
+{{- $index := "noindex" -}}
+{{- $follow := "nofollow" -}}
+{{- $previews := slice -}}
+{{- if not site.Params.Seo.IsPrivate }}
+  {{- if and (not .Page.Params.noindex) (ne .Kind "section") -}}
+    {{- $index = "index" -}}
+		{{- $previews = slice "max-snippet:-1" "max-image-preview:large" "max-video-preview:-1" -}}
+  {{- end -}}
+  {{- if not .Page.Params.nofollow -}}
+    {{- $follow = "follow" -}}
+  {{- end -}}
+{{- end }}
+{{- /* Note: Make sure $index is the first item */ -}}
+{{- $value := slice $index $follow -}}
+
+{{- if site.Params.Seo.NoAI -}}
+	{{- $value = $value | append "noai" "noimageai" -}}
+{{- end -}}
+
+{{- $value = $value | append $previews -}}
+
+{{- $.Scratch.Set "Robots" (delimit $value ", ") -}}

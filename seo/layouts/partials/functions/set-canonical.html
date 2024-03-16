@@ -1,0 +1,12 @@
+{{- /*
+	MODULE: SEO
+	Function: set-canonical
+	---
+	Sets site.Scratch field "Canonical" to a canonical page link.
+	---
+	Params:
+	- .	Page context
+*/ -}}
+
+{{- $canonical := .Params.Canonical | default .Permalink -}}
+{{- $.Scratch.Set "Canonical" $canonical -}}

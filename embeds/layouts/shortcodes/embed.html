@@ -1,0 +1,59 @@
+{{- /* }}
+	MODULE: EMBEDS
+	(Shortcode) Generic Embed
+	---
+  Turns a URL into a preview card using the keyless Microlink API. Microlink
+	allows 50 free API calls per day.
+
+	@link https://microlink.io/docs/api/parameters/meta
+
+	@IDEA Save thumbnail from remote
+	@IDEA warnf if we get a JSON 403 or 429 response
+	---
+	Params:
+  - 0		The URL to embed.
+*/ -}}
+
+{{- $url := .Get 0 -}}
+{{- if $url -}}
+	{{- with getJSON
+		"https://api.microlink.io?" (querify
+			"url" $url
+			"filter" "image,title,publisher,description,date,logo") -}}
+
+		{{- with .data }}
+			<figure class="flex mb-4 bg-white card not-prose">
+				<a href="{{- $url | safeURL }}" class="flex-1">
+					<img src="{{- .image.url | safeURL -}}" alt="" width="200" height="155" class="card--thumbnail">
+				</a>
+				<figcaption class="flex flex-col p-4 pl-6 flex-2">
+					<a href="{{- $url | safeURL -}}"
+						class="card--title line-clamp-2 opacity-hover">
+						{{- /* Page title minus the site name */ -}}
+						{{- replace .title (print .publisher " - ") "" -}}
+					</a>
+					<p class="my-2 text-sm card--desc line-clamp-2">
+						{{- .description | truncate 125 -}}
+					</p>
+
+					{{- $pubLogo := resources.GetRemote .logo.url -}}
+					{{- /* @link https://supercookie.me/workwise */ -}}
+					<span class="text-sm{{- if $pubLogo }} flex items-center {{- end -}}">
+						{{- if $pubLogo -}}
+							<img src="{{- .logo.url | safeURL -}}" width="22" height="22" alt="" class="mr-1"/>
+						{{- end -}}
+
+						<a href="{{- $url | safeURL -}}" class="underline opacity-hover">
+							{{- .publisher -}}
+						</a>
+						<span aria-hidden="true">&nbsp;&middot;&nbsp;</span>
+						<time datetime="{{- .date -}}">
+							{{- time.Format ":date_long" .date -}}
+						</time>
+					</span>
+				</figcaption>
+			</figure>
+		{{- end }}
+	{{- end }}
+{{- end }}
+

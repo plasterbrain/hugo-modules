@@ -1,0 +1,15 @@
+{{- /*
+	MODULE: EMBEDS
+	(Function) get-icon
+	---
+	Fetches, executes, and returns a given icon in `assets/icons`.
+	---
+	Params:
+	- .Icon		Icon basename, ex. "twitter" for "twitter.svg"
+*/ -}}
+{{- $svg := false -}}
+{{- with resources.Get (printf "assets/icons/%s.svg" .Icon) -}}
+	{{- $svg = . | resources.ExecuteAsTemplate "icon.svg" . -}}
+	{{- $svg = $svg.Content -}}
+{{- end -}}
+{{- return $svg -}}

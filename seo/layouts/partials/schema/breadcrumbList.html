@@ -1,0 +1,35 @@
+{{- /*
+  MODULE: SEO
+  JSON-LD Schema: BreadcrumbList
+  ---
+  Returns schema dictionary for the page's breadcrumb trail.
+
+	@link https://developers.google.com/search/docs/appearance/structured-data/breadcrumb
+
+	@TODO after 1 .Ancestors ?
+	---
+	Params:
+	- .  Page context
+*/ -}}
+
+{{- $json := dict -}}
+{{- $crumbs := slice -}}
+{{- $i := 0 -}}
+{{- range .Ancestors.Reverse -}}
+	{{- $i = add $i 1 -}}
+	{{- $crumbs = $crumbs | append (dict
+		"@type" "ListItem"
+		"position" $i
+		"name" (.LinkTitle | htmlUnescape | safeHTML | plainify)
+		"item" .Permalink
+	) -}}
+{{- end -}}
+
+{{- if gt $i 0 -}}
+	{{- $json = dict
+		"@type" "BreadcrumbList"
+		"itemListElement" $crumbs
+	-}}
+{{- end -}}
+
+{{- return $json -}}

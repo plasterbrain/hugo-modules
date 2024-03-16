@@ -1,0 +1,25 @@
+{{- /*
+	MODULE: IMAGES
+	Function: get-placeholder
+	---
+	Returns a low-quality image placeholder (LQIP) for the given image.
+	---
+	Params:
+	- .Image			Image object to get a LQIP for.
+	- .AsString		Whether to return LQIP as a base64-encoded string (default true) or
+								as an image resource.
+	---
+	Returns:
+	- [string|resource] LQIP hash (escape with `safeURL` when setting as an element's
+											`src` or `background-image`) or resource object.
+*/ -}}
+
+{{- $returnString := .AsString | default true -}}
+{{- $image := .Image -}}
+
+{{- $placeholder := $image.Resize "40x" -}}
+{{- $placeholder = $placeholder.Filter (images.GaussianBlur 6) -}}
+{{- if $returnString -}}
+	{{- $placeholder = printf `data:%s;base64,%s` $image.MediaType ($placeholder.Content | base64Encode) -}}
+{{- end -}}
+{{- return $placeholder -}}

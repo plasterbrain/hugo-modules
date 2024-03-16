@@ -1,0 +1,14 @@
+{{- /*
+	@link https://fed.brid.gy/docs#searchable
+*/ -}}
+
+{{- if not .Params.Noindex -}}
+	{{- if site.Params.Social.UseBridgyFed }}
+		<link rel="alternate" type="application/activity+json" href="https://fed.brid.gy/r/{{- site.BaseURL | safeURL -}}">
+	{{- end }}
+
+	{{- with site.Params.Social.Profiles.Twitter }}
+		<meta name="twitter:creator"
+			content="@{{ replaceRE `^https?://twitter.com/*` `$1` . }}">
+	{{- end -}}
+{{- end }}

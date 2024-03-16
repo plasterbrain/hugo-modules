@@ -1,0 +1,36 @@
+{{- /*
+	MODULE: UTILITIES/COLORS
+	Function: rgbToL
+	---
+	Converts RGB slice to relative luminance value (e.g. for the purpose of WCAG
+	contrast ratios.)
+
+	@link https://www.w3.org/TR/WCAG20/#relativeluminancedef
+
+	@TODO move
+	---
+	Params:
+	- .		RGB slice (red, blue, green)
+	---
+	Returns:
+	- [float] Relative luminance value
+*/ -}}
+
+{{- $ratios := slice .2126 .7152 .0722 -}}
+
+{{- $lum := 0 -}}
+{{- $rgb := apply . "div" "." 255.0 -}}
+{{- $i := 0 -}}
+{{- range $rgb -}}
+	{{- $color := . -}}
+	{{- if le $color 0.04045 -}}
+		{{- $color = div $color 12.92 -}}
+	{{- else -}}
+		{{- $color = math.Pow (div (add $color .055) 1.055) 2.4 -}}
+	{{- end -}}
+
+	{{- $ratio := index $ratios $i -}}
+	{{- $lum = add $lum (mul $ratio $color) -}}
+	{{- $i = add $i 1 -}}
+{{- end -}}
+{{- return $lum -}}
