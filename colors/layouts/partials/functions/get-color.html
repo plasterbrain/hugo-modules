@@ -1,0 +1,14 @@
+{{- $color := . -}}
+{{- $result := dict
+	"Bg" site.Params.Colors.defaultWhite
+	"Text" site.Params.Colors.defaultBlack -}}
+
+{{- with site.Data.moduleColors.colors -}}
+	{{- with index . $color -}}
+		{{- $result = dict
+			"Bg" .
+			"Text" (partialCached "functions/get-wcagBW.html" (dict "Color" .) $color) -}}
+	{{- end -}}
+{{- end -}}
+
+{{ return $result }}

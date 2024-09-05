@@ -9,15 +9,18 @@
 	---
 	Params:
 	- .		Hex color string
+	---
+	Returns:
+	- [slice] (red, green, blue)
 */ -}}
 
 {{- $rgb := slice -}}
 {{- $hex := strings.TrimPrefix "#" . -}}
 
-{{- if findRE `^([a-f0-9]{6})$` $hex 1 -}}
+{{- if findRE `^([a-fA-F0-9]{6})$` $hex 1 -}}
 	{{- /* 6-letter hex */ -}}
 	{{- $hex = split $hex "" -}}
-{{- else if findRE `^([a-f0-9]{3})$` $hex 1 -}}
+{{- else if findRE `^([a-fA-F0-9]{3})$` $hex 1 -}}
 	{{- /* Double the values of 3-letter hex... dw about it */ -}}
 	{{- $hex2 := split $hex "" -}}
 	{{- $hex = slice
@@ -26,7 +29,7 @@
 		(index $hex2 2) (index $hex2 2) -}}
 {{- else -}}
 	{{- /* Invalid hex */ -}}
-	{{- warnf "Failed to convert hex code `#%s` to RGB." -}}
+	{{- warnf "Failed to convert hex code `%s` to RGB." $hex -}}
 	{{- $hex = slice -}}
 	{{- $rgb := slice 0 0 0 -}}
 {{- end -}}

@@ -1,0 +1,7 @@
+#---
+# MODULE: COLORS
+#---
+
+[params.colors]
+defaultBlack = "#000"
+defaultWhite = "#fff"

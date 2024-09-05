@@ -1,6 +1,16 @@
 {{- /*
+	MODULE: COLORS
+	Function: rgbToHSL
+	---
+	Converts a list of RGB values to a list of the color's hue, saturation and light values.
 
 	@link https://www.rapidtables.com/convert/color/rgb-to-hsl.html
+	---
+	Params:
+	- .		RGB slice (red, green, blue)
+	---
+	Returns:
+	- [slice] (hue, saturation, value)
 */ -}}
 
 {{- $rgb := apply . "div" "." 255.0 -}}

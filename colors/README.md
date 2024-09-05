@@ -1,11 +1,5 @@
 # Hugo Modules: Colors
-Some color-conversion utilities, useful for e.g. getting WCAG-compliant contrast colors.
+- Data file with some common branding colors
+- Some color-conversion utilities, useful for e.g., getting WCAG-compliant contrast colors.
 
-```golang
-  {{- /* If you got a color from `.Colors`, convert it to string */ -}}
-  {{- $color := delimit . "" -}}
-
-  {{- $rgb := partialCached "functions/hexToRGB.html" $color -}}
-
-  {{- $textColor := partialCached "functions/get-wcagBW.html" $rgb $color -}}
-```
+@TODO Hugo has built-in luminance for colors now! https://gohugo.io/methods/resource/colors/
