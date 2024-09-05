@@ -30,6 +30,6 @@
 	{{- with $hsl -}}
 		{{- $pixel = $pixel.Filter (images.Colorize (index . 0) (mul (index . 1) 100.0) 100) -}}
 	{{- end -}}
-	{{- $return = resources.Copy "assets/images/og/_og-bg.jpg" $pixel -}}
+	{{- $return = resources.Copy "assets/images/og/_og_bg.jpg" $pixel -}}
 {{- end -}}
 {{- return $return -}}

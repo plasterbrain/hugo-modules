@@ -1,4 +1,4 @@
-# Hugo Modules: Socials
+# Hugo Modules: Social
 Adds functionality to easily create share buttons/links and enhance your site with some basic IndieWeb/fediverse technology.
 
 ## Features
@@ -55,3 +55,10 @@ Relies on some of the scratch variables set by the SEO module (with sensible fal
 ## Read more
 - https://guide.toot.as/guide/use-your-own-domain/#5-static-files
 - https://indiewebify.me/
+
+## License
+- Facebook, Tumblr: [CoreUI Free Icons](https://github.com/coreui/coreui-icons#brand-icons) (CC0 1.0)
+- Reddit: [Font Awesome](https://github.com/FortAwesome/Font-Awesome/#license) (CC BY 4.0)
+- Linux (Tux): [IcoMoon Free](https://github.com/Keyamoon/IcoMoon-Free/blob/master/License.txt) (CC BY 4.0 😑)
+- Hacker News/Y Combinator: [SVG Porn](https://github.com/gilbarbara/logos/blob/master/LICENSE.txt) (CC0 1.0)
+- Twitter: [Twitter Open Source](https://github.com/twitter/opensource-website/blob/main/LICENSE) (Apache)

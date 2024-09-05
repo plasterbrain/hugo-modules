@@ -29,15 +29,21 @@
 
 {{- with $image -}}
 	{{- $sources := slice -}}
-	{{- /* Source used for the image element, which may become a LQIP */ -}}
-	{{- $imgSrc := .RelPermalink -}}
-	{{- /* Source for `data-iesrc` for Lozad's picture polyfill */ -}}
-	{{- $ieSrc := .RelPermalink -}}
 
-	{{- $filetype := path.Ext .RelPermalink -}}
+	{{- /* Source used for the image element, which may become a LQIP */ -}}
+	{{- $imgSrc := "" -}}
+	{{- /* Source for `data-iesrc` for Lozad's picture polyfill */ -}}
+	{{- $ieSrc := "" -}}
+
+	{{- $filetype := ".png" -}}
 
 	{{- $isResource := eq (printf "%T" .) "*resources.resourceAdapter" -}}
 	{{- if $isResource -}}
+		{{- $imgSrc = .RelPermalink -}}
+		{{- $ieSrc = .RelPermalink -}}
+
+		{{- $filetype = path.Ext .RelPermalink -}}
+
 		{{- $newImage := $image -}}
 		{{- if or $width $height -}}
 			{{- $width = string ($width | default "") -}}
@@ -69,6 +75,10 @@
 		{{- /* Update dimensions in case one was auto */ -}}
 		{{- $width = string $newImage.Width -}}
 		{{- $height = string $newImage.Height -}}
+	{{- else -}}
+		{{- $imgSrc = . -}}
+		{{- $ieSrc = . -}}
+		{{- $filetype = path.Ext $imgSrc -}}
 	{{- end -}}
 
 	{{- $isGif := eq $filetype ".gif" -}}

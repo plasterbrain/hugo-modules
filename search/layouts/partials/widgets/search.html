@@ -6,11 +6,12 @@
 	@TODO test no icon, custom icon
 	@TODO customize colors!
 	@TODO Google option... -_-
+	partialCached "functions/get-icon.html" (dict "Icon" "search") "search"
 */ -}}
 {{- $buttonLabel := i18n "searchWidget" | default "Search" -}}
 {{- $buttonLabelClass := "" -}}
 
-{{- $icon := resources.Get (site.Params.Search.Icon | default "menus/search.svg") -}}
+{{- $icon := resources.Get "assets/images/icons/search.svg" -}}
 {{- with $icon -}}
 	{{- if eq (path.Ext .Permalink) ".svg" -}}
   	{{- $icon = $icon.Content -}}
@@ -22,23 +23,23 @@
 		-}}
 	{{- end -}}
 	{{/* Visually hide the text if we have an icon. */}}
-	{{- $buttonLabelClass = `class="is-sr-only"` -}}
+	{{- $buttonLabelClass = `class="sr-only"` -}}
 {{- else -}}
 	{{/* Fail printf gracefully */}}
 	{{- $icon = "" -}}
 {{- end -}}
 
 {{- $button := print `
-	<button id="search--submit" type="submit" aria-labelledby="search--label"  class="button is-info">
+	<button id="search--submit" type="submit" aria-labelledby="search--label"  class="flex justify-center items-center p-1">
 		<span id="search--label" ` ($buttonLabelClass | safeHTML) `>`
 			($buttonLabel | safeHTML)
 		`</span>`
 		($icon | safeHTML)
 	`</button>` -}}
 
-{{- $queryPlaceholder := site.Params.Search.Placeholder | default "" -}}
+{{- $queryPlaceholder := site.Params.Search.Label | default "" | htmlUnescape | safeHTML -}}
 {{- $queryLabel := print `
-	<label for="search--query" class="is-sr-only">`
+	<label for="search--query" class="sr-only">`
 		($queryPlaceholder | safeHTML)
 	`</label>` -}}
 
@@ -46,14 +47,13 @@
 	{{- partial .Template -}}
 {{- else -}}
 	{{- $page := site.Params.Search.Page | default "search" -}}
-	{{- $page = path.Join site.BaseURL $page -}}
 	<form id="search" role="search" data-turbo="false"
-	action="{{ $page }}" method="GET"
+	action="/{{ $page }}" method="GET"
 	class="js-only">
-		<div role="presentation" class="field has-addons">
-			<div role="presentation" class="control">
+		<div role="presentation" class="flex">
+			<div role="presentation">
 				{{- $queryLabel | safeHTML -}}
-				<input id="search--query" name="s" type="search" required placeholder="{{- $queryPlaceholder | safeHTMLAttr -}}" class="input" value="">
+				<input id="search--query" name="s" type="search" required placeholder="{{- $queryPlaceholder | safeHTMLAttr -}}" class="p-1 px-2 text-sm rounded-md" value="">
 			</div>
 			<div role="presentation" class="control">
 				{{- $button | safeHTML -}}

@@ -17,7 +17,7 @@ const $memberEls = Array.prototype.slice.call(
 
 let callbackURL = "CALLBACK_URL"; // To be replaced by Hugo
 
-const hidden = "is-hidden"; // Hidden item class
+const hidden = "hidden"; // Hidden item class
 
 let auth0Client = null;
 const fetchAuthConfig = () => fetch("/auth_config.json");

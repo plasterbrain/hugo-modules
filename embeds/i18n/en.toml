@@ -58,3 +58,14 @@
 	other = "macOS"
 [windows]
 	other = "Windows"
+
+
+# Goes after license description with link
+[licenseMore]
+	other = "Read more &rarr;"
+[cc]
+	other = "Creative Commons"
+[cc0]
+	other = "CC0 1.0 Universal"
+[cc0desc]
+	other = "You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission or providing attribution."

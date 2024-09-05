@@ -1,0 +1,13 @@
+[outputFormats]
+[outputFormats.RSS]
+	mediatype = "application/rss"
+	baseName = "feed"
+# [outputFormats.feedStyle]
+# 	baseName = "feed-style"
+# 	isPlainText = true
+# 	mediaType = "text/xsl"
+# 	notAlternative = true
+
+# [mediaTypes]
+#   [mediaTypes."text/xsl"]
+#     suffixes = ['xsl']

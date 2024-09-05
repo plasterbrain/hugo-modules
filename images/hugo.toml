@@ -1,0 +1,6 @@
+#---
+# MODULE: Images
+#---
+
+[params.images.icons]
+path = "images/icons/%s.svg"

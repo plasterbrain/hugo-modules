@@ -16,12 +16,6 @@ This module does not use extensive automatic srcset formatting bc I hate that sh
     [[module.imports]]
     path = "github.com/plasterbrain/hugo-modules/images"
     ```
-1. **Update** your templates to add the meta tag partials.
-  - *baseof.html*
-    ```golang
-    {{- partialCached "social-site.html" . "default" -}}
-    {{- partial "social-page.html" . -}}
-    ```
 
 ## TODO
 - Move SVG thing over here
@@ -32,6 +26,8 @@ This module does not use extensive automatic srcset formatting bc I hate that sh
 {{- range (slice "webp" "png") -}}
   {{- $ext := . -}}
   {{- $newImage = $newImage.Process $ext -}}
+
+note: https://github.com/golang/go/issues/62421
 
 ## Read more
 - [Hugo forums discussion on possible LQIP approaches](https://discourse.gohugo.io/t/low-quality-image-placeholder-lqip-pipes/20259)

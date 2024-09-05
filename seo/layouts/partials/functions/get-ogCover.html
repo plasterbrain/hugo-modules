@@ -8,6 +8,7 @@
 	@TODO Allow custom base template/bg image
 	@TODO Favicon overlay?
 	@TODO Custom font
+	@TODO Giving some error where $title is template.html
 	---
 	Params:
 	- .	Page context
@@ -18,17 +19,16 @@
 {{- $cover := "" -}}
 
 {{- /* Tries to create a solid background from your theme color. */ -}}
+{{- $page := . -}}
 {{- $bg := partialCached "functions/get-themeBg.html" . "default" -}}
-{{- if $bg -}}
+{{- with $bg -}}
 	{{- $textColor := "#ffffff" -}}
 	{{- with site.Params.Seo.ThemeColor -}}
-		{{- $key := delimit . "" -}}
-		{{- $rgb := partialCached "functions/hexToRGB.html" . $key -}}
 		{{- $textColor = partialCached "functions/get-wcagBW.html"
-		(dict "Color" $rgb) $key -}}
+		(dict "Color" .) . -}}
 	{{- end -}}
-	{{- $title := .LinkTitle | plainify -}}
-	{{- $cover = $bg.Filter (images.Text $title (dict
+	{{- $title := $page.LinkTitle | plainify -}}
+	{{- $cover = $bg.Filter (images.Text (string $title) (dict
 		"color" $textColor
 		"size" 60
 		"linespacing" 2
@@ -37,7 +37,7 @@
 	)) -}}
 
 	{{- /* Rename the image */ -}}
-	{{- $permalink := printf "assets/images/og/%s.jpg" (.LinkTitle | anchorize) -}}
+	{{- $permalink := printf "assets/images/og/%s.jpg" ($page.LinkTitle | anchorize) -}}
 	{{- $cover = resources.Copy $permalink $cover -}}
 {{- end -}}
 {{- return $cover -}}

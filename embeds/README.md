@@ -35,3 +35,6 @@ SVG icons don't point to their titles with `aria-label` as there may be multiple
 - https://bsky.link/ ?
 - clean this tf up
 - sr text for yt is the title twice - change button to "play video" or somethin
+
+## License
+- Bandcamp, itch.io, Soundcloud, Steam: [Wikimedia Commons](https://commons.wikimedia.org/wiki/Commons:Threshold_of_originality) (CC0 1.0)

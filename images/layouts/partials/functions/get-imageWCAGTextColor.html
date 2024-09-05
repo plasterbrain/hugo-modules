@@ -3,6 +3,7 @@
 	Function: get-imageWCAGTextColor
 	---
 	Gets WCAG black/white result for an image's dominant color.
+	@TODO built-in luminance now?
 	---
 	Params:
 	- .Image			Image object to get a LQIP for.
@@ -28,9 +29,8 @@
 {{- with $image -}}
 	{{- $color := first 1 .Colors -}}
 	{{- $color = delimit $color "" -}}
-	{{- $rgb := partialCached "functions/hexToRGB.html" $color $color -}}
 	{{- $result = partialCached "functions/get-wcagBW.html"
-		(dict "Color" $rgb "Options" $options) $color -}}
+		(dict "Color" $color "Options" $options) $color -}}
 {{- end -}}
 {{- return $result -}}
 

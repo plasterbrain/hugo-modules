@@ -1,0 +1,2 @@
+{{- $license := .Get 0 | lower -}}
+{{- partialCached "widgets/license.html" $license $license -}}

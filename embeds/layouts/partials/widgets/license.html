@@ -1,0 +1,36 @@
+{{- $license := . -}}
+{{- $svgs := slice -}}
+{{- if hasPrefix $license "cc" }}
+	{{- $svgs = $svgs | append "cc" -}}
+
+	{{- if hasPrefix $license "cc0" }}
+		{{- $svgs = $svgs | append "cc0" -}}
+	{{- end }}
+{{- end }}
+
+<div class="border border-black license">
+	<div class="flex gap-2 items-center p-2 text-lg font-bold bg-black license--title">
+		<span class="flex gap-1 items-center license--icons">
+		{{- range $svgs -}}
+			{{- $icon := partialCached "functions/get-icon.html" (dict "Icon" .) . -}}
+			{{- with $icon -}}
+				{{- . | safeHTML -}}
+			{{- end -}}
+		{{- end -}}
+		</span>
+		<span>{{- i18n $license | htmlUnescape | safeHTML -}}</span>
+	</div>
+	<div class="p-2 text-sm italic leading-relaxed">
+		{{- i18n (print $license "desc") | htmlUnescape | safeHTML -}}
+
+		{{ with site.Data.moduleEmbeds.licenses }}
+			{{ with index . $license }}
+				{{- $url := printf .url (site.Language.Lang | anchorize) -}}
+				{{- print "&#32;" | safeHTML -}}
+				<a rel="license" href="{{- $url | safeURL -}}" class="license--link link">
+					{{- i18n "licenseMore" | htmlUnescape | safeHTML -}}
+				</a>
+			{{- end -}}
+		{{- end -}}
+	</div>
+</div>

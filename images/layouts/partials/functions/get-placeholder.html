@@ -3,6 +3,8 @@
 	Function: get-placeholder
 	---
 	Returns a low-quality image placeholder (LQIP) for the given image.
+
+	@TODO got some file DNE error using placeholder.content that went away after server restart, nyeh
 	---
 	Params:
 	- .Image			Image object to get a LQIP for.
@@ -20,6 +22,6 @@
 {{- $placeholder := $image.Resize "40x" -}}
 {{- $placeholder = $placeholder.Filter (images.GaussianBlur 6) -}}
 {{- if $returnString -}}
-	{{- $placeholder = printf `data:%s;base64,%s` $image.MediaType ($placeholder.Content | base64Encode) -}}
+	{{- $placeholder = printf `data:%s;base64,%s` $image.MediaType ($image.Content | base64Encode) -}}
 {{- end -}}
 {{- return $placeholder -}}

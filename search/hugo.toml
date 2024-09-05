@@ -2,6 +2,7 @@
 # MODULE: Search
 #---
 [params.search]
+label = "Search the site"
 placeholder = "Search the site..."
 page = "search"
 

@@ -1,14 +1,16 @@
 {{- /*
-	MODULE: EMBEDS
+	MODULE: ICONS
 	(Function) get-icon
 	---
-	Fetches, executes, and returns a given icon in `assets/icons`.
+	Fetches, executes, and returns a given icon in site.Params.Icons.Path.
 	---
 	Params:
 	- .Icon		Icon basename, ex. "twitter" for "twitter.svg"
 */ -}}
+
 {{- $svg := false -}}
-{{- with resources.Get (printf "icons/%s.svg" .Icon) -}}
+{{- $path := site.Params.Images.Icons.Path | default "assets/images/icons/%s.svg" -}}
+{{- with resources.Get (printf $path .Icon) -}}
 	{{- $svg = . | resources.ExecuteAsTemplate "icon.svg" . -}}
 	{{- $svg = $svg.Content -}}
 {{- end -}}

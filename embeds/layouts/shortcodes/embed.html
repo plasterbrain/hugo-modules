@@ -22,8 +22,8 @@
 			"filter" "image,title,publisher,description,date,logo") -}}
 
 		{{- with .data }}
-			<figure class="flex mb-4 bg-white card not-prose">
-				<a href="{{- $url | safeURL }}" class="flex-1">
+			<figure class="flex mb-4 card not-prose">
+				<a href="{{- $url | safeURL }}">
 					<img src="{{- .image.url | safeURL -}}" alt="" width="200" height="155" class="card--thumbnail">
 				</a>
 				<figcaption class="flex flex-col p-4 pl-6 flex-2">

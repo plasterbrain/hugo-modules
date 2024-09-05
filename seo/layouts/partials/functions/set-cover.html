@@ -18,7 +18,7 @@
 {{- $useCustom := and site.Params.Seo.UseCustomCovers (not .Params.NoCustomCover) }}
 
 {{- $cover := .Params.OGCover | default .Params.Cover -}}
-{{- if not $useCustom -}}sdf
+{{- if not $useCustom -}}
 	{{- $cover = $cover | default site.Params.OGCover -}}
 {{- end -}}
 {{- with $cover -}}
