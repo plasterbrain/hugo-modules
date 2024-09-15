@@ -1,0 +1,100 @@
+{{- $url := . -}}
+{{- $id := replaceRE
+	"https://store.steampowered.com/app/((?:[0-9])*)/(?:.)*/" "$1" $url -}}
+{{- $url = print $url "?" (querify "snr" "1_5_1100__1100") -}}
+{{- $api := print "https://store.steampowered.com/api/appdetails?"
+	(querify "appids" $id) -}}
+
+{{- with resources.GetRemote $api -}}
+	{{- with .Err -}}
+		{{- /* API 1 lookup unsuccessful? */ -}}
+		{{- warnf "Embeds: %s" . -}}
+	{{- else -}}
+		{{- $data := . | transform.Unmarshal -}}
+		{{- with index $data $id -}}
+			{{- $data = .data -}}
+			{{- partialCached "module-embeds/widgets/steam/markup.html" (dict
+				"Id" $id
+				"Data" $data
+				"Url" $url) $id -}}
+		{{- end -}}
+	{{- end -}}
+{{- else -}}
+	{{- /* API bad URL? */ -}}
+	{{ warnf "Embeds: failed to embed Steam url %q" $url }}
+{{- end -}}
+
+{{- define "partials/module-embeds/widgets/steam/markup.html" -}}
+	{{- $id := .Id -}}
+	{{- $url := .Url -}}
+	{{- $data := .Data -}}
+
+	{{- $title := printf `<a class="text-white embed-steam--caption" style="text-decoration-color: white;" href="%s">%s</a>` $url $data.name -}}
+
+	{{- $tags := slice -}}
+	{{- range ($data.genres | append $data.categories) -}}
+		{{ $tags = $tags | append $data.description -}}
+	{{- end -}}
+
+	{{- $platformIcons := dict "windows" "windows" "mac" "osx" "linux" "steam" -}}
+
+	<figure class="overflow-visible relative p-4 card embed-steam not-prose">
+		<figcaption class="flex justify-between items-start mb-2">
+			<div role="presentation">
+				<span class="text-lg leading-none embed-steam--title">
+					{{- i18n "steamTitle" $title | safeHTML -}}
+				</span>
+				{{- /*
+				<span class="block text-sm uppercase" style="color: #bbb;">
+					{{- if $data.release_date.coming_soon -}}
+						{{- i18n "steamComingSoon" -}}
+					{{- else -}}
+						{{- i18n "steamByline" (dict "Author" (delimit $data.developers ", " "& ") "Date" $data.release_date.date) -}}
+					{{- end -}}
+				</span>
+				*/ -}}
+			</div>
+			<span style="color: #9099A0; font-size:2em;">
+				{{- partialCached "icon.html" (dict "Icon" "steam" "i18n" "steam") "steam" -}}
+			</span>
+		</figcaption>
+		<div role="presentation" class="flex">
+			<a href="{{- $url | safeURL -}}" class="mr-2 opacity-hover">
+				<img src="{{- printf `https://cdn.akamai.steamstatic.com/steam/apps/%s/capsule_184x69.jpg` $id | safeURL -}}" alt="" width="184" height="69">
+			</a>
+			<p class="mb-1" style="color: #c6cfd7;">
+				{{- $data.short_description -}}
+			</p>
+		</div>
+		{{- /* with $tags -}}
+			<ul class="list-inline" style="font-size: .8em; color: #67c1f5;" role="list">
+				{{- range . | first 3 -}}
+					<li class="px-1 tag" style="background-color: #223c4e;">
+						{{- . -}}
+					</li>
+				{{- end -}}
+			</ul>
+		{{- end */ -}}
+		<ul role="list" aria-label="{{- i18n `gamePlatforms` 3 -}}" class="inline text-white opacity-70 embed-steam--platforms list-inline">
+			{{- range (slice "windows" "mac" "linux") -}}
+				{{- if (index $data.platforms .) -}}
+					{{- $icon := index $platformIcons . -}}
+					{{- with partialCached "icon.html" (dict "Icon" $icon "i18n" $icon) $icon -}}
+						<li>{{- . | safeHTML -}}</li>
+					{{- end -}}
+				{{- end -}}
+			{{- end -}}
+		</ul>
+		<div role="presentation" style="bottom: -1rem; right: .5rem;" class="absolute">
+			<div role="presentation" class="inline-block">
+				<span class="p-2 bg-black embed-steam--price">
+					{{- $data.price_overview.final_formatted -}}
+				</span>
+				{{- /* --- Buy Button --- */ -}}
+				<a class="p-2 embed-steam--button button opacity-hover" href="{{ $url | safeURL }}">
+					{{- i18n "steamBuy" | safeHTML -}}
+				</a>
+			</div>
+		</div>
+	</figure>
+{{- end -}}

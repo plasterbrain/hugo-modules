@@ -4,12 +4,15 @@
 	---
 	Adds meta tags for various favicon formats.
 
-	@link https://evilmartians.com/chronicles/how-to-favicon-in-2021-six-files-that-fit-most-needs
+	We use the *assets* directory and not *static* in this module so that Hugo can
+	dynamically generate tags for an arbitrary number of icons/sizes. The module
+	assumes the files in this folder follow the naming conventions of RealFaviconGenerator.
+
 	@link https://realfavicongenerator.net/faq
-	@link https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
 */ -}}
 
 {{- $favPath := site.Params.Seo.FaviconPath | default "" }}
+{{- /* @TODO assets wouldn't link here??? */ -}}
 		<link rel="icon" href="/favicon.ico" sizes="any">
 {{- with resources.Match (path.Join $favPath "**favicon*.png") -}}
 	{{- range . }}
@@ -17,6 +20,12 @@
 	{{- end }}
 {{- end -}}
 
+{{- /*
+	Alternatively you can put this in *static* if it has the correct name. It will
+	be discovered automatically.
+
+	@link https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+*/ -}}
 {{- with resources.Match (path.Join $favPath "**apple-touch-icon.png") -}}
 	{{- range . }}
 		<link rel="apple-touch-icon" type="image/png" href="{{- .RelPermalink -}}" sizes="{{- .Width -}}x{{- .Height -}}">
@@ -35,6 +44,7 @@
 		<meta name="theme-color" content="{{- . | htmlUnescape | safeHTML | plainify -}}" {{ if $darkTheme -}}media="(prefers-color-scheme: dark)"{{- end -}}>
 {{- end }}
 
+{{- /* Browser config can also be discovered automatically but we're fancy */ -}}
 {{- with site.Home.OutputFormats.Get "webappmanifest" }}
 		<link rel="manifest" href="{{- .RelPermalink -}}">
 {{- end -}}

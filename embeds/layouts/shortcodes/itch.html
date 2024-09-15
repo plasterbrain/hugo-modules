@@ -1,6 +1,6 @@
 {{- /*
 	MODULE: Embeds
-	(Shortcode) itch.io Widget
+	(Shortcode) itch.io Widget Wrapper
 	---
   Turns a link to a game on itch.io into a mockup of the light-theme widget.
 	You should set `site.Params.Api.itch` to your API key.
@@ -13,97 +13,5 @@
 	- 0 	itch.io game page URL, ex. "https://plasterbrain.itch.io/pizzagame"
 */ -}}
 
-{{- $extended := false -}}
 {{- $url := .Get 0 -}}
-{{- $rel := "nofollow noopener noreferrer" -}}
-{{- with (getJSON (print $url "/data.json")) -}}
-  {{- $id := .id | int -}}
-
-  {{- with site.Params.Api.Itch -}}
-		{{- /* itch.io has two APIs for game data: a JS wrapper for the public
-			"/data.json" endpoint and a restricted server API. The former gives us the
-			game ID from the page URL. The latter uses the ID to get the rest.
-			Yea it's dumb */ -}}
-    {{- with (getJSON (print "https://api.itch.io/games/" $id)
-      (dict "Authorization" (print "Bearer " .) )) -}}
-      {{ $extended = .game -}}
-    {{- else -}}
-			{{- if site.Params.Embeds.ShowWarnings -}}
-				{{- warnf "Error getting itch.io widget for `%s`" $url -}}
-			{{- end -}}
-		{{- end -}}
-  {{- end -}}
-
-  {{- with $extended -}}
-		{{- $traits := .traits -}}
-    {{- $cover := .cover_url -}}
-		{{- $html5 := ne (printf "%T" (index . "embed")) "<nil>" -}}
-		{{- $wordmark := partialCached "functions/get-icon.html"
-			(dict "Icon" "itchio-wordmark") "itchio-wordmark" -}}
-
-    <figure class="flex relative card not-prose" style="color: #222222;">
-      <a href="{{- $url | safeURL -}}" rel="{{- $rel -}}" class="box-content p-2 opacity-hover" style="flex: 0 0 180px;">
-        <picture {{ if .still_cover_url -}}class="gif"{{- end -}}>
-					{{- /* Use gif as the backup source. */ -}}
-          {{- if .still_cover_url }}
-						{{- $cover = .still_cover_url -}}
-            <source srcset="{{- .cover_url | safeURL -}}" media="(prefers-reduced-motion: no-preference)">
-          {{- end }}
-          <img src="{{- $cover | safeURL -}}" width="180" height="143" alt="" style="border: 1px solid #dadada; border-radius: 3px; box-shadow: 0 10px 10px -10px rgba(0,0,0,0.3);">
-        </picture>
-      </a>
-      <figcaption class="flex flex-col items-start p-2" style="border-left: 1px solid #dadada;">
-        <div role="presentation" class="card--title line-clamp-2">
-          <a href="{{- $url | safeURL -}}" rel="{{- $rel -}}">
-						{{- .title | htmlUnescape | safeHTML -}}
-					</a>
-          {{- "" -}}
-          <ul role="list" class="inline ml-2 list-inline" style="color: #6c6c6c;" aria-label='{{- i18n "gamePlatforms" 3 -}}'>
-            {{- range (slice "windows" "linux" "osx") -}}
-              {{- if in $traits (print "p_" .) -}}
-                {{- with partialCached "functions/get-icon.html"
-									(dict "Icon" .) . -}}
-                  <li>{{- . | safeHTML -}}</li>
-                {{- end -}}
-              {{- end -}}
-            {{- end -}}
-          </ul>
-        </div>
-        <div role="presentation" class="flex-1" style="font-size: .73rem;">
-					{{- $user := printf `<a class="font-semibold" href="%s">%s</a>`
-						.user.url .user.username -}}
-          <span style="font-size: .9em;">
-						{{- i18n "itchByline" $user | safeHTML -}}</span>
-          <p class="card--desc line-clamp-1">{{- .short_text -}}</p>
-
-					{{- $btnText := i18n "itchDownload" -}}
-					{{- if $html5 -}}
-						{{- $btnText = i18n "itchPlay" (dict "Itch" `<span class="font-bold">itch.io</span>`) -}}
-					{{- else -}}
-						{{- $url = path.Join $url "purchase?popup=1" -}}
-						{{- /* --- PRICE --- */ -}}
-						{{- /* @NOTE AFAIK itch.io only shows prices in USD */ -}}
-						{{- if in $traits "can_be_bought" -}}
-							{{- $price := "$0.00 USD" -}}
-							{{- if gt .min_price 0 -}}
-								{{- $btnText = i18n "itchBuy" -}}
-								{{- $price = (printf `$%.2f USD` (div .min_price 100)) -}}
-							{{- end -}}
-							{{- $price = printf
-								`<span class="font-semibold">%s</span>` $price -}}
-							<span>{{- i18n "itchPrice" $price | safeHTML -}}</span>
-						{{- end -}}
-					{{- end -}}
-        </div>
-        <a href="{{- $url | safeURL -}}" rel="{{- $rel -}}" {{ if not $html5 -}}target="popup" onclick="window.open('{{- $url | safeJS -}}','popup','width=660,height=700')"{{- end }} class="embed-itch--button opacity-hover button bg-itch" style="border-radius: 3px; box-shadow: rgba(33, 34, 34, 0.21) 0px 0px 1px inset; color: #371e1e !important; font-size: 14px; height: 35px; line-height: 35px; padding: 0 10px;">
-          {{- $btnText | safeHTML -}}
-        </a>
-				{{- with $wordmark -}}
-          <a rel="{{- $rel -}}" href="https://itch.io/" class="absolute leading-none embed-itch--logo opacity-hover" style="bottom: .5rem; right: .5rem; color: #6c6c6c;">
-            {{ . | safeHTML }}
-          </a>
-        {{- end -}}
-      </figcaption>
-    </figure>
-  {{- end -}}
-{{- end -}}
+{{- partialCached "module-embeds/widgets/itch.html" $url $url -}}

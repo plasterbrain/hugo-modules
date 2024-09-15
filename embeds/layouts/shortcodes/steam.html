@@ -5,76 +5,10 @@
   Turns a link to a game on Steam into a mockup of the Steam widget.
 
 	@link https://partner.steamgames.com/doc/marketing/widget
-
-	@IDEA Save local version of capsule image
-	@TODO Idk what the byline thing is doing
-	@TODO BORKED
 	---
 	Params:
   - 0		Steam store URL, ex. "https://store.steampowered.com/app/..."
 */ -}}
 
 {{- $url := .Get 0 -}}
-{{- $id := replaceRE
-	"https://store.steampowered.com/app/((?:[0-9])*)/(?:.)*/" "$1" $url -}}
-{{- $url = print $url "?" (querify "snr" "1_5_1100__1100") -}}
-
-{{- with (getJSON "https://store.steampowered.com/api/appdetails?" (querify "appids" $id)) -}}
-	{{- with index . $id -}}
-    {{- with .data -}}
-      {{- $title := printf `<a class="text-white embed-steam--caption" style="text-decoration-color: white;" href="%s">%s</a>` $url .name -}}
-      {{- $tags := slice -}}
-      {{- range (.genres | append .categories) -}}
-        {{ $tags = $tags | append .description -}}
-      {{- end -}}
-
-      <figure class="overflow-visible relative p-4 card not-prose" style="border: 1px solid #282e39; background-color: #282e39;">
-        <figcaption class="flex justify-between items-start mb-2">
-          <div role="presentation">
-            <span class="text-lg leading-none text-white">
-              {{- i18n "steamTitle" (dict "Title" $title) -}}
-            </span>
-						{{- /*
-            <span class="block text-sm uppercase" style="color: #bbb;">
-              {{- if .release_date.coming_soon -}}
-                {{- i18n "steamComingSoon" -}}
-              {{- else -}}
-                {{- i18n "steamByline" (dict "Author" (delimit .developers ", " "& ") "Date" .release_date.date) -}}
-              {{- end -}}
-            </span>
-						*/ -}}
-          </div>
-          {{- with partialCached "functions/get-icon.html"
-						(dict "Icon" "steam") "steam" -}}
-            {{- . | safeHTML -}}
-          {{- end -}}
-        </figcaption>
-        <div role="presentation" class="flex">
-          <a href="{{- $url | safeURL -}}" class="mr-2 opacity-hover">
-            <img src="{{- printf `https://cdn.akamai.steamstatic.com/steam/apps/%s/capsule_184x69.jpg` $id | safeURL -}}" alt="" width="184" height="69">
-          </a>
-          <p class="mb-1" style="color: #c6cfd7;">
-						{{- .short_description -}}
-					</p>
-        </div>
-        {{- with $tags -}}
-          <ul class="list-inline" style="font-size: .8em; color: #67c1f5;" role="list">
-            {{- range . | first 3 -}}
-              <li class="px-1 tag" style="background-color: #223c4e;">
-                {{- . -}}
-              </li>
-            {{- end -}}
-          </ul>
-        {{- end -}}
-        <div role="presentation" style="bottom: -1rem; right: .5rem;" class="absolute">
-          <span class="p-2 mr-2 bg-black">
-						{{- .price_overview.final_formatted -}}
-					</span>
-          <a class="p-2 embed-steam--button button" href="{{ $url | safeURL }}" style="background-color: #6fa720; background-image: linear-gradient(to right, rgb(111, 167, 32) 5%, rgb(88, 138, 27) 95%); box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); color: #000;">
-            {{- i18n "steamBuy" | safeHTML -}}
-          </a>
-        </div>
-      </figure>
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
+{{- partialCached "module-embeds/widgets/steam.html" $url $url -}}

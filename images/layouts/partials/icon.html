@@ -1,0 +1,19 @@
+{{/*
+	MODULE: IMAGES
+	Icon
+	---
+	Prints an SVG icon with screenreader text fallback. The icon should have aria-hidden
+	set to true.
+	---
+	Params:
+	- .Icon		Icon slug.
+	- .i18n		Slug for i18n string.
+*/}}
+{{- $class := "" -}}
+{{- with (partialCached "functions/get-icon.html" (dict "Icon" .Icon) .Icon) -}}
+	{{ . | safeHTML -}}
+	{{- $class = ` class="sr-only"` -}}
+{{- end -}}
+<span {{- $class | safeHTMLAttr -}}>
+	{{- i18n .i18n | htmlUnescape | safeHTML -}}
+</span>

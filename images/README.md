@@ -1,15 +1,15 @@
 # Hugo Modules: Images
-Adds partials and functions for responsive and performant image loading.
+Adds partials and functions for responsive, accessible, performant image loading.
 
 ## Features
 - Lazy loading with Lozad.js
 - Automatic WebP and/or PNG fallback
 - Low-quality image placeholders with native Hugo functions
-- Function to get appropriate color for text overlay (using the Colors module)
+- Get WCAG-safe color for text overlays (using the Colors module)
 
-This module does not use extensive automatic srcset formatting bc I hate that shit
+There's no exhaustive srcset formatting bc I don't like it
 
-## Quick start
+## Install
 1. **Import** this module by adding an entry to your site's config file(s):
     ```toml
     [modules]
@@ -17,17 +17,9 @@ This module does not use extensive automatic srcset formatting bc I hate that sh
     path = "github.com/plasterbrain/hugo-modules/images"
     ```
 
-## TODO
-- Move SVG thing over here
-- fix instructions
-
-{{- $sources = cond (eq $filetype "avif") (slice $image) (slice) -}}
-{{- $newImage := $image.Process (print "resize " $width "x" $height) -}}
-{{- range (slice "webp" "png") -}}
-  {{- $ext := . -}}
-  {{- $newImage = $newImage.Process $ext -}}
-
-note: https://github.com/golang/go/issues/62421
+## @TODO
+- Motion-sensitive gifs wrapped in a picture with source, link to actual gif file.
 
 ## Read more
 - [Hugo forums discussion on possible LQIP approaches](https://discourse.gohugo.io/t/low-quality-image-placeholder-lqip-pipes/20259)
+- https://github.com/golang/go/issues/62421

@@ -1,0 +1,6 @@
+{{- $param := site.Params.Social.SyndParam -}}
+{{- with .Param $param -}}
+{{ with (index . "twitter") }}
+	<a href="https://twitter.com/intent/like?=tweet_id="></a>
+{{- end -}}
+{{- end -}}

@@ -2,34 +2,42 @@
 	MODULE: IMAGES
 	Image
 	---
-	Turns an image resource (or URL) into a `picture` element with LQIP, webp and
-	PNG fallback.
+	Turns an image resource into a `picture` element with LQIP, webp and PNG fallback,
+	plus still image fallback to make gifs accessible. Accepts URLs too but you won't get
+	alternate formats/fallback.
 
-	@TODO TESTING!
-
+	@TODO can hugo save a url string image as a resource
+	---
 	Params:
-	.Image	The image to show. Hugo Image or path as a string.
-	.Alt		Alt text, default blank.
-	.Lazy		Whether to lazy load the image, default true.
-	.Class	Class attribute value for the `picture` as a slice.
-	.Atts		Additional atts for `<img>`, a slice of strings
-	.Width	Width of the image, default `.Width` if `.Image` is a resource. If
-					specified without .Height, the aspect ratio is preserved.
-	.Height	Height of the image, default `.Height` if `.Image` is a resource. If
-					specified without .Width, the aspect ratio is preserved.
+	- .Image		The image to show. Hugo Image or path as a string.
+	- .Alt			Alt text, default blank.
+	- .Lazy			Whether to lazy load the image, default true.
+	- .Class		Class attribute value for the `picture` as a slice of values (eg. `slice "class1" "class2"`).
+	- .ImgClass Ditto but for the image inside.
+	- .Atts			Additional atts for `<img>`, a slice of full name/value attribute markup.
+	- .Width		Width of the image, default `.Width` if `.Image` is a resource. If
+							specified without .Height, the aspect ratio is preserved.
+	- .Height		Height of the image, default `.Height` if `.Image` is a resource. If
+							specified without .Width, the aspect ratio is preserved.
+	- .Download	If image is a string, whether to download and process a local copy. @TODO
+	- .Sources  Slice of urls for source elements if .Image is a string
+	- .Clamp		If it's an external URL, smash the image into your given dimensions.
+							Assumes you are not already supplying a `style` value in `.Atts`.
 */}}
 {{- $image := .Image -}}
 {{- $alt := .Alt | htmlUnescape | safeHTML | plainify -}}
 {{- $lazy := .Lazy | default true -}}
 {{- $class := .Class | default slice -}}
+{{- $imgClass := .ImgClass | default slice -}}
 {{- $name := .Name | default false -}}
 {{- $customAtts := .Atts -}}
-{{- $width := .Width -}}
-{{- $height := .Height -}}
+{{- $width := .Width | string -}}
+{{- $height := .Height | string -}}
+{{- $sources := .Sources | default slice -}}
+{{- $dl := .Download | default false -}}
+{{- $imgClamp := .Clamp | default false -}}
 
 {{- with $image -}}
-	{{- $sources := slice -}}
-
 	{{- /* Source used for the image element, which may become a LQIP */ -}}
 	{{- $imgSrc := "" -}}
 	{{- /* Source for `data-iesrc` for Lozad's picture polyfill */ -}}
@@ -79,6 +87,16 @@
 		{{- $imgSrc = . -}}
 		{{- $ieSrc = . -}}
 		{{- $filetype = path.Ext $imgSrc -}}
+
+		{{- $newSources := slice -}}
+		{{- range $sources -}}
+			{{- /* https://help.accusoft.com/PrizmViewer/v10.1/Config/MIME_Types.html */ -}}
+			{{- $ext := path.Ext . -}}
+			{{- $newSources = $newSources | append (dict
+				"RelPermalink" .
+				"MediaType" (dict "Type" (print "image/" $ext))) -}}
+			{{- $sources = $newSources -}}
+		{{- end -}}
 	{{- end -}}
 
 	{{- $isGif := eq $filetype ".gif" -}}
@@ -93,17 +111,31 @@
 		(printf `alt="%s"` $alt)
 		| append $customAtts
 	-}}
+
+	{{- $imgDims := "" -}}
+	{{- if $width -}}
+		{{- $imgAtts = $imgAtts | append (printf `width="%s"` $width) -}}
+		{{- $imgDims = print $imgDims (printf `width:%spx;` $width) -}}
+	{{- end -}}
+	{{- if $height -}}
+		{{- $imgAtts = $imgAtts | append (printf `height="%s"` $height) -}}
+		{{- $imgDims = print $imgDims (printf `height:%spx;` $height) -}}
+	{{- end -}}
+
+	{{- if and $imgClamp (not $isResource) -}}
+		{{- $imgAtts = $imgAtts | append (printf `style="%s"` $imgDims) -}}
+		{{- $imgClass = $imgClass | append "object-cover" -}}
+	{{- end -}}
+
+	{{- with $imgClass -}}
+		{{- $imgAtts = $imgAtts | append
+			(printf `class="%s"` (delimit (uniq .) " ")) -}}
+	{{- end -}}
 	{{ if $lazy -}}
 		{{- $imgAtts = $imgAtts | append
 			`loading="lazy"`
 			`decoding="async"`
 		-}}
-	{{- end -}}
-	{{- if $width -}}
-		{{- $imgAtts = $imgAtts | append (printf `width="%s"` $width) -}}
-	{{- end -}}
-	{{- if $height -}}
-		{{- $imgAtts = $imgAtts | append (printf `height="%s"` $height) -}}
 	{{- end -}}
 
 	{{- $pictureAtts := slice -}}

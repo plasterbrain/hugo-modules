@@ -3,13 +3,21 @@
 #---
 
 [params.social]
-useWebmentions = false
 useOpenID = false
-useBridgyFed = false
+
+# https://web.dev/articles/web-share
+showWebShareButton = true
 shareLinks = ["twitter", "facebook", "mastodon"]
 
-# Create rel="me" link tags for `.Social.Profiles` keys:
-relMe = [] # ex. ["twitter", "github"]
+[params.social.bridgy]
+useFed = false
+
+[params.social.webmentions]
+enabled = true
+limit = 5 # -1 to disable
+showDates = false
+showReplies = false
+showSource = false
 
 [params.social.profiles]
 #email = ""
@@ -17,9 +25,9 @@ relMe = [] # ex. ["twitter", "github"]
 #github = ""
 #gonkle = ""
 #instagram = ""
-#keybase = ""
 #microblog = ""
 #twitter = ""
+#email = "" # Adds rel="me" link for IndieAuth
 
 #[params.social.profiles.mastodon]
 #username = ""
@@ -27,8 +35,6 @@ relMe = [] # ex. ["twitter", "github"]
 # Let users discover you as any username @ your Hugo site's domain name.
 #alias = true
 
-# Example:
-# @TODO pgp
 [outputs]
 home = [ "HTML", "RSS", "webfinger"]
 

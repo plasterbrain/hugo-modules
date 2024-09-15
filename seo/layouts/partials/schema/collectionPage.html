@@ -7,6 +7,7 @@
   Params:
   - .  Page context
 */ -}}
+
 {{- $id := .Permalink -}}
 {{- $json := dict
 	"@id" $id
@@ -18,7 +19,7 @@
 -}}
 
 {{- $type := slice "CollectionPage" -}}
-{{- if eq .Params.Layout "search" -}}
+{{- if eq .Params.Layout (site.Params.Seo.SearchPageLayout) -}}
 	{{- $type = $type | append "SearchResultsPage" -}}
 {{- end -}}
 {{- $json = merge $json (dict

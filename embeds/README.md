@@ -1,40 +1,39 @@
-# Hugo Module: Privacy-Friendly Embeds
-@TODO Whatever these specific classes were?
-
+# Hugo Module: Embeds
 Various shortcodes to turn URLs into embed widgets.
 - Generic website card
 - Bandcamp
-- itch.io
+- itch\.io
 - Steam
 - SoundCloud
 - Spotify
 - YouTube
 
-However, rather than simply plugging the URL into an iframe or script source, each shortcode fetches data from the platform's API to recreate the third-party widget in plain HTML.
+However, rather than simply plugging the URL into an iframe or script source, each shortcode fetches data from the platform's API to recreate the third-party widget in plain, privacy-respectin' HTML.
 
-- This sometimes impacts initial build time if the third-party APIs are slow to respond. @TODO cache tips
-- Generic embed uses an API limited to 50 free calls per day.
-- These shortcodes use Tailwind.css classes. If your site is not using Tailwind, the HTML will not be styled correctly out of the box.
+Generic embeds use the Microlink API, which is limited to 50 free calls per day.
 
-## Setup
-1. If using the itch.io shortcode, you'll need [an itch API key](https://itch.io/api-keys). Put it a separate *config/_default/params.toml* file, like this:
-    ```toml
-    [api]
-    itch = "{abcd1234}"
-    ```
-    Set your *gitignore* to exclude this file.
+It also includes a widget for showing license info.
 
-Media embed iframes have IDs based on their anchorized name or URL (for YouTube). Avoid embedding the same URL multiple times on one page.
+## Install
+Follow general module install instructions.
 
-## Design rationale
-This doesn't have the same level of escaping for things like titles as the SEO module; we'll assume the third-party sites have done that for us. Similarly i18n values are not overly processed on the assumption that you are not insane.
+If using the itch\.io shortcode, you'll need [an itch API key](https://itch.io/api-keys). Put it a separate *config/_default/params.toml* file, like this:
+```toml
+[api]
+itch = "{abcd1234}"
+```
+Set your *gitignore* to exclude this file.
 
-SVG icons don't point to their titles with `aria-label` as there may be multiple widgets with the same icon on a single page, thus creating duplicate IDs.
+Notes that using embeds can imapct build time if third-party or APIs are slow to respond.
 
 ## @TODO
-- https://bsky.link/ ?
-- clean this tf up
-- sr text for yt is the title twice - change button to "play video" or somethin
+- https://bsky.link/
+- https://github.com/luwes/lite-vimeo-embed
+- https://gohugo.io/getting-started/configuration/#configure-segments
+- get remote JSON deprecated aieeee
+- finish putting everything under namespaced folder
 
-## License
-- Bandcamp, itch.io, Soundcloud, Steam: [Wikimedia Commons](https://commons.wikimedia.org/wiki/Commons:Threshold_of_originality) (CC0 1.0)
+{{- /* iframely */ -}}
+{{- with getJSON "https://iframe.ly/api/oembed?" (querify "url" $url "api_key" $ifkey "media" 0 "language" site.LanguageCode "ssl" 1 "title" 1 "lazy" 1 "iframe" 1) }}
+	{{ .html | safeHTML }}
+{{- end }}

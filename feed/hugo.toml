@@ -2,12 +2,15 @@
 [outputFormats.RSS]
 	mediatype = "application/rss"
 	baseName = "feed"
-# [outputFormats.feedStyle]
-# 	baseName = "feed-style"
-# 	isPlainText = true
-# 	mediaType = "text/xsl"
-# 	notAlternative = true
+# [outputFormats.feed_style]
+#  	baseName = "feed-style"
+#  	isPlainText = true
+#  	mediaType = "text/xsl"
+#  	notAlternative = true
 
 # [mediaTypes]
-#   [mediaTypes."text/xsl"]
-#     suffixes = ['xsl']
+# 	[mediaTypes."text/xsl"]
+# 	suffixes = ['xsl']
+
+# [outputs]
+# home = [ "HTML", "RSS", "feed_style"]

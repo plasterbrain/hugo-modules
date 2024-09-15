@@ -1,0 +1,145 @@
+{{- /*
+	MODULE: EMBEDS
+	(Widget) itch.io
+	---
+	The code for the itch.io widget markup itself is inlined at the bottom of this file.
+	@TODO Extract visual display from logic a little more for end user customization,
+	make styles available for same
+	@TODO param to choose background/text/button/border colors
+
+	@link https://github.com/itchio/itch.io/issues/992
+	@link https://itch.io/widget
+	---
+	Params:
+	- .		itch.io game url
+*/ -}}
+{{- $url := . -}}
+
+{{- $key := site.Params.Api.Itch -}}
+{{- if $key -}}
+	{{- /* Get game ID from game url using the public "/data.json" endpoint */ -}}
+	{{- $api1 := print $url "/data.json" -}}
+	{{- with resources.GetRemote $api1 -}}
+		{{ with .Err }}
+			{{- /* API 1 lookup unsuccessful? */ -}}
+			{{- warnf "Embeds: %s" . }}
+		{{- else }}
+			{{- $data := . | transform.Unmarshal -}}
+			{{- $id := $data.id -}}
+
+			{{- /* Get game information from ID using restricted server API */ -}}
+			{{- $api2 := print "https://api.itch.io/games/" $id -}}
+			{{- $opts := (dict
+				"headers" (dict "Authorization" (print "Bearer " $key) )) -}}
+			{{- with resources.GetRemote $api2 $opts -}}
+				{{ with .Err }}
+					{{- /* API 2 lookup unsuccessful */ -}}
+					{{ warnf "Embeds: %s" . }}
+				{{ else }}
+					{{- $data = . | transform.Unmarshal -}}
+					{{- partial "module-embeds/widgets/itch/markup.html" (dict
+						"Data" $data
+						"Url" $url
+					) -}}
+				{{- end -}}
+			{{- else -}}
+				{{- /* API 2 bad URL? */ -}}
+				{{ warnf "Embeds: failed to embed itch url %q" $url }}
+			{{- end -}}
+		{{ end }}
+	{{ else }}
+		{{- /* API 1 bad URL? */ -}}
+		{{ warnf "Embeds: failed to embed itch url %q" $url }}
+	{{- end -}}
+{{- end -}}
+
+{{- define "partials/module-embeds/widgets/itch/markup.html" -}}
+{{- $data := .Data.game -}}
+
+{{- $rel := "nofollow noopener noreferrer" -}}
+
+{{- $imageOpts := (dict
+	"Image" $data.cover_url
+	"Width" 180
+	"Height" 143
+	"Class" (slice "embed-itch--thumbnail" "block"))
+-}}
+{{- with $data.still_cover_url -}}
+	{{- $imageOpts = $imageOpts | merge (dict "Sources" (slice .)) -}}
+{{- end -}}
+
+{{- $user := printf `<a class="font-semibold" href="%s">%s</a>`
+$data.user.url $data.user.username -}}
+{{- $byline := i18n "itchByline" $user -}}
+
+{{- $isHtml5 := ne (printf "%T" $data.embed) "<nil>" -}}
+{{- $price := "" -}}
+{{- $btnText := i18n "itchDownload" -}}
+{{- $btnLink := .Url -}}
+{{- $bgColor := (partialCached "functions/get-color.html" "itch" "itch" ) -}}
+{{- $btnStyle := printf `style="background-color: %s;"` $bgColor.Bg -}}
+{{- if $isHtml5 -}}
+	{{- $btnText = i18n "itchPlay" (dict "Itch" `<span class="font-bold">itch.io</span>`) -}}
+{{- else -}}
+	{{- $btnLink = path.Join .Url "purchase?popup=1" -}}
+	{{- /* --- PRICE --- */ -}}
+	{{- /* @NOTE AFAIK itch.io only shows prices in USD */ -}}
+	{{- if in $data.traits "can_be_bought" -}}
+		{{- $price = "$0.00 USD" -}}
+		{{- if gt $data.min_price 0 -}}
+			{{- $btnText = i18n "itchBuy" -}}
+			{{- $price = (printf `$%.2f USD` (div $data.min_price 100)) -}}
+		{{- end -}}
+		{{- $price = printf `<span class="font-semibold">%s</span>` $price -}}
+		{{- $price = i18n "itchPrice" $price -}}
+	{{- end -}}
+{{- end -}}
+
+{{- $wordmark := partialCached "icon.html"
+(dict "Icon" "itchio-wordmark" "i18n" "itch") "itchio-wordmark" -}}
+
+<figure class="flex relative card not-prose embed-itch">
+	{{- /* --- THUMBNAIL --- */ -}}
+	<a href="{{- .Url | safeURL -}}" rel="{{- $rel -}}" aria-hidden="true"
+		class="p-2 opacity-hover" style="flex: 0 0 180px;">
+		{{- partial "image.html" $imageOpts -}}
+	</a>
+	{{- /* ----------------- */ -}}
+	<figcaption class="flex flex-col items-start p-2">
+		<div role="presentation" class="card--title line-clamp-2">
+			{{- /* ----- TITLE ----- */ -}}
+			<a href="{{- .Url | safeURL -}}" rel="{{- $rel -}}">
+				{{- $data.title | htmlUnescape | safeHTML -}}
+			</a>
+			{{- /* --- PLATFORMS --- */ -}}
+			<ul role="list" aria-label="{{- i18n `gamePlatforms` 3 -}}" class="inline ml-2 embed-itch--platforms list-inline">
+				{{- range (slice "windows" "linux" "osx") -}}
+					{{- if in $data.traits (print "p_" .) -}}
+						{{- with partialCached "icon.html" (dict "Icon" . "i18n" .) . -}}
+							<li>{{- . | safeHTML -}}</li>
+						{{- end -}}
+					{{- end -}}
+				{{- end -}}
+			</ul>
+			{{- /* ----------------- */ -}}
+		</div>
+		<div role="presentation" class="flex-1 text-xs embed-itch--desc">
+			{{- /* --- AUTHOR LINK --- */ -}}
+			<span style="font-size: .9em;">{{- $byline | safeHTML -}}</span>
+			{{- /* --- DESCRIPTION --- */ -}}
+			<p class="card--desc line-clamp-1">{{- $data.short_text | safeHTML -}}</p>
+			{{- /* ------ PRICE ------ */ -}}
+			<span>{{- $price | safeHTML -}}</span>
+		</div>
+		{{- /* ----- BUTTON ----- */ -}}
+		<a href="{{- $btnLink | safeURL -}}" rel="{{- $rel -}}" {{ if not $isHtml5 -}}target="popup" onclick="window.open('{{- $btnLink | safeJS -}}','popup','width=660,height=700')"{{- end }} class="opacity-hover button embed-itch--button" {{ $btnStyle | safeHTMLAttr -}}>
+			{{- $btnText | safeHTML -}}
+		</a>
+		{{- /* --- ITCH LOGO --- */ -}}
+		<a rel="{{- $rel -}}" href="https://itch.io/" class="absolute leading-none embed-itch--logo opacity-hover">
+			{{- $wordmark | safeHTML -}}
+		</a>
+		{{- /* ----------------- */ -}}
+	</figcaption>
+</figure>
+{{- end -}}

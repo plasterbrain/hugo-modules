@@ -1,0 +1,5 @@
+
+{{- with partialCached "module-feed/functions/get-RSS.html" . "default" -}}
+	{{- $title := i18n "moduleFeed_title" site.Title -}}
+	{{- printf `<link rel="%s" type="%s" href="%s" title="%s">` .Rel .MediaType.Type .Permalink $title | safeHTML -}}
+{{- end -}}

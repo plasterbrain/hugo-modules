@@ -1,18 +1,19 @@
-# Cool Hugo Modules
+# plasterbrain's Cool Hugo Modules
+![Hugo](https://img.shields.io/badge/Hugo-ff4088?style=flat&logo=hugo&logoColor=ffffff)
+
 Modules are like Hugo's version of plug-ins. They can be used to add theme-agnostic functionality like SEO markup to your Hugo site.
 
-Misc:
-- no-js class thing
+## Install
+[See HugoMods instructions on how to set up your site to use hugo mods](https://hugomods.com/blog/2023/03/how-to-use-hugo-modules/).
 
-## Getting started
-Some of the modules are pretty barebones or proofs of concept. Look through them and only install the ones you need.
+Notes:
+- These modules are provided as a starting point rather than a turnkey solution. Most shortcodes use Tailwind classes. If your site is not using Tailwind, the HTML will not be styled correctly out of the box.
+- Only US english (`en`) i18n are provided.
 
-They are also *not* namespaced (avoiding filenames like ✨ *__plaster_coolModules_xoxo_seo-partial.html* ✨ is an act of self-care). Check the contents of each module *before installing* in case their filenames conflict with anything in your theme(s) or site layouts.
+Override template files as needed to get the most out of them on your own site.
 
-Localization strings are available in US english (`"en"`). If your site's content language is not set to `"en"`, the strings will not show up.
-
-1. Install Golang
-1. Initialize the module system in your Hugo site directory. @TODO idk if you actually have to do this lol
+## @TODO
+- Namespacing
 
 ## License
 These modules are provided in the hopes they will be useful as-is; I can't promise any real support or regular maintenance.
@@ -20,5 +21,5 @@ These modules are provided in the hopes they will be useful as-is; I can't promi
 MIT be nice to me no fascists
 
 ## See also
-- https://github.com/hugo-mods/lazyimg/
+- https://hugo-mods.github.io/#mods
 - https://hugomods.com/

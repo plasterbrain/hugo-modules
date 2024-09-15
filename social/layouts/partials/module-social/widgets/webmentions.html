@@ -1,0 +1,205 @@
+{{- /*
+	MODULE: SOCIAL
+	(Widget) Webmentions
+	---
+	Shows webmentions for the given post using Webmention.io's API.
+
+	Post must have this frontmatter:
+
+	```
+	webmention:
+		enabled: true
+	```
+
+	@link https://webmention.io/
+	@link https://github.com/aaronpk/webmention.io
+
+	@TODO where filtering for wm-private is not tested
+	---
+	Params:
+	- .			Post context
+*/ -}}
+
+{{- /*
+	V1. Separate templates for facepiles (likes/bookmarks) comments (replies)
+	V2. Tumblr-like notes list of all reactions
+*/ -}}
+
+{{- if and site.Params.Social.Webmentions.Enabled .Params.Webmention.Enabled -}}
+	{{- $url := .Params.Webmention.Target | default .Permalink -}}
+	{{- $api := print `https://webmention.io/api/mentions.jf2?` (querify
+		"target" $url
+		"wm-property[]" "") -}}
+
+		{{- /* V1 here: use a slice to create separate sections */ -}}
+		{{- /* $kinds := slice "like-of" "repost-of" "mention-of" */ -}}
+		{{- if site.Params.Social.Webmentions.ShowReplies -}}
+			{{- /* $kinds = $kinds | append "in-reply-to" */ -}}
+			{{- $kinds = print $kinds "&wm-property[]=in-reply-to" -}}
+		{{- end -}}
+		{{- $kinds := slice "like-of&wm-property[]=repost-of&wm-property[]=bookmark-of&wm-property[]=mention-of" -}}
+
+		{{- range $kind := $kinds -}}
+			{{- with resources.GetRemote (print $api $kind) -}}
+				{{- with .Err -}}
+					{{- warnf "%s" . -}}
+				{{- else -}}
+					{{- $data := . | transform.Unmarshal -}}
+					{{- $data := $data.children -}}
+					{{- if gt (len $data) 0 -}}
+						{{- $limit := site.Params.Social.Webmentions.Limit -}}
+						{{- if ge $limit 0 -}}
+							{{- $data = $data | first $limit -}}
+						{{- end -}}
+						{{- /* V1 here: get template based on list kind */ -}}
+						{{- /*$temp := cond (eq $kind "in-reply-to") "replies" "list"*/ -}}
+						{{- $temp := "list-notes" -}}
+
+						{{- $temp = printf "module-social/widgets/webmentions/%s.html" $temp -}}
+						{{- partial $temp (dict
+							"Data" $data
+							"Slug" $kind) -}}
+					{{- end -}}
+				{{- end -}}
+			{{- else -}}
+				{{- warnf "Social: Unable to get %s webmentions for %q" $kind $url -}}
+			{{- end -}}
+		{{- end -}}
+{{- end -}}
+
+{{- /* V1 List Facepile */ -}}
+{{- define "partials/module-social/widgets/webmentions/list.html" -}}
+	{{- $data := .Data -}}
+	{{- $slug := .Slug | default "" -}}
+	{{- $link := ne $slug "like-of" -}}
+	{{- $titleId := print $slug "--title" -}}
+	<h3 id="{{- $titleId -}}">
+		<span role="text">
+			{{- i18n (print "moduleSocial_" $slug) (len $data) | htmlUnescape | safeHTML -}}
+		</span>
+	</h3>
+	<ul class="flex flex-wrap gap-2" role="list" aria-labelledby="{{- $titleId -}}">
+		{{- range (where $data "wm-private" "ne" true) -}}
+			<li>
+				{{- $name := .author.name | default (i18n "moduleSocial_anon") -}}
+				{{- $img := partialCached "module-social/widgets/webmentions/_author-photo.html" (dict "Author" .author "Alt" $name) (print .author.name "-alt") -}}
+
+				{{- if $link -}}
+					<a href="{{ .url -}}" class="opacity-hover" rel="nofollow">
+						{{- $img | safeHTML -}}
+					</a>
+				{{- else -}}
+					{{- $img | safeHTML -}}
+				{{- end -}}
+			</li>
+		{{- end -}}
+	</ul>
+{{- end -}}
+
+{{- /* V1 "Tumblr" Notes */ -}}
+{{- define "partials/module-social/widgets/webmentions/list-notes.html" -}}
+	{{- $data := .Data -}}
+	<ol class="space-y-2 text-xs h-feed" role="list">
+		{{- range (where $data "wm-private" "ne" true) -}}
+			{{- $kind := index . "wm-property" -}}
+			<li class="">
+				<div role="presentation" class="flex flex-wrap gap-2 items-center h-cite space-between">
+					<div role="presentation" class="flex flex-1 gap-2 items-center h-card">
+						{{- $name := .author.name | default (i18n "moduleSocial_anon") -}}
+						{{- $img := partialCached "module-social/widgets/webmentions/_author-photo.html" (dict "Author" .author "Alt" $name) (print .author.name "-alt") -}}
+						{{- $name = printf `
+							<a href="%s" class="p-name u-url opacity-hover link" rel="nofollow">%s</a>` .url $name -}}
+
+						{{- $img | safeHTML -}}
+						<span>
+							{{- i18n (print "moduleSocial_notes_" $kind) $name | htmlUnescape | safeHTML -}}
+
+							{{- if site.Params.Social.Webmention.ShowSources -}}
+								<span class="ml-1 text-xs italic opacity-70 p-publication">
+									{{- $url := urls.Parse .url -}}
+									{{- i18n "moduleSocial_notes_source" $url.Hostname | htmlUnescape | safeHTML -}}
+								</span>
+							{{- end -}}
+						</span>
+					</div>
+					{{- if site.Params.Social.Webmention.ShowDates -}}
+						{{- $time := (index . "wm-received") -}}
+						<time class="dt-published" datetime="{{- $time -}}">
+							{{- $time | time.Format ":date_medium" -}}
+						</time>
+					{{- end -}}
+				</div>
+				{{- if and site.Params.Social.Webmentions.ShowReplies (eq $kind "in-reply-to") -}}
+					<div class="e-content prose">
+						<blockquote>{{ .content.text }}</blockquote>
+					</div>
+				{{- end -}}
+			</li>
+		{{- end -}}
+	</ol>
+
+{{- end -}}
+
+{{- define "partials/module-social/widgets/webmentions/replies.html" -}}
+	{{- $data := (.Data | first 3) -}}
+	{{- $titleId := "replies--title" -}}
+	<h3 id="{{- $titleId -}}">
+		<span role="text">
+			{{- i18n "moduleSocial_replies" (len $data) | htmlUnescape | safeHTML -}}
+		</span>
+	</h3>
+	<ol class="space-y-4" role="list" aria-labelledby="{{- $titleId -}}">
+		{{- range $data -}}
+			<li>
+				<article class="p-4 bg-white rounded-md border border-gray">
+					<header class="flex gap-2 items-center mb-4 text-sm space-between">
+						<div role="presentation" class="flex flex-1 gap-2 items-center">
+							{{- $name := .author.name | default (i18n "moduleSocial_anon") -}}
+							{{- partialCached "module-social/widgets/webmentions/_author-photo.html" (dict "Author" .author "Alt" "") .author.name -}}
+							{{- $name -}}
+							{{- with .published -}}
+								<time datetime="{{- . -}}" class="opacity-70 dt-published">
+									{{- partialCached "functions/get-relativeDate.html" (time.AsTime .) . -}}
+								</time>
+							{{- end -}}
+						</div>
+						<a href="{{- .url -}}">Reply</a>
+					</header>
+					{{- if and site.Params.Social.Webmentions.ShowReplies -}}
+						<div class="max-w-none text-sm prose">
+							{{- $excerpt := .content.text | truncate 500 -}}
+							{{- if ne $excerpt .content.text -}}
+								{{- $excerpt = strings.TrimRight ",(-;[{… " (chomp $excerpt) -}}
+								{{- $excerpt = print $excerpt "&hellip;" -}}
+							{{- end -}}
+							<p>
+								{{- $excerpt | safeHTML -}}
+							</p>
+							<div class="text-xs italic">
+								via <a href="{{- .url -}}">{{- (urls.Parse .url).Hostname -}}</a>
+							</div>
+						</div>
+					{{- end -}}
+				</article>
+			</li>
+		{{- end -}}
+	</ol>
+{{- end -}}
+
+{{- define "partials/module-social/widgets/webmentions/_author-photo.html" -}}
+	{{- $author := .Author -}}
+	{{- $alt := .Alt | default "" -}}
+	{{- $photo_s := 20 -}}
+
+	{{- $photo := "" -}}
+	{{- with $author.photo -}}
+		{{- $photo = . -}}
+	{{- else -}}
+		{{- $photo = resources.Get "images/anonymous.jpg" -}}
+		{{- with $photo -}}
+			{{- $photo = .RelPermalink -}}
+		{{- end -}}
+	{{- end -}}
+
+	<img src="{{- $photo | safeURL -}}" alt="{{- $alt -}}" width="{{- $photo_s -}}" height="{{- $photo_s -}}" loading="lazy" decoding="async" class="rounded-md u-photo">
+{{- end -}}

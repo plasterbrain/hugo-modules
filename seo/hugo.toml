@@ -23,24 +23,31 @@ maxDescChars = 155
 # https://ogtester.com/blog/what-is-maximum-length-of-og-title-and-og-description
 maxOGDescChars = 85
 
-useSchema = true	# Output JSON-LD schema for some Google search features
+useSchema = true				# Output JSON-LD schema
 siteAlternateName = ""	# For certain Google JSON-LD schema
-
+searchPageLayout = ""		# Layout used for your search page if any. Used for JSON-LD
+paywallClass = ""				# CSS class name (with the dot) containing paywalled content.
 themeColor = "#fff"				# Browser toolbar color
 #themeColorDark = "#000"	# Browser toolbar color with dark OS theme
 backgroundColor = "#fff"	# Browser fill color when PWA loads
 #faviconPath = "favicon/"
 
 [outputs]
-home = [ "HTML", "RSS", "webappmanifest", "ai"]
+home = [ "HTML", "RSS", "webappmanifest", "ai", "humans"]
 
 [outputFormats]
 [outputFormats.browserconfig]
 	name = "browserconfig"
 	baseName = "browserconfig"
 	mediaType = "application/xml"
-	notAlternative = "true"
+	notAlternative = true
 [outputFormats.ai]
 	baseName = "ai"
 	mediaType = "text/plain"
-	notAlternative = "true"
+	notAlternative = true
+  isPlainText = true
+[outputFormats.humans]
+  baseName = "humans"
+  mediaType = "text/plain"
+	notAlternative = true
+  isPlainText = true

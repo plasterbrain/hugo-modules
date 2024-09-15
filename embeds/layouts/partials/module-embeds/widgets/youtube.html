@@ -1,0 +1,80 @@
+{{- /*
+
+	Known issues: you can only focus the iframe itself, not the play button on activation. Awkward
+	@link https://github.com/paulirish/lite-youtube-embed?tab=readme-ov-file
+	*/ -}}
+
+{{- $url := . -}}
+
+{{- $api := print "https://www.youtube.com/oembed?" (querify
+	"format" "json"
+	"url" $url) -}}
+
+{{- with resources.GetRemote $api -}}
+	{{- with .Err -}}
+		{{- /* API lookup unsuccessful */ -}}
+		{{- warnf "Embeds: %s" . -}}
+	{{- else -}}
+		{{- $data := . | transform.Unmarshal -}}
+
+		{{- $params := (urls.Parse $url).Query -}}
+		{{- $id := index $params.v 0 -}}
+
+		{{- /* Hacky way to get all non-video (?v=) query params */ -}}
+		{{- $_params := dict -}}
+		{{- range $k, $v := $params -}}
+			{{- if ne $k "v" -}}
+			{{- $_params = $_params | merge (dict $k (delimit $v ",")) -}}
+			{{- end -}}
+		{{- end -}}
+		{{- $params := $_params -}}
+
+		{{- partialCached "module-embeds/widgets/youtube/markup.html" (dict
+			"Id" $id
+			"Params" $params
+			"Data" $data
+			"Url" $url) $id -}}
+	{{- end -}}
+{{- else -}}
+	{{- /* API bad URL? */ -}}
+	{{- warnf "Embeds: failed to embed YouTube video %q" $url -}}
+{{- end -}}
+
+{{- define "partials/module-embeds/widgets/youtube/markup.html" -}}
+	{{- $id := .Id -}}
+	{{- $data := .Data -}}
+	{{- $url := .Url -}}
+	{{- $params := .Params -}}
+
+	{{- $thumbnail := resources.GetRemote $data.thumbnail_url -}}
+	{{- $thumbnail = resources.Copy (printf "assets/images/thumbnails/%s.jpg" $id) $thumbnail -}}
+	{{- $style := printf `style="background-image:url('%s');"` $thumbnail.RelPermalink -}}
+
+	<lite-youtube class="js-only" videoid="{{- $id -}}" {{- with $params }} params="{{ querify . }}"{{- end }} {{ $style | safeHTMLAttr }}>
+		<button class="js-only lty-playbtn" type="button">
+			<span class="lty-title" role="presentation">
+				{{- i18n "moduleEmbeds_play" $data.title | htmlUnescape | safeHTML -}}
+			</span>
+		</button>
+	</lite-youtube>
+	{{- /* Humman noscript version for JS haters */ -}}
+	<noscript data-nosnippet="true">
+		<div class="relative aspect-video">
+			{{- partialCached "image.html" (dict
+				"Image" $thumbnail
+				"Class" (slice "aspect-video")
+				"Width" 560 "Height" 315
+				"ImgClass" (slice "mx-auto rounded-md")
+				"Clamp" true) $data.thumbnail_url -}}
+
+			<div class="absolute inset-0 p-4 w-full h-full bg-black bg-opacity-70 centered">
+				{{- partialCached "icon.html" (dict
+					"Icon" "youtube-wordmark" "i18n" "moduleEmbeds_youtube") "youtube-wordmark" -}}
+				<a href="{{- $url | safeURL -}}" class="p-2 mt-2 font-bold bg-black opacity-hover">
+					{{- $data.title | htmlUnescape | safeHTML -}}
+				</a>
+				<span>{{- i18n "moduleEmbeds_ytNoscript" | htmlUnescape | safeHTML -}}</span>
+			</div>
+		</div>
+	</noscript>
+{{- end -}}

@@ -1,4 +1,9 @@
-{{- /* Deprecate site.Author.email in favor of site.Params.author.email */}}
+{{- /*
+	MODULE: FEED
+	---
+	General site RSS template
+- */}}
+
 {{- $authorEmail := "" }}
 {{- with site.Params.author }}
   {{- if reflect.IsMap . }}
@@ -13,7 +18,6 @@
   {{- end }}
 {{- end }}
 
-{{- /* Deprecate site.Author.name in favor of site.Params.author.name */}}
 {{- $authorName := "" }}
 {{- with site.Params.author }}
   {{- if reflect.IsMap . }}
@@ -34,7 +38,7 @@
 {{- if .IsHome }}{{ $pctx = .Site }}{{ end }}
 {{- $pages := slice }}
 {{- if or $.IsHome $.IsSection }}
-{{- $pages = $pctx.RegularPages }}
+{{- $pages = where site.RegularPages "Type" "ne" "page" }}
 {{- else }}
 {{- $pages = $pctx.Pages }}
 {{- end }}
@@ -44,27 +48,48 @@
 {{- end }}
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
 {{- with resources.Get "feed-style.xsl" -}}
-	{{- printf `<?xml-stylesheet href="%s" type="text/xsl"?>` .RelPermalink | safeHTML -}}
+	{{- $style := . | resources.ExecuteAsTemplate "feed-style.xsl" . -}}
+	{{- printf `<?xml-stylesheet href="%s" type="text/xsl"?>` $style.RelPermalink | safeHTML -}}
 {{- end -}}
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>{{ if eq .Title .Site.Title }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} on {{ end }}{{ .Site.Title }}{{ end }}</title>
+    <title>{{ .Site.Title | transform.XMLEscape | safeHTML }}</title>
     <link>{{ .Permalink }}</link>
-    <description>Recent content {{ if ne .Title .Site.Title }}{{ with .Title }}in {{ . }} {{ end }}{{ end }}on {{ .Site.Title }}</description>
-    <generator>Hugo</generator>
-    <language>{{ site.Language.LanguageCode }}</language>{{ with $authorEmail }}
-    <managingEditor>{{.}}{{ with $authorName }} ({{ . }}){{ end }}</managingEditor>{{ end }}{{ with $authorEmail }}
-    <webMaster>{{ . }}{{ with $authorName }} ({{ . }}){{ end }}</webMaster>{{ end }}{{ with .Site.Copyright }}
-    <copyright>{{ . }}</copyright>{{ end }}{{ if not .Date.IsZero }}
-    <lastBuildDate>{{ (index $pages.ByLastmod.Reverse 0).Lastmod.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>{{ end }}
+    <description>{{ (i18n "feedDesc" site.Title) | transform.XMLEscape | safeHTML }}</description>
+    <language>{{ site.Language.LanguageCode }}</language>
+		{{ with $authorEmail }}
+			<managingEditor>
+				{{.}}{{ with $authorName }} ({{ . }}){{ end }}
+			</managingEditor>
+			<webMaster>
+			{{ . }}{{ with $authorName }} ({{ . }}){{ end }}
+			</webMaster>
+		{{ end }}
+		{{ with .Site.Copyright }}
+    	<copyright>{{ . | transform.XMLEscape | safeHTML }}</copyright>
+		{{ end }}
+		{{ if not .Date.IsZero }}
+			<lastBuildDate>
+				{{ (index $pages.ByLastmod.Reverse 0).Lastmod.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}
+			</lastBuildDate>
+		{{ end }}
     {{- with .OutputFormats.Get "RSS" }}
     {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
     {{- end }}
     {{- range $pages }}
     <item>
-      <title>{{ .Title }}</title>
+			{{- $title := .Title -}}
+			{{- with .CurrentSection -}}
+				{{- if not .IsHome -}}
+					{{- $section := .LinkTitle -}}
+					{{- $title = i18n "feedPostTitleFormat" (dict "Section" $section "Title" $title) -}}
+				{{- end -}}
+			{{- end -}}
+      <title>{{ $title | transform.XMLEscape | safeHTML }}</title>
       <link>{{ .Permalink }}</link>
-      <pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+      <pubDate>
+				{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}
+			</pubDate>
       {{- with $authorEmail }}<author>{{ . }}{{ with $authorName }} ({{ . }}){{ end }}</author>{{ end }}
       <guid>{{ .Permalink }}</guid>
       <description>{{ .Summary | transform.XMLEscape | safeHTML }}</description>

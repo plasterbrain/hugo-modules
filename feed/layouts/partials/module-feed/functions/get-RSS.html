@@ -1,0 +1,21 @@
+{{- /*
+	MODULE: Feed
+	Function: get-RSS
+	---
+	Returns the site RSS output format tied to the index/home page.
+	You should cache this partial.
+	---
+	Params:
+	- .		Page context
+	---
+	Returns:
+	- Home/site RSS feed output format object, if it exists.
+*/ -}}
+
+{{- $rss := false -}}
+{{- with site.Home -}}
+	{{- with .OutputFormats.Get "rss" -}}
+		{{- $rss = . -}}
+	{{- end -}}
+{{- end }}
+{{- return $rss -}}

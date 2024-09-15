@@ -4,13 +4,13 @@
 	---
 	What it says on the tin.
 	@TODO Neocities not_found.html
-	@TODO Search results page!
+	@TODO Search results page
 */ -}}
 
 {{- print `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` | safeHTML }}
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	{{- if not site.Params.Seo.IsPrivate -}}
-		{{- range .Data.Pages -}}
+		{{- range (where .Pages "Sitemap.Disable" "ne" true) -}}
 			{{- if and .Permalink (not .Params.Noindex) -}}
 				<url>
 					<loc>{{- $.Scratch.Get "Canonical" -}}</loc>
@@ -19,11 +19,17 @@
 							{{- .Lastmod.Format "2006-01-02T15:04:05-07:00" | safeHTML -}}
 						</lastmod>
 					{{ end }}
+					{{- with .Sitemap.ChangeFreq }}
+						<changefreq>{{ . }}</changefreq>
+					{{- end }}
+					{{ if ge .Sitemap.Priority 0.0 }}
+						<priority>{{ .Sitemap.Priority }}</priority>
+					{{ end }}
+					<xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" />
 					{{ if .IsTranslated }}
 						{{ range .Translations }}
 							<xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
 						{{ end }}
-							<xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" />
 					{{ end }}
 				</url>
 			{{- end -}}

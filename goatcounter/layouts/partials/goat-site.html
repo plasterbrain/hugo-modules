@@ -1,5 +1,8 @@
-<script data-goatcounter="https://MYCODE.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
-<noscript>
-    <img src="https://MYCODE.goatcounter.com/count?p=/test-noscript">
-</noscript>
+{{- with site.Params.Goatcounter.Code -}}
+	{{- $code := . -}}
+	{{ $js := resources.Get "js/goatcounter.js" | js.Build "goatcounter.js" | minify }}
+	<script data-goatcounter="https://{{- $code -}}.goatcounter.com/count" async src="{{- $js.RelPermalink | safeURL -}}"></script>
+	<noscript>
+    <img src="https://{{- $code -}}.goatcounter.com/count?p=/test-noscript">
+	</noscript>
+{{- end -}}

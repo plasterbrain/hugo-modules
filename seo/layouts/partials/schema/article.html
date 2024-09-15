@@ -2,13 +2,10 @@
   MODULE: SEO
   JSON-LD Schema: Article
   ---
-  Returns schema dictionary for an article.
+  Returns schema dictionary for an article, designed for Google search.
 
   @link https://developers.google.com/search/docs/appearance/structured-data/article
   @link https://developers.google.com/search/docs/appearance/publication-dates
-
-  @IDEA Param to override locked content class
-  @IDEA Param to choose between BlogPosting/Article/NewsArticle
   ---
   Params:
   - .  Page context
@@ -17,7 +14,6 @@
 {{- $id := .Permalink -}}
 {{- $json := merge (dict
 	"@type" "BlogPosting"
-	"@id" (print .Permalink "#article")
 	"isPartOf" (dict "@id" $id)
 	"mainEntityOfPage" (dict "@id" $id)
 	"headline" ($.Scratch.Get "OGTitle" | htmlUnescape | safeHTML | plainify)
@@ -29,7 +25,7 @@
 	(partialCached "schema/_author.html" . "default")
 -}}
 
-{{- with .Params.Keywords -}}
+{{- with .Params.SearchKeywords -}}
   {{- $json = merge $json (dict
 		"keywords" .) -}}
 {{- end -}}
@@ -46,14 +42,17 @@
 {{- end -}}
 
 {{- if .Page.Params.Paywall -}}
-	{{- $json = merge $json (dict
-		"isAccessibleForFree" "False"
-		"hasPart" (dict
+	{{- $paywall := (dict
+		"isAccessibleForFree" "False" ) -}}
+	{{- with site.Params.Seo.PaywallClass -}}
+		{{- $paywall = merge $paywall (dict
+			"hasPart" (dict
 			"@type" "WebPageElement"
 			"isAccessibleForFree" "False"
 			"cssSelector" ".locked"
-		)
-	) -}}
+		)) -}}
+	{{- end -}}
+	{{- $json = merge $json $paywall -}}
 {{- end -}}
 
 {{- return $json -}}

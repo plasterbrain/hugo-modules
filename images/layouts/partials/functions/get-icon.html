@@ -10,7 +10,7 @@
 
 {{- $svg := false -}}
 {{- $path := site.Params.Images.Icons.Path | default "assets/images/icons/%s.svg" -}}
-{{- with resources.Get (printf $path .Icon) -}}
+{{- with resources.GetMatch (printf $path .Icon) -}}
 	{{- $svg = . | resources.ExecuteAsTemplate "icon.svg" . -}}
 	{{- $svg = $svg.Content -}}
 {{- end -}}

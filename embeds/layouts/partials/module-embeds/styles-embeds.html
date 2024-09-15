@@ -1,0 +1,4 @@
+{{ $css := resources.Get "module-embeds/css/lite-yt-embed.css" }}
+{{- with ($css | resources.Minify) -}}
+	<link rel="stylesheet" href="{{ .RelPermalink | safeURL -}}" type="text/css">
+{{- end -}}

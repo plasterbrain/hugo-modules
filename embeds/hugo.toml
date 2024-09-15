@@ -3,12 +3,8 @@
 #---
 
 [params.embeds]
-# @TODO change name
-showWarnings = true # Show console warnings if some API lookups fail
-bandcampColor = "0687f5"
-youtubeClass = "w-full aspect-video embed"
-showTitles = true
-showWordmarks = true
+[params.embeds.youtube]
+showCaptions = true
 
 [params.api] # Add this to a separate params.toml file
 itch = ""

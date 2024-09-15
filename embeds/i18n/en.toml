@@ -47,10 +47,19 @@
 [steamComingSoon]
 	other = "Coming soon"
 [steamTitle]
-	other = 'Buy {{ .Title }} <span style="color: #9e9e9e">on Steam</span>'
+	other = "Buy {{ . }} on Steam"
 
-[youtube]
+[tenorVia] # https://tenor.com/gifapi/documentation#attribution
+	other = "Via Tenor"
+
+[moduleEmbeds_youtube]
 	other = "YouTube"
+[moduleEmbeds_play]
+	other = "Play {{ . }}"
+# [moduleEmbeds_ytVideo]
+# 	other = "{{ . }} on YouTube"
+[moduleEmbeds_ytNoscript]
+	other = "This video requires Javascript."
 
 [linux]
 	other = "Linux"
@@ -58,7 +67,6 @@
 	other = "macOS"
 [windows]
 	other = "Windows"
-
 
 # Goes after license description with link
 [licenseMore]

@@ -1,0 +1,189 @@
+
+{{- /*
+	MODULE: SOCIAL
+	Brid.gy Metadata
+	---
+	Collection of partial ideas to insert microformat markup for Brid.gy.
+
+	Does not include examples of:
+	- Image/video (use `u-photo` or `u-video` on the media)
+	- Regular tags (use `u-category` on span/link with tag name)
+	- "u-tag-of" (for labeling Github issues/tagging Flickr images with a post)
+
+	@link https://brid.gy/about
+	@link https://fed.brid.gy/docs
+	---
+	Params:
+	- .		Page context
+*/ -}}
+
+{{- /*
+	BRIDGY FED LINK
+	---
+	Only shows if `site.Params.Socials.Bridgy.UseFed` is true.
+	Put this inside your post's `.h-entry` element but *not* inside `.e-content`.
+
+	@link https://fed.brid.gy/docs#web-get-started#web-how-post
+*/ -}}
+
+{{- define "partial/module-social/widgets/meta-bridgy/fed.html" -}}
+	{{- if site.Params.Socials.Bridgy.UseFed -}}
+		<a class="u-bridgy-fed" href="https://fed.brid.gy/" hidden class="hidden"></a>
+	{{- end -}}
+{{- end -}}
+
+{{- /*
+	PERSON-TAGS
+	---
+	```
+	webmention:
+		tagged:
+			- name: Cinderace
+				url: https://inting.com/
+	```
+
+	@link https://brid.gy/about#person-tag
+	@link https://indieweb.org/person-tagwith
+*/ -}}
+
+{{- define "partials/module-social/widgets/meta-bridgy/person-tags.html" -}}
+	{{- with .Params.webmention -}}
+		{{- with .tagged -}}
+			Tagged:
+			<ul role="list" class="flex gap-2 not-prose">
+				{{- range . -}}
+					<li class="flex gap-1 items-center">
+						{{- with partialCached "functions/get-icon.html" (dict "Icon" "person") "person" -}}
+							{{- . | safeHTML -}}
+						{{- end -}}
+						<a class="u-url link u-category h-card" href="{{- .url | safeURL -}}">
+							<span class="p-name" role="text">{{- .name | htmlUnescape | safeHTML -}}</span>
+						</a>
+					</li>
+				{{- end -}}
+			</ul>
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
+{{- /*
+	IN-REPLY-TO
+	---
+	With Bridgy Publish, likes and replies can be used to star Github repos or post new
+	issues/comments on them.
+
+	```
+	replyTo:
+		name: Pokemon Unite Twitter
+		url: https://x.com/PokemonUnite/status/1415657439207198721
+	```
+
+	@link https://brid.gy/about#reply
+	@link https://indieweb.org/like
+*/ -}}
+{{- define "partials/module-social/widgets/meta-bridgy/reply.html" -}}
+	{{- with .Params.webmention -}}
+		{{- with .replyTo -}}
+			{{- $kind := cond (in (slice "reply" "repost" "like") .kind) .kind "reply" -}}
+
+			{{- $class := dict
+				"reply" "u-in-reply-to"
+				"like" "u-like-of"
+				"repost" "u-repost-of" -}}
+			{{- $class = index $class $kind -}}
+
+			{{- $name := printf `<a class="%s" href="%s"><span role="text">%s</span></a>` $class .url .name -}}
+
+			{{- $author := "" -}}
+			{{- with .author -}}
+				{{- $author = printf `<span class="p-author h-card">%s</span>` . -}}
+			{{- end -}}
+
+			{{- $slug := print "moduleSocial_" $kind -}}
+			{{- $params := dict
+				"Name" $name
+				"Author" $author
+				"Me" (site.Params.Author.Name | default site.Title)
+			-}}
+
+			{{- i18n $slug $params | htmlUnescape | safeHTML -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
+{{- /*
+
+	Assumes you are using Tailwind or otherwise have a class called "hidden" for
+	marking content `display: none;`.
+
+	```
+	webmention:
+	```
+
+	@link https://brid.gy/about#omit-link
+	@link https://brid.gy/about#ignore-formatting
+	@link https://brid.gy/about#silo-content
+*/ -}}
+{{- define "partials/module-social/widgets/meta-bridgy/posse.html" -}}
+	{{- with .Params.webmention -}}
+		{{- with .Posse -}}
+			<ul role="list" hidden class="hidden">
+				{{ range $network, $url := . }}
+				<li>
+					<a href="{{- $url | safeURL -}}" rel="syndication" class="u-syndication">
+						{{ i18n (print "moduleSocial_" $network) | htmlUnescape | safeHTML -}}
+					</a>
+				</li>
+				{{- end -}}
+			</ul>
+		{{- end -}}
+
+		{{- /* @link https://brid.gy/about#webmentions */ -}}
+		{{- with .Bridgy -}}
+			{{- $params := querify
+				"bridgy_omit_link" (.omitLink | default false)
+				"bridgy_ignore_formatting" (.ignoreFormatting | default false) -}}
+			{{- with .Publish -}}
+				{{- $url := print "https://brid.gy/publish/%s?" $params -}}
+				{{- $links := . | intersect (slice "bluesky" "flickr" "github" "mastodon") -}}
+				<div hidden class="hidden">
+					{{- range $links -}}
+						<a href="{{- printf $url . | safeURL -}}" rel="nofollow"></a>
+					{{- end -}}
+				</div>
+			{{- end -}}
+
+			{{- with .Content -}}
+				{{- range $silo, $content := . -}}
+					{{- $class := printf "e-bridgy-%s-content" $silo -}}
+					<div hidden class="{{- $class | safeHTML }} hidden">
+						{{- $content | htmlUnescape | safeHTML -}}
+					</div>
+				{{- end -}}
+			{{- end -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
+{{- /*
+	Proof of concept for including your literal geo coordinates on a post(!).
+
+	Specify latitude and longitude in the frontmatter:
+	```
+	webmention:
+		location: [12.34, 56.78]
+	```
+
+	@link https://brid.gy/about#location
+*/ -}}
+
+{{- define "partials/module-social/widgets/meta-bridgy/location.html" -}}
+	{{- with .Params.webmention -}}
+		{{- with .location -}}
+			<p class="h-geo h-card">
+				<span class="p-latitude">{{- index . 0 | string -}}</span>,
+				<span class="p-longitude">{{- index . 1 | string -}}</span>
+			</p>
+		{{- end -}}
+	{{- end -}}
+{{- end -}}

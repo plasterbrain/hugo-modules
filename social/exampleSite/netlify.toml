@@ -1,5 +1,6 @@
 # Use your site as a Mastodon/fediverse account
-# @link https://fed.brid.gy/docs#setup
+# @link https://fed.brid.gy/docs#fediverse-enhanced
+
 [[redirects]]
   from = "/.well-known/host-meta*"
   to = "https://fed.brid.gy/.well-known/host-meta:splat"

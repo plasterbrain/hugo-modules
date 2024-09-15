@@ -1,21 +1,73 @@
-[shareDefault]
+[moduleSocial_microSharePost]
+	other = "Share this post"
+[moduleSocial_shareDefault]
 	other = "Share"
-[shareFacebook]
-	other = "Share"
-[shareTumblr]
-	other = "Share"
-[shareTwitter]
+[moduleSocial_shareFacebook]
+	other = "Share on Facebook"
+[moduleSocial_shareTumblr]
+	other = "Tumble"
+[moduleSocial_shareTwitter]
 	other = "Tweet"
-[shareMastodon]
+[moduleSocial_shareMastodon]
 	other = "Toot"
 
-[socialSpotify]
+[spotify]
 	other = "Spotify"
-[socialApple]
+[apple]
 	other = "Apple Music"
-[socialBandcamp]
+[bandcamp]
 	other = "Bandcamp"
-[socialYoutube]
+[youtube]
 	other = "YouTube"
-[socialSoundcloud]
+[soundcloud]
 	other = "SoundCloud"
+[patreon]
+	other = "Patreon"
+[tumblr]
+	other = "Tumblr"
+
+[moduleSocial_reply]
+	other = "Re: {{ .Name }}"
+
+[moduleSocial_like]
+	other = "{{ .Me }} liked {{ .Name }} by {{ .Author }}"
+
+[moduleSocial_repost]
+	other = "Reblogged {{ .Author }}"
+
+
+
+[moduleSocial_webmentions]
+	other = "Notes"
+
+[moduleSocial_anon]
+	other = "Anonymous"
+
+[moduleSocial_like-of]
+	one = "{{ . }} like"
+	other = "{{ . }} likes"
+[moduleSocial_mention-of]
+	one = "{{ . }} mention"
+	other = "{{ . }} mentions"
+[moduleSocial_bookmark-of]
+	one = "{{ . }} bookmark"
+	other = "{{ . }} bookmarks"
+[moduleSocial_repost-of]
+	one = "{{ . }} reblog"
+	other = "{{ . }} reblogs"
+[moduleSocial_replies]
+	one = "{{ . }} reply"
+	other = "{{ . }} replies"
+
+[moduleSocial_notes_in-reply-to]
+	other = "{{ . }} commented:"
+[moduleSocial_notes_like-of]
+	other = "{{ . }} liked this"
+[moduleSocial_notes_repost-of]
+	other = "{{ . }} reposted this"
+[moduleSocial_notes_mention-of]
+	other = "{{ . }} mentioned this"
+[moduleSocial_notes_bookmark-of]
+	other = "{{ . }} bookmarked this"
+[moduleSocial_notes_source] # e.g. "on twitter.com"
+	other = "on {{ . }}"

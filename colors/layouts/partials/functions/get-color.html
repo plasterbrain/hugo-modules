@@ -1,3 +1,19 @@
+{{- /*
+	MODULE: COLORS
+	Function: get-color
+	---
+	Given a key, returns data about the associated color as defined in
+	data/moduleColors/colors.yaml.
+
+	---
+	Params:
+	- .		Color key
+	---
+	Returns
+	- [collection]			Color info. Keys are named assuming this is for a share button.
+		- .Bg	[string]		Main color hex code
+		- .Text [string]	WCAG-accessible contrast color hex code
+*/ -}}
 {{- $color := . -}}
 {{- $result := dict
 	"Bg" site.Params.Colors.defaultWhite
@@ -7,7 +23,8 @@
 	{{- with index . $color -}}
 		{{- $result = dict
 			"Bg" .
-			"Text" (partialCached "functions/get-wcagBW.html" (dict "Color" .) $color) -}}
+			"Text" (partialCached "functions/get-wcagBW.html" (dict
+				"Color" .) $color) -}}
 	{{- end -}}
 {{- end -}}
 

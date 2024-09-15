@@ -1,0 +1,18 @@
+{{- with partial "module-social/functions/get-shareLinks.html" . -}}
+	<p class="flex gap-2 items-center post--meta font-button post--share">
+		<span class="sr-only">{{- i18n "moduleSocial_microSharePost" -}}</span>
+		{{- range . -}}
+			{{- if ne .Link "" -}}
+				<a href="{{- .Link | safeURL -}}" rel="nofollow noopener noreferrer" target="popup" onclick="{{- .JS | safeJS -}}" class="opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
+					{{- .Icon | safeHTML -}}
+					<span class="ml-1">{{- .Label | safeHTML }}</span>
+				</a>
+			{{- else -}}
+				<button data-kind="share" type="button" typeonclick="{{- .JS | safeJS -}}" class="js-only hidden opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
+					{{- .Icon | safeHTML -}}
+					<span class="ml-1">{{- .Label | safeHTML }}</span>
+				</button>
+			{{- end -}}
+		{{- end -}}
+	</p>
+{{- end -}}

@@ -1,0 +1,31 @@
+{{- /*
+	MODULE: SOCIALS
+	(Partial) Social Site Meta
+	---
+	Social media/IndieWeb `<head>` tags for the home page.
+
+	@TODO PGP key for IndieAuth
+
+	@link https://indieauth.com/setup
+	@link https://indieauth.com/openid
+	@link https://fed.brid.gy/docs#mastodon-link-verification
+	---
+	Params:
+	- .		Page context
+*/ -}}
+
+{{- with site.Params.Socials.Github -}}
+	<link rel="me" href="{{- . | safeURL -}}">
+{{- end }}
+{{- with site.Params.Socials.Email -}}
+	<link rel="me" href="{{- . -}}">
+{{- end -}}
+
+{{- if and site.Params.Social.UseBridgyFed }}
+	<link rel="me" href="https://web.brid.gy/r/{{- site.BaseURL -}}">
+{{- end }}
+
+{{- if site.Params.Social.UseOpenID }}
+	<link rel="openid.delegate" href="{{- site.BaseURL -}}" />
+	<link rel="openid.server" href="https://openid.indieauth.com/openid" />
+{{- end }}

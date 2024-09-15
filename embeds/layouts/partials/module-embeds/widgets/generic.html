@@ -1,0 +1,58 @@
+{{- /* @TODO cleanup design
+	@link https://supercookie.me/workwise */ -}}
+
+{{- $url := . -}}
+{{- $api := print "https://api.microlink.io?" (querify
+	"url" $url
+	"filter" "image,title,publisher,description,date,logo") -}}
+
+{{- with resources.GetRemote $api -}}
+	{{ with .Err }}
+	{{- /* API lookup unsuccessful */ -}}
+		{{- warnf "Embeds: %s" . }}
+	{{- else }}
+		{{- $data := . | transform.Unmarshal -}}
+		{{- partialCached "module-embeds/widgets/generic/markup.html" (dict
+			"Data" $data.data
+			"Url" $url
+		) -}}
+	{{- end }}
+{{ else }}
+	{{- /* API 1 bad URL? */ -}}
+	{{- warnf "Embeds: failed to embed itch url %q" $url -}}
+{{- end -}}
+
+{{- define "partials/module-embeds/widgets/generic/markup.html" -}}
+{{- $data := .Data -}}
+{{- $url := .Url -}}
+<figure class="flex mb-4 card not-prose">
+	<a href="{{- $url | safeURL }}">
+		<img src="{{- $data.image.url | safeURL -}}" alt="" width="200" height="155" class="card--thumbnail">
+	</a>
+	<figcaption class="flex flex-col p-4 pl-6 flex-2">
+		<a href="{{- $url | safeURL -}}"
+			class="card--title line-clamp-2 opacity-hover">
+			{{- /* Page title minus the site name */ -}}
+			{{- replace $data.title (print $data.publisher " - ") "" -}}
+		</a>
+		<p class="my-2 text-sm card--desc line-clamp-2">
+			{{- $data.description | truncate 125 -}}
+		</p>
+
+		{{- $pubLogo := resources.GetRemote $data.logo.url -}}
+		<span class="text-sm{{- if $pubLogo }} flex items-center {{- end -}}">
+			{{- if $pubLogo -}}
+				<img src="{{- $data.logo.url | safeURL -}}" width="22" height="22" alt="" class="mr-1"/>
+			{{- end -}}
+
+			<a href="{{- $url | safeURL -}}" class="underline opacity-hover">
+				{{- $data.publisher -}}
+			</a>
+			<span aria-hidden="true">&nbsp;&middot;&nbsp;</span>
+			<time datetime="{{- $data.date -}}">
+				{{- time.Format ":date_long" $data.date -}}
+			</time>
+		</span>
+	</figcaption>
+</figure>
+{{- end -}}

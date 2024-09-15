@@ -1,0 +1,5 @@
+/* TEAM */
+{{ with site.Params.Author }}
+	{{ with .Name }}{{ . }}{{ end }}
+{{ end }}
+{{ site.BaseURL }}

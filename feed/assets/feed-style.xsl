@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+	This is a modified version of Pretty Feed v3 by Matt Webb.
+	https://github.com/genmon/aboutfeeds/blob/main/tools/pretty-feed-v3.xsl
+
+	Pretty Feed is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+	https://creativecommons.org/licenses/by-nc-sa/3.0/
 -->
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"
 xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
@@ -15,11 +19,11 @@ xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
       </head>
       <body class="bg-white">
         <nav class="px-3 py-2 mt-2 mb-5 container-md mt-md-5 markdown-body">
-          <p class="px-1 py-1 mb-1 bg-yellow-light ml-n1">
-            <strong>This is a web feed,</strong> also known as an RSS feed. <strong>Subscribe</strong> by copying the URL from the address bar into your newsreader.
+          <p class="px-1 py-1 bg-yellow-light ml-n1">
+            {{- i18n "feedAbout1" | safeHTML -}}
           </p>
           <p class="text-gray">
-            Visit <a href="https://aboutfeeds.com">About Feeds</a> to get started with newsreaders and subscribing. It’s free.
+            {{- i18n "feedAbout2" | safeHTML -}}
           </p>
         </nav>
         <div class="px-3 py-3 container-md markdown-body">
@@ -42,8 +46,7 @@ xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
                 <path d="M160 213h-34a82 82 0 0 0 -82 -82v-34a116 116 0 0 1 116 116z" fill="#FFF"/>
                 <path d="M184 213A140 140 0 0 0 44 73 V 38a175 175 0 0 1 175 175z" fill="#FFF"/>
               </svg>
-
-              Web Feed Preview
+              {{ i18n "feedPreview" | htmlUnescape | safeHTML }}
             </h1>
             <h2><xsl:value-of select="/rss/channel/title"/></h2>
             <p><xsl:value-of select="/rss/channel/description"/></p>
@@ -51,7 +54,7 @@ xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
               <xsl:attribute name="href">
                 <xsl:value-of select="/rss/channel/link"/>
               </xsl:attribute>
-              Visit Website &#x2192;
+              {{- i18n "feedVisit" | htmlUnescape | safeHTML -}}
             </a>
           </header>
           <h2>Recent Items</h2>

@@ -1,0 +1,16 @@
+{{- /*
+	MODULE: Feed
+	Snippet: Feed Link
+	---
+	RSS icon linked to your site RSS.
+	---
+	Params:
+	- .		Page context
+*/ -}}
+
+{{- $feed := partialCached "module-feed/functions/get-RSS.html" . "default" -}}
+{{- $icon := "rss" -}}
+{{- $class := "" -}}
+<a href="{{- $feed.RelPermalink | safeURL -}}" class="feed--link opacity-hover">
+	{{- partialCached "icon.html" (dict "Icon" $icon "i18n" "feedIconAlt") $icon -}}
+</a>

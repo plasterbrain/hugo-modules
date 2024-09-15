@@ -1,20 +1,18 @@
 # Hugo Modules: SEO
-Easily set up favicons, robots tags, Open Graph, rich results, sitemaps, and more with the SEO module!
-
+- Open Graph/social media tags
 - JSON-LD Schema
 - Favicons
-- Open Graph tags
 - Robot tags, *robots.txt, ai.txt*
+- Sitemap
 
-## Quick start
-
+## Install
 1. **Import** this module by adding an entry to your site's config file(s):
     ```toml
     [modules]
     [[module.imports]]
     path = "github.com/plasterbrain/hugo-modules/seo"
     ```
-1. **Add** your favicon files to *assets/favicon*:
+1. **Add** your favicon files to a folder under *assets*. By default this folder is called *favicon*. Set `site.Params.Seo.FaviconPath` in *hugo.toml* if you're using a different folder name.
     - Default: Square (usually 32x32) *favicon.ico*
     - Another format:
       - Square *favicon.svg* OR
@@ -23,8 +21,7 @@ Easily set up favicons, robots tags, Open Graph, rich results, sitemaps, and mor
     - PWA manifest:
       - 192x192 *android-chrome-192x192.png*
       - 512x512 *android-chrome-512x512.png*
-1. **Configure** your site to use module features:
-    - See *hugo.toml* @TODO link for a list of module settings you may want to edit in your site or theme.
+1. **Configure** your site to use module features in *hugo.toml*.
     - Add `"webappmanifest"` and `"ai"` to `outputs.home` in your config:
       ```toml
       [outputs]
@@ -74,36 +71,7 @@ Easily set up favicons, robots tags, Open Graph, rich results, sitemaps, and mor
       {{- define "canonical" }}{{- "" -}}{{- end }}
       ```
 
-Read on to learn about some of the module's quirks and features.
-
-## Feature notes
-### Article OG tags
-- @TODO there's an archetype in there I think
-- OGCover
-
-Twitter title/description inherit values from OG, because lol twitter
-
-### Favicon files
-The *favicon/* folder can have any name/path. Just set `site.Params.Seo.FaviconPath` to match the relative path under *assets*.
-
-We use the *assets* directory and not *static* in this module so that Hugo can dynamically generate tags for an arbitrary number of icons/sizes. The module assumes the files in this folder follow the naming conventions of [RealFaviconGenerator](https://realfavicongenerator.net/faq).
-
-Note that *favicon.ico, browserconfig.xml,* and [Apple Touch icons](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html) do not need explicit tags to be discovered so long as they are properly named, so the module supports storing them in *static* or your *assets* favicon folder as you see fit.
-
-### Locked content
-Pages with `.Params.Paywall` set to `true` are marked as *paywalled* in the JSON-LD schema. It's assumed that any obfuscated/restricted content on the page has the class `"locked"`. @TODO google link
-
-### Partial structure
-Function partials (ex. *set-cover.html*) set `$.Scratch` values and handle default fallbacks. The page head partial (ex. *seo-page.html*) then grabs these values, then escapes, truncates, and formats them in tags.
-
-For handling custom logic specific to certain page kinds/layouts, it's best to override the function partials (and/or the blocks we defined above in *baseof.html*) rather than the unwieldy *seo-page.html*.
-
-### Template performance
-If you peek into *seo-page.html,* will see a lengthy pipe chain on a lot of the meta tag values, mostly to escape quotes and the like for use in HTML attributes. Content generally fails gracefully if required asset files etc. don't exist.
-
-These features keep the templates pretty safe and generalized, but may incur small performance costs when building/testing locally. Adjust them for your needs! (Ex. if you know exactly what favicons you're going to have and where they are, you can greatly simplify seo-favicons.html.)
-
-### @TODO
+## @TODO
 - https://pwa.nuxtjs.org/meta/ https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
 - MULTIPLE SITEMAPS HELP
 - site.Params.Pages.About for article:author

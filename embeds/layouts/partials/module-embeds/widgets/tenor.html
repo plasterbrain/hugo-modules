@@ -1,0 +1,68 @@
+{{- /*
+	@TODO DIY image markup using returned placeholder since Tenor formats gifs like videos.
+	@link https://developers.google.com/tenor/guides/quickstart
+*/ -}}
+{{- $id := . -}}
+{{- $key := site.Params.Api.Tenor -}}
+{{- $url := "" -}}
+{{- $alt := "" -}}
+{{- $image := "" -}}
+{{- $source := "" -}}
+{{- $width := 100 -}}
+{{- $height := 100 -}}
+{{- with $key -}}
+	{{- $params := querify
+		"ids" $id
+		"key" .
+		"media_filter" "gif,preview"
+	-}}
+	{{- $remote := print "https://tenor.googleapis.com/v2/posts?" $params -}}
+
+	{{ with resources.GetRemote $remote }}
+		{{ with .Err }}
+			{{ warnf "%s" . }}
+		{{ else }}
+			{{ $data := . | transform.Unmarshal }}
+			{{- with $data -}}
+				{{- with .results -}}
+					{{- with (index . 0) -}}
+						{{- $url = .itemurl -}}
+						{{- $alt = .content_description -}}
+						{{- with (index .media_formats "gif") -}}
+							{{- $image = .url -}}
+							{{- $width = (index .dims 0) -}}
+							{{- $height = (index .dims 1) -}}
+						{{ end }}
+						{{- with (index .media_formats "preview") -}}
+						{{- $source = .url -}}
+						{{ end }}
+					{{ end }}
+				{{ end }}
+			{{ end }}
+		{{- end -}}
+	{{ else }}
+		{{ warnf "Unable to get remote resource %q" $url }}
+	{{ end }}
+{{ end }}
+
+{{- $cacheKey := print "tenor-" $id -}}
+<a href="{{- $url | safeURL -}}" rel="nofollow noreferrer">
+	<figure class="embed embed-tenor">
+		{{- partialCached "image.html" (dict
+			"Image" $image
+			"Sources" (slice $source)
+			"Lazy" true
+			"Alt" $alt
+			"Width" $width
+			"Height" $height
+			"Atts" (slice `class="w-full"`)
+		) $cacheKey -}}
+		<figcaption class="ml-auto text-sm">
+			{{- with partialCached "functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
+				{{- . | safeHTML -}}
+			{{- else -}}
+				{{- i18n "tenorVia" | safeHTML -}}
+			{{- end -}}
+		</figcaption>
+	</figure>
+</a>

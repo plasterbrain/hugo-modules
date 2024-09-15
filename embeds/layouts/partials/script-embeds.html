@@ -1,8 +1,9 @@
-{{- with resources.Get "src/embeds.js" -}}
+{{- with resources.Get "js/lite-yt-embed.js" -}}
 	{{- $js := . | js.Build (dict
-		"targetPath" "dist/embeds.min.js"
-		"minify" true) -}}
-	<script>
-		{{ $js.Content | safeJS }}
-	</script>
+		"targetPath" "js/embeds.min.js"
+		"minify" true
+		"params" (dict
+			"lang" site.Language.Lang
+			"cc" (site.Params.Embeds.Youtube.ShowCaptions | default true))) -}}
+	<script async src="{{- $js.RelPermalink | safeURL -}}"></script>
 {{- end -}}
