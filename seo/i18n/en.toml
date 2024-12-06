@@ -9,3 +9,6 @@
 [OGMinutes] # ex. "Est. reading time: 3 minutes"
 	one = "{{- . }} minute"
 	other = "{{- . }} minutes"
+
+[moduleSeo_titlePagination]
+	other = "{{ .Title }} - Page {{ .Page }}"

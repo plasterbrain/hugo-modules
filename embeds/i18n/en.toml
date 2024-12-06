@@ -40,6 +40,8 @@
 [itchPrice]
 	other = "{{ . }} or more" # e.g. "$10.99 or more"
 
+[steam]
+	other = "Steam"
 [steamBuy]
 	other = "Buy on Steam"
 [steamByline]
@@ -63,7 +65,7 @@
 
 [linux]
 	other = "Linux"
-[macos]
+[osx]
 	other = "macOS"
 [windows]
 	other = "Windows"

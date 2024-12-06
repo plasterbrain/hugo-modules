@@ -10,6 +10,6 @@
 {{- end }}
 		<meta property="og:locale" content="{{- site.LanguageCode -}}">
 {{- partialCached "seo-favicon.html" . "default" -}}
-{{- if site.Params.Seo.NoAI }}
+{{- if site.Params.Seo.Ai.Block }}
 		<meta name="CCBot" content="nofollow">
 {{- end -}}

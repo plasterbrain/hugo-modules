@@ -31,8 +31,8 @@
 {{- /* Note: Make sure $index is the first item */ -}}
 {{- $value := slice $index $follow -}}
 
-{{- if site.Params.Seo.NoAI -}}
-	{{- $value = $value | append "noai" "noimageai" -}}
+{{- if site.Params.Seo.Ai.Block -}}
+	{{- $value = $value | append "Ai.Block" "noimageai" -}}
 {{- end -}}
 
 {{- $value = $value | append $previews -}}

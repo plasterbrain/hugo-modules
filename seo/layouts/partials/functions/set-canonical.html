@@ -3,10 +3,17 @@
 	Function: set-canonical
 	---
 	Sets site.Scratch field "Canonical" to a canonical page link.
+
+	@link https://developers.google.com/search/docs/specialty/ecommerce/pagination-and-incremental-page-loading#use-urls-correctly
 	---
 	Params:
 	- .	Page context
 */ -}}
 
 {{- $canonical := .Params.Canonical | default .Permalink -}}
+{{- if .IsNode -}}
+	{{- with (partial "functions/paginate.html" .) -}}
+		{{- $canonical = path.Join $canonical .URL -}}
+	{{- end -}}
+{{- end -}}
 {{- $.Scratch.Set "Canonical" $canonical -}}

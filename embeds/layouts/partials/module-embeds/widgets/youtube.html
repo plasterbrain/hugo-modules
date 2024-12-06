@@ -1,8 +1,6 @@
 {{- /*
-
-	Known issues: you can only focus the iframe itself, not the play button on activation. Awkward
 	@link https://github.com/paulirish/lite-youtube-embed?tab=readme-ov-file
-	*/ -}}
+*/ -}}
 
 {{- $url := . -}}
 
@@ -52,7 +50,7 @@
 
 	<lite-youtube class="js-only" videoid="{{- $id -}}" {{- with $params }} params="{{ querify . }}"{{- end }} {{ $style | safeHTMLAttr }}>
 		<button class="js-only lty-playbtn" type="button">
-			<span class="lty-title" role="presentation">
+			<span class="sr-only lty-title" role="presentation">
 				{{- i18n "moduleEmbeds_play" $data.title | htmlUnescape | safeHTML -}}
 			</span>
 		</button>

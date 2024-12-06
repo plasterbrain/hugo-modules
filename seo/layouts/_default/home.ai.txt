@@ -1,4 +1,4 @@
-{{- if site.Params.Seo.NoAI -}}
+{{- if site.Params.Seo.Ai.Block -}}
 User-Agent: *
 Disallow: *.txt
 Disallow: *.pdf

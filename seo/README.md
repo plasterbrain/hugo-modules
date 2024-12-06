@@ -43,7 +43,7 @@
 
       {{- /* Block: Cover */ -}}
       {{- block "cover" . -}}
-        {{- partial "functions/set-cover.html" . -}}
+        {{- partial "functions/set-ogCover.html" . -}}
       {{- end -}}
 
       {{- /* Block: Canonical */ -}}
@@ -72,17 +72,22 @@
       ```
 
 ## @TODO
-- https://pwa.nuxtjs.org/meta/ https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
-- MULTIPLE SITEMAPS HELP
+- https://pwa.nuxtjs.org/meta/
+  - https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
 - site.Params.Pages.About for article:author
 - article:publisher
 - Set `site.Params.Author` (not `site.Author`) if your site has one author.
-- `site.Params.Search.Page` @TODO
 - Note the JSON-LD file assumes your search page uses `q` as the search term query parameter (ex. "coolfoods.com/search?q=hotdogs").
 - User-agent: archive.org_bot
-- Canonical + i18n = ??
 - Scripts to ping shit https://www.google.com/ping?sitemap=
-- Whatever that bing thing was
+- https://www.jeremiak.com/blog/block-bots-netlify-edge-functions/
+
+## Notes
+- Does not support multiple sitemaps
+- Assumes OG title does not include site title
+- Does not support titles/canonical for paginated *posts,* only sections/lists
+- Custom OG images may puff up your build time.
+- Hugo caches the custom OG images, so if you're editing *get-ogCover.html*, you'll have to clear the generated resources folder to see changes on existing pages.
 
 ## See also
 - [Evil Martians favicon guide](https://evilmartians.com/chronicles/how-to-favicon-in-2021-six-files-that-fit-most-needs)

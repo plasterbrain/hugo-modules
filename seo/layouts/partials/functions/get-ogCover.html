@@ -5,39 +5,55 @@
 	---
 	Creates a basic Open Graph cover for the given page.
 
-	@TODO Allow custom base template/bg image
 	@TODO Favicon overlay?
 	@TODO Custom font
 	@TODO Giving some error where $title is template.html
+	DOES NOT WORK WITH AVIF
 	---
 	Params:
-	- .	Page context
+	- .Page
+	- .Cover
 	---
 	Returns
 	- [string]	Path to the page's generated OG cover image
 */ -}}
-{{- $cover := "" -}}
+{{- $cover := .Cover -}}
+{{- $coverSet := false -}}
+{{- $page := .Page -}}
 
-{{- /* Tries to create a solid background from your theme color. */ -}}
-{{- $page := . -}}
-{{- $bg := partialCached "functions/get-themeBg.html" . "default" -}}
-{{- with $bg -}}
-	{{- $textColor := "#ffffff" -}}
-	{{- with site.Params.Seo.ThemeColor -}}
-		{{- $textColor = partialCached "functions/get-wcagBW.html"
-		(dict "Color" .) . -}}
+{{- with partialCached "functions/get-ogCoverTemplateOverlay.html" . "default" -}}
+	{{- /* Overlay template on our cover image, if any */ -}}
+	{{- $overlay := . -}}
+
+	{{- if and $cover (eq (printf "%T" $cover) "*resources.resourceAdapter") -}}
+		{{- $cover = $cover.Filter (images.Overlay $overlay 0 0) -}}
+	{{- else -}}
+		{{- $cover = $overlay -}}
 	{{- end -}}
-	{{- $title := $page.LinkTitle | plainify -}}
-	{{- $cover = $bg.Filter (images.Text (string $title) (dict
-		"color" $textColor
-		"size" 60
-		"linespacing" 2
-		"x" (div $bg.Width 3)
-		"y" (div $bg.Height 2.5)
-	)) -}}
-
-	{{- /* Rename the image */ -}}
-	{{- $permalink := printf "assets/images/og/%s.jpg" ($page.LinkTitle | anchorize) -}}
-	{{- $cover = resources.Copy $permalink $cover -}}
+{{- else -}}
+	{{- /* Theme color bg with text. */ -}}
+	{{- $bg := partialCached "functions/get-themeBg.html" . "default" -}}
+	{{- with $bg -}}
+		{{- $textColor := "#ffffff" -}}
+		{{- with site.Params.Seo.ThemeColor -}}
+			{{- $textColor = partialCached "functions/get-wcagBW.html"
+			(dict "Color" .) . -}}
+		{{- end -}}
+		{{- $title := $page.LinkTitle | plainify -}}
+		{{- $cover = $bg.Filter (images.Text (string $title) (dict
+			"color" $textColor
+			"size" 60
+			"linespacing" 2
+			"x" (div $bg.Width 3)
+			"y" (div $bg.Height 2.5)
+		)) -}}
+	{{- end -}}
 {{- end -}}
+
+{{ $cover = $cover.Crop "1200x630 topleft" }}
+
+{{- /* Rename the image */ -}}
+{{- $permalink := printf "assets/images/og/%s.jpg" ($page.LinkTitle | anchorize) -}}
+{{- $cover = resources.Copy $permalink $cover -}}
+
 {{- return $cover -}}

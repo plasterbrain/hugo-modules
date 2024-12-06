@@ -2,15 +2,20 @@
 	other = "Share this post"
 [moduleSocial_shareDefault]
 	other = "Share"
+[moduleSocial_shareBluesky]
+	other = "Skypost"
 [moduleSocial_shareFacebook]
 	other = "Share on Facebook"
+[moduleSocial_shareMastodon]
+	other = "Toot"
+[moduleSocial_shareReddit]
+	other = "Post to Reddit"
 [moduleSocial_shareTumblr]
 	other = "Tumble"
 [moduleSocial_shareTwitter]
 	other = "Tweet"
-[moduleSocial_shareMastodon]
-	other = "Toot"
 
+# @TODO
 [spotify]
 	other = "Spotify"
 [apple]
@@ -25,6 +30,10 @@
 	other = "Patreon"
 [tumblr]
 	other = "Tumblr"
+[freesound]
+	other = "Freesound.org"
+[mediafire]
+	other = "Mediafire"
 
 [moduleSocial_reply]
 	other = "Re: {{ .Name }}"
@@ -34,8 +43,6 @@
 
 [moduleSocial_repost]
 	other = "Reblogged {{ .Author }}"
-
-
 
 [moduleSocial_webmentions]
 	other = "Notes"

@@ -18,7 +18,7 @@ Override template files as needed to get the most out of them on your own site.
 ## License
 These modules are provided in the hopes they will be useful as-is; I can't promise any real support or regular maintenance.
 
-MIT be nice to me no fascists
+MIT be nice to me no fascists (edit november 2024: I SAID NO FASCISTS!!!! YOU GUYS SERIOUSLY????)
 
 ## See also
 - https://hugo-mods.github.io/#mods

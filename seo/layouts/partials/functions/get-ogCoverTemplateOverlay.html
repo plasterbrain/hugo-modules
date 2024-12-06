@@ -1,0 +1,7 @@
+{{- $image := false -}}
+{{- with site.Params.Seo.OGCoverTemplate.Image -}}
+	{{- with resources.Get . -}}
+		{{- $image = . -}}
+	{{- end -}}
+{{- end -}}
+{{- return $image -}}

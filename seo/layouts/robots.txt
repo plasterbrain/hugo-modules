@@ -8,26 +8,46 @@
 	staging website with a password or firewall!
 
 	@link https://www.searchenginejournal.com/how-to-block-google-staging-site/327697/
+	@link https://runtimeterror.dev/dynamic-robots-txt-hugo-external-data-sources/
 */ -}}
+# ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡇⠀⢸⣗⠲⣖⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+# ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⠇⠀⠀⢼⡏⠀⠀⠉⠲⡽⡀⠀⠀⠀⢀⢀⣠⣤⣄⡀⡀⢰⣶⣶⣶⣶⣶⣾⣿⡇
+# ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡏⠀⠀⠀⡇⣇⠀⠀⠀⠀⢸⣇⠀⠀⡐⡟⡻⠒⠙⢯⡿⡊⠀⠛⠛⡛⣿⡟⠋⠉⠁
+# ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⡏⠀⠀⠀⠀⡇⣿⠀⠀⢀⡠⢖⡇⠀⡧⣿⠁⠀⠀⠀⠀⡇⣿⠀⠀⠀⠀⣿⣇⡅⠀⠀
+# ⠀⠀⠀⠀⠀⠀⠀⠀⣼⠃⠀⠀⠀⠀⠀⣿⡟⠻⠷⢯⣍⡀⠀⣼⣿⡇⠀⠀⠀⠀⠀⡇⡇⠀⠀⠀⠀⣿⣇⠁⠀⠀
+# ⡀⡀⠀⠀⠀⠀⢠⣟⠇⠀⠀⠀⠀⠀⡸⡿⡇⠀⠀⠀⠀⠉⢧⣳⣻⠀⠀⠀⠀⠀⣼⣞⠇⠀⠀⠀⢈⠿⣿⠀⠀⠀
+# ⢷⣇⠀⠀⠀⠠⣯⠃⠀⠀⠀⠀⠀⠀⢯⡯⡇⠀⠀⠀⠀⠀⣾⢹⣿⡀⠀⣀⣠⣴⡿⠁⠀⠀⠀⠀⢐⢏⡇⠀⠀⠀
+# ⠈⣿⣆⠀⣴⡗⠁⠀⠀⠀⠀⠀⠀⢀⡇⣯⠀⠀⠀⣠⣶⣿⠏⠀⠛⣯⡯⡿⠋⠁⠀⠀⠀⠀⠀⠀⣯⣿⠇⠀⠀⠀
+# ⠀⠘⣿⣟⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⣸⡿⠛⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠘⠀⠀⠀
+# ⠀⠀⠘⠻⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 
+{{- /* Comment everything out by changing this to "#" */ -}}
 {{- $n := "" -}}
-{{- if not hugo.IsProduction -}}
-{{- $n = "#" -}}
-User-agent: *
-Disallow: /
-{{- end }}
 
-{{- if site.Params.Seo.NoAI }}
-{{$n}}User-agent: CCBot
-{{$n}}User-agent: GPTBot
-{{$n}}User-agent: img2dataset
+{{ if not hugo.IsProduction }}
+{{$n}}User-agent: *
 {{$n}}Disallow: /
-{{- end }}
+{{- end -}}
 
-{{$n}}User-agent: 008
-{{$n}}User-agent: voltron
-{{$n}}User-agent: Bytespider
-{{$n}}Disallow: /
+{{- if site.Params.Seo.Ai.Block -}}
+	{{- $url := "https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/main/robots.json" -}}
+	{{- with resources.GetRemote $url -}}
+		{{- with .Err -}}
+			{{- warnf "SEO: %s" . -}}
+		{{- else -}}
+			{{- $robots := unmarshal .Content -}}
+			{{- range $botname, $_ := $robots }}
+				{{- if not (in site.Params.Seo.Ai.Whitelist $botname) }}
+					{{- printf "%sUser-agent: %s\n" $n $botname }}
+				{{- end }}
+			{{- end -}}
+			{{- printf "Disallow: /\n" }}
+			{{- warnf "SEO: Bad bots bundled by https://github.com/ai-robots-txt/ai.robots.txt" }}
+		{{- end -}}
+	{{- else -}}
+		{{- warnf "SEO: Unable to get remote resource %q" $url -}}
+	{{- end -}}
+{{- end }}
 
 {{$n}}User-agent: bingbot
 {{$n}}User-agent: SemrushBot

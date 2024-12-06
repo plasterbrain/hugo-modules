@@ -82,16 +82,12 @@
 		<meta name="robots" content="{{- . -}}">
 {{- end }}
 
-{{- if site.Params.Seo.UseSchema -}}
-	{{- with $.Scratch.Get "Graph" }}
-		{{- if hasPrefix ($.Scratch.Get "Robots") "index" -}}
-			{{- $schema := dict
-				"@context" "https://schema.org"
-				"@graph" . -}}
-			{{/* For pretty print, add `(dict "indent" "	")` */}}
-		<script type="application/ld+json">
-			{{ $schema | jsonify | safeJS }}
-		</script>
-		{{- end -}}
-	{{- end -}}
+{{- with $.Scratch.Get "Graph" }}
+	{{- $schema := dict
+		"@context" "https://schema.org"
+		"@graph" . -}}
+		{{/* For pretty print, add `(dict "indent" "	")` */}}
+	<script type="application/ld+json">
+		{{ $schema | jsonify | safeJS }}
+	</script>
 {{- end -}}

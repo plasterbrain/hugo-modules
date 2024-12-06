@@ -7,7 +7,7 @@ useOpenID = false
 
 # https://web.dev/articles/web-share
 showWebShareButton = true
-shareLinks = ["twitter", "facebook", "mastodon"]
+shareLinks = ["bluesky", "reddit", "facebook", "mastodon"]
 
 [params.social.bridgy]
 useFed = false

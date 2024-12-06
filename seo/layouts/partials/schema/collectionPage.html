@@ -30,10 +30,17 @@
 {{- if $cover -}}
 	{{- $imageId := print .Permalink "#primaryimage" -}}
 
+	{{- $license := .Params.Cover.License -}}
+	{{- $credit := .Params.Cover.Credit -}}
+  {{- /* @NOTE This does not check if path is invalid */ -}}
+	{{- with .Params.OGCover.Image -}}
+		{{- $license = .Params.OGCover.License -}}
+		{{- $credit = .Params.OGCover.Credit -}}
+	{{- end -}}
 	{{- $image := partialCached "schema/_image.html" (dict
 		"Image" $cover
-		"License" .Params.CoverLicense
-		"Credit" .Params.CoverCredit
+		"License" $license
+		"Credit" $credit
 	) $cover.RelPermalink -}}
 	{{ $image = merge $image (dict
 		"@id" $imageId

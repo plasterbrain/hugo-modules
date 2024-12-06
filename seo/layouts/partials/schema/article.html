@@ -30,16 +30,7 @@
 		"keywords" .) -}}
 {{- end -}}
 
-{{- $cover := $.Scratch.Get "OGCover" -}}
-{{- if $cover -}}
-	{{- $json = merge $json (dict
-		"image" (partialCached "schema/_image.html" (dict
-			"Image" $cover
-			"License" .Params.CoverLicense
-			"Credit" .Params.CoverCredit
-		) $cover.RelPermalink)
-	) -}}
-{{- end -}}
+{{- /* @TODO image */ -}}
 
 {{- if .Page.Params.Paywall -}}
 	{{- $paywall := (dict

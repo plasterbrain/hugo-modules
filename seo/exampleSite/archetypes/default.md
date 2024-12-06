@@ -1,12 +1,13 @@
 ---
 #--- METADATA
+#@TODO UPDATE
 #-------------------------------------------------------------
 #summary:         # Excerpt for archives
 #description:     # Search engine excerpt
 #searchKeywords:  # Search engine keywords
 #OGTitle:         # Social media title
 #OGDescription:   # Social media excerpt
-#OGImage:         # Social media image
+#OGCover:         # Social media image
 #coverCredit:         # Credit for this image (ex. "My buddy Eric")
 #coverLicense:        # License info URL or Creative Commons SPDX ID (ex. CC BY-NC)
 

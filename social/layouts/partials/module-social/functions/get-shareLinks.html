@@ -43,7 +43,11 @@
 	{{- $network := . -}}
 	{{- $params := slice -}}
 
-	{{- if eq $network "twitter" -}}
+	{{- if eq $network "bluesky" -}}
+		{{- $params = (slice
+			"https://bsky.app/intent/compose"
+			(slice "text" $permalink)) -}}
+	{{- else if eq $network "twitter" -}}
 		{{- /* (Passed to `querify`, so args are a slice and not a map.) */ -}}
 		{{- $twitterArgs := slice "text" $title "url" $permalink -}}
 
