@@ -15,6 +15,9 @@ RUDIMENTARY UNDER CONSTRUCTION DO NOT EAT
     - Set `"params.search.page"` to the relative URL of your search results page.
 1. **Update** your templates with the necessary markup:
 
-## See also
-- https://developer.mozilla.org/en-US/docs/Web/OpenSearch
-- https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md
+## TODO
+- Search form:
+  - Test with custom search icon
+  - Option to customize DDG colors
+  - Google option
+- OpenSearch favicon, languages

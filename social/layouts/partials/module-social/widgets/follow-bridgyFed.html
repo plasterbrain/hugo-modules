@@ -2,11 +2,14 @@
 	@TODO
 	@link https://tantek.com/2023/020/t2/bridgy-fed-follow-form
 */ -}}
+
+{{- /*
 {{- $url := urls.Parse site.BaseURL -}}
 <form method="post" action="https://fed.brid.gy/remote-follow">
-	<label for="follow-address">{{- i18n "@TODOformlabel" | safeHTML -}}</label>
+	<label for="follow-address">{{- i18n "moduleSocial_bridgyFollow" | safeHTML -}}</label>
 	<input id="follow-address" name="address" type="text" required placeholder="@you@instance.social" value="">
 	<input name="domain" type="hidden" value="{{- $url.Hostname -}}">
 	<input name="protocol" type="hidden" value="web">
-	<button type="submit">{{- i18n "@TODOfollow" -}}</button>
+	<button type="submit">{{- i18n "moduleSocial_follow" -}}</button>
 </form>
+*/ -}}

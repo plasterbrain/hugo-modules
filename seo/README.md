@@ -71,23 +71,29 @@
       {{- define "canonical" }}{{- "" -}}{{- end }}
       ```
 
-## @TODO
-- https://pwa.nuxtjs.org/meta/
+## TODO
+- Potentially more tags:
+  - https://pwa.nuxtjs.org/meta/
   - https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
 - site.Params.Pages.About for article:author
 - article:publisher
-- Set `site.Params.Author` (not `site.Author`) if your site has one author.
-- Note the JSON-LD file assumes your search page uses `q` as the search term query parameter (ex. "coolfoods.com/search?q=hotdogs").
+- `site.Params.Author` vs `site.Author` -- also multiple authors?
 - User-agent: archive.org_bot
-- Scripts to ping shit https://www.google.com/ping?sitemap=
-- https://www.jeremiak.com/blog/block-bots-netlify-edge-functions/
+- Potential bot-blocking fun:
+  - https://paste.melanie.lol/no-ai--next.config.js
+  - https://www.jeremiak.com/blog/block-bots-netlify-edge-functions/
 
 ## Notes
+- OG:URL is used as JSON-LD "series root" for paginated archives.
+- JSON-LD templates assume your search page uses `q` as the search term query parameter (ex. "coolfoods.com/search?q=hotdogs")
 - Does not support multiple sitemaps
 - Assumes OG title does not include site title
 - Does not support titles/canonical for paginated *posts,* only sections/lists
-- Custom OG images may puff up your build time.
-- Hugo caches the custom OG images, so if you're editing *get-ogCover.html*, you'll have to clear the generated resources folder to see changes on existing pages.
+- Custom OG images will increase your build time.
+
+## Known issues
+- Giving some error where $title is template.html
+- Hugo sometimes caches the custom OG images, so if you're editing *get-ogCover.html*, you'll have to clear the generated resources folder to see changes on existing pages.
 
 ## See also
 - [Evil Martians favicon guide](https://evilmartians.com/chronicles/how-to-favicon-in-2021-six-files-that-fit-most-needs)

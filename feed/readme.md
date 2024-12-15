@@ -1,3 +1,8 @@
 # Hugo Module: RSS Feed
-Content-Type: application/xml; charset=utf-8  # not application/rss+xml
-x-content-type-options: nosniff
+RSS feed with custom browser styles and category names in the title.
+
+## TODO
+- Category/tag feeds
+
+## See also
+- https://validator.w3.org/feed/check.cgi

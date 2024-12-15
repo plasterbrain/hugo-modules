@@ -1,6 +1,5 @@
 ---
 #--- METADATA
-#@TODO UPDATE
 #-------------------------------------------------------------
 #summary:         # Excerpt for archives
 #description:     # Search engine excerpt

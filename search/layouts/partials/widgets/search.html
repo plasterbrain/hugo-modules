@@ -1,12 +1,12 @@
 {{- /*
 	Widgets: Search
 	---
-	@link https://duckduckgo.com/params
+	Search form for your site with DuckDuckGo noscript fallback (assuming your site
+	search is JS-powered).
 
-	@TODO test no icon, custom icon
-	@TODO customize colors!
-	@TODO Google option... -_-
-	partialCached "functions/get-icon.html" (dict "Icon" "search") "search"
+	You must set `site.Params.Search.Page` for this to work.
+	@link https://duckduckgo.com/params
+	---
 */ -}}
 {{- $buttonLabel := i18n "searchWidget" | default "Search" -}}
 {{- $buttonLabelClass := "" -}}

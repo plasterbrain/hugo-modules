@@ -6,6 +6,8 @@
 
   @link https://developers.google.com/search/docs/appearance/structured-data/article
   @link https://developers.google.com/search/docs/appearance/publication-dates
+
+	@TODO Image
   ---
   Params:
   - .  Page context
@@ -29,8 +31,6 @@
   {{- $json = merge $json (dict
 		"keywords" .) -}}
 {{- end -}}
-
-{{- /* @TODO image */ -}}
 
 {{- if .Page.Params.Paywall -}}
 	{{- $paywall := (dict

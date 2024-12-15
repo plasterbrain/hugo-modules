@@ -17,8 +17,12 @@ There's no exhaustive srcset formatting bc I don't like it
     path = "github.com/plasterbrain/hugo-modules/images"
     ```
 
-## @TODO
-- Motion-sensitive gifs wrapped in a picture with source, link to actual gif file.
+## SPICY
+- Motion-sensitive gifs wrapped in a picture with source should link to actual gif file.
+- https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
+
+## Known issues
+- get-placeholder gave some DNE error using placeholder.content that went away after server restart
 
 ## Read more
 - [Hugo forums discussion on possible LQIP approaches](https://discourse.gohugo.io/t/low-quality-image-placeholder-lqip-pipes/20259)

@@ -66,7 +66,7 @@
 			</webMaster>
 		{{ end }}
 		{{ with .Site.Copyright }}
-    	<copyright>{{ . | transform.XMLEscape | safeHTML }}</copyright>
+    	<copyright>{{- . | plainify | transform.XMLEscape -}}</copyright>
 		{{ end }}
 		{{ if not .Date.IsZero }}
 			<lastBuildDate>
@@ -85,14 +85,20 @@
 					{{- $title = i18n "feedPostTitleFormat" (dict "Section" $section "Title" $title) -}}
 				{{- end -}}
 			{{- end -}}
-      <title>{{ $title | transform.XMLEscape | safeHTML }}</title>
+      <title>{{ $title | plainify | transform.XMLEscape }}</title>
       <link>{{ .Permalink }}</link>
       <pubDate>
 				{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}
 			</pubDate>
       {{- with $authorEmail }}<author>{{ . }}{{ with $authorName }} ({{ . }}){{ end }}</author>{{ end }}
       <guid>{{ .Permalink }}</guid>
-      <description>{{ .Summary | transform.XMLEscape | safeHTML }}</description>
+      <description>
+				{{- if .Truncated -}}
+					{{- .Summary | plainify | transform.XMLEscape -}}
+				{{- else -}}
+					{{- .Summary | transform.XMLEscape -}}
+				{{- end -}}
+			</description>
     </item>
     {{- end }}
   </channel>

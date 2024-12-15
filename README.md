@@ -12,7 +12,7 @@ Notes:
 
 Override template files as needed to get the most out of them on your own site.
 
-## @TODO
+## TODO
 - Namespacing
 
 ## License

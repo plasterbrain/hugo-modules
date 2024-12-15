@@ -4,7 +4,6 @@
 
 [params.patreon]
 campaignID = "" # https://www.patreon.com/api/campaigns/{ID}
-tiers = [1678896, 1678901, 1678920] #@TODO integers might break stuff
 
 [params.auth0]
 domain = ""

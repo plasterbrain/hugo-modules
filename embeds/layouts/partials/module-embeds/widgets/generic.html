@@ -1,5 +1,12 @@
-{{- /* @TODO cleanup design
-	@link https://supercookie.me/workwise */ -}}
+{{- /*
+	MODULE: EMBEDS
+	Shortcode: Generic Website Embed
+	---
+	@link https://supercookie.me/workwise
+	---
+	Params:
+	- . 	URL to embed
+*/ -}}
 
 {{- $url := . -}}
 {{- $api := print "https://api.microlink.io?" (querify
@@ -12,7 +19,7 @@
 		{{- warnf "Embeds: %s" . }}
 	{{- else }}
 		{{- $data := . | transform.Unmarshal -}}
-		{{- partialCached "module-embeds/widgets/generic/markup.html" (dict
+		{{- partialCached "module-embeds/widgets/generic/_markup.html" (dict
 			"Data" $data.data
 			"Url" $url
 		) -}}
@@ -22,7 +29,7 @@
 	{{- warnf "Embeds: failed to embed itch url %q" $url -}}
 {{- end -}}
 
-{{- define "partials/module-embeds/widgets/generic/markup.html" -}}
+{{- define "partials/module-embeds/widgets/generic/_markup.html" -}}
 {{- $data := .Data -}}
 {{- $url := .Url -}}
 <figure class="flex mb-4 card not-prose">

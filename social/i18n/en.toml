@@ -16,23 +16,23 @@
 	other = "Tweet"
 
 # @TODO
-[spotify]
+[moduleSocial_spotify]
 	other = "Spotify"
-[apple]
+[moduleSocial_appleMusic]
 	other = "Apple Music"
-[bandcamp]
+[moduleSocial_bandcamp]
 	other = "Bandcamp"
-[youtube]
+[moduleSocial_youtube]
 	other = "YouTube"
-[soundcloud]
+[moduleSocial_soundcloud]
 	other = "SoundCloud"
-[patreon]
+[moduleSocial_patreon]
 	other = "Patreon"
-[tumblr]
+[moduleSocial_tumblr]
 	other = "Tumblr"
-[freesound]
+[moduleSocial_freesound]
 	other = "Freesound.org"
-[mediafire]
+[moduleSocial_mediafire]
 	other = "Mediafire"
 
 [moduleSocial_reply]
@@ -49,6 +49,11 @@
 
 [moduleSocial_anon]
 	other = "Anonymous"
+
+[moduleSocial_follow]
+	other = "Follow"
+[moduleSocial_bridgyFollow]
+	other = "Follow on Brid.gy"
 
 [moduleSocial_like-of]
 	one = "{{ . }} like"

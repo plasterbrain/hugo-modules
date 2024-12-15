@@ -12,7 +12,6 @@
 */ -}}
 
 {{- $favPath := site.Params.Seo.FaviconPath | default "" }}
-{{- /* @TODO assets wouldn't link here??? */ -}}
 		<link rel="icon" href="/favicon.ico" sizes="any">
 {{- with resources.Match (path.Join $favPath "**favicon*.png") -}}
 	{{- range . }}

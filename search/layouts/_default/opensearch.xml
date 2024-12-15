@@ -1,7 +1,14 @@
 {{- /*
-	@TODO favicon
-	@TODO languages
+	MODULE: Search
+	---
+	OpenSearch XML markup.
+
+	@link https://developer.mozilla.org/en-US/docs/Web/OpenSearch
+	@link https://github.com/dewitt/opensearch/blob/master/opensearch-1-1-draft-6.md
+	---
 */ -}}
+
+{{- /*
 {{- `<?xml version="1.0" encoding="UTF-8"?>` | safeHTML -}}
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
 	{{- with site.Params.Seo.ShortTitle }}
@@ -29,3 +36,4 @@
 	{{- end }}
   <Language>{{- site.LanguageCode -}}</Language>
 </OpenSearchDescription>
+*/ -}}

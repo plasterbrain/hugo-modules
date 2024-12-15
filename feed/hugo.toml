@@ -1,3 +1,6 @@
+[params.rss]
+fullContent = false
+
 [outputFormats]
 [outputFormats.RSS]
 	mediatype = "application/rss"

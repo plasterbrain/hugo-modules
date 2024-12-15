@@ -1,6 +1,11 @@
 {{- /*
-	@TODO DIY image markup using returned placeholder since Tenor formats gifs like videos.
+	MODULE: EMBEDS
+	Shortcode: Tenor Gif
+	---
 	@link https://developers.google.com/tenor/guides/quickstart
+	---
+	Params:
+	- .		Tenor image/post ID (int)
 */ -}}
 {{- $id := . -}}
 {{- $key := site.Params.Api.Tenor -}}
@@ -34,7 +39,7 @@
 							{{- $height = (index .dims 1) -}}
 						{{ end }}
 						{{- with (index .media_formats "preview") -}}
-						{{- $source = .url -}}
+							{{- $source = .url -}}
 						{{ end }}
 					{{ end }}
 				{{ end }}

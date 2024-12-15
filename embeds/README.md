@@ -26,12 +26,11 @@ Set your *gitignore* to exclude this file.
 
 Notes that using embeds can imapct build time if third-party or APIs are slow to respond.
 
-## @TODO
-- https://bsky.link/
+## TODO
+- Audio widgets fixed???
+- https://docs.bsky.app/docs/advanced-guides/oembed
 - https://github.com/luwes/lite-vimeo-embed
 - https://gohugo.io/getting-started/configuration/#configure-segments
-- get remote JSON deprecated aieeee
-- finish putting everything under namespaced folder
 
 {{- /* iframely */ -}}
 {{- with getJSON "https://iframe.ly/api/oembed?" (querify "url" $url "api_key" $ifkey "media" 0 "language" site.LanguageCode "ssl" 1 "title" 1 "lazy" 1 "iframe" 1) }}

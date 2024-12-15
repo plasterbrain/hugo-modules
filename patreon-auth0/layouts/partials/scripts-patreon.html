@@ -3,8 +3,9 @@
 	---
 	Loads scripts for Patreon/Auth0 authentication in the page footer.
 
-	@TODO BABE WHAT AND WHERE IS AUTH0.JS
+	ETA: BABE WHAT AND WHERE IS AUTH0.JS
 		- additional future me: YEAH
+			- ditto but it's me from the bad trump-2024 timeline: i think i found it at some point but forgot where it is
 */ -}}
 <script type="module">
 	import hotwiredTurbo from 'https://cdn.skypack.dev/@hotwired/turbo';
@@ -14,8 +15,10 @@
 	{{ $js := . | resources.Minify }}
 	{{- $callback := urls.Parse $.Site.BaseURL -}}
 	{{- $callback = $callback.JoinPath $.Site.Params.pages.patreon -}}
-	{{- /* @TODO Make the print conditional if prod doesn't use trailing slash */ -}}
-	{{- $callback = print $callback "/" -}}
+	{{- if not (hasSuffix $callback "/") -}}
+		{{- $callback = print $callback "/" -}}
+	{{- end -}}
+
 	{{- /* Behold: this is how professionals import variables into JS. */ -}}
 	<script data-turbo-permanent id="patreon">
 		{{ replace $js.Content "CALLBACK_URL" $callback | safeJS }}
