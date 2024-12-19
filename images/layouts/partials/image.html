@@ -9,11 +9,13 @@
 	Note this template is SLOW, so maybe don't use it for every image on your site.
 
 	@TODO Save/process external URLs as resources
+	@TODO Why aren't height/width added automatically
 	---
 	Params:
 	- .Image		The image to show. Hugo Image or path as a string.
 	- .Alt			Alt text, default blank.
 	- .Lazy			Whether to lazy load the image, default true.
+	- .Name
 	- .Class		Class attribute value for the `picture` as a slice of values (eg. `slice "class1" "class2"`).
 	- .ImgClass Ditto but for the image inside.
 	- .ImgAtts			Additional atts for `<img>`, a slice of full name/value attribute markup.

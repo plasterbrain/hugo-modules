@@ -76,7 +76,7 @@
     {{- with .OutputFormats.Get "RSS" }}
     {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
     {{- end }}
-    {{- range $pages }}
+    {{- range where $pages "Draft" "ne" true }}
     <item>
 			{{- $title := .Title -}}
 			{{- with .CurrentSection -}}
@@ -85,7 +85,7 @@
 					{{- $title = i18n "feedPostTitleFormat" (dict "Section" $section "Title" $title) -}}
 				{{- end -}}
 			{{- end -}}
-      <title>{{ $title | plainify | transform.XMLEscape }}</title>
+      <title>{{ $title | markdownify | plainify | htmlUnescape | safeHTML | transform.XMLEscape }}</title>
       <link>{{ .Permalink }}</link>
       <pubDate>
 				{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}

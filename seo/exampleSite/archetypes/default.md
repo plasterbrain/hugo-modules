@@ -17,7 +17,7 @@
 #noindex: false
 #nofollow: false
 #canonical:  # Canonical URL
-#aliases:    # list 302 redirect URLs underneath as bullet items
+#aliases:    # list 301 redirect URLs underneath as bullet items
 # - "old/relative/url"
 
 sitemap: # https://www.sitemaps.org/protocol.html
