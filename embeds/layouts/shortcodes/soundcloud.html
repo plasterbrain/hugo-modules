@@ -8,21 +8,4 @@
 */ -}}
 
 {{- $url := .Get 0 -}}
-{{- with getJSON
-	"https://soundcloud.com/oembed?" (querify
-		"format" "json"
-		"url" $url
-		"auto_play" "true") -}}
-	{{- $id := (urls.Parse $url).Path | anchorize -}}
-	{{- $iframe := .html -}}
-	{{- $iframe = replace $iframe " src=" (printf " id=\"%s\" class=\"hidden\" data-src=" $id) -}}
-	{{- partial "_media-embed.html" (dict
-		"Link" $url
-		"Id" $id
-		"iframe" $iframe
-		"Thumbnail" .thumbnail_url
-		"Title" .title
-		"Icon" "soundcloud-wordmark"
-		"Style" `style="height: 200px;"`
-		) -}}
-{{- end }}
+{{- partialCached "module-embeds/widgets/soundcloud.html" $url $url -}}

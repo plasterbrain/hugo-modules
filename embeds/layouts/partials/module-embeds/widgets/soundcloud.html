@@ -1,0 +1,44 @@
+{{- /*
+	MODULE: EMBEDS
+	(Shortcode) SoundCloud Player
+	---
+  @TODO Click-through thumbnail
+	@SPICTY Params for size etc.
+	---
+  - 0		SoundCloud URL.
+*/ -}}
+
+{{- $url := . -}}
+{{- $id := (urls.Parse $url).Path | anchorize -}}
+{{- $api := print "https://soundcloud.com/oembed?"
+	(querify
+	"format" "json"
+	"url" $url
+	"auto_play" "false"
+	"maxheight" "81") -}}
+
+{{- with resources.GetRemote $api -}}
+	{{- with .Err -}}
+		{{- /* API 1 lookup unsuccessful? */ -}}
+		{{- warnf "Embeds: %s" . -}}
+	{{- else -}}
+		{{- with . | transform.Unmarshal -}}
+
+			{{- $iframe := .html -}}
+			{{- $iframe | safeHTML -}}
+			{{- /* $iframe = replace $iframe " src=" (printf " id=\"%s\" class=\"hidden\" data-src=" $id) -}}
+			{{- partial "module-embeds/widgets/_iframe.html" (dict
+				"Link" $url
+				"Id" $id
+				"iframe" $iframe
+				"Thumbnail" .thumbnail_url
+				"Title" .title
+				"Icon" "soundcloud-wordmark"
+				"Style" `style="height: 200px;"`
+				) */ -}}
+		{{- end -}}
+	{{- end -}}
+{{- else -}}
+	{{- /* API bad URL? */ -}}
+	{{ warnf "Embeds: failed to embed SoundCloud url %q" $url }}
+{{- end -}}
