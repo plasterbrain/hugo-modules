@@ -18,7 +18,7 @@
 # @TODO
 [moduleSocial_spotify]
 	other = "Spotify"
-[moduleSocial_appleMusic]
+[moduleSocial_applemusic]
 	other = "Apple Music"
 [moduleSocial_bandcamp]
 	other = "Bandcamp"
@@ -34,6 +34,8 @@
 	other = "Freesound.org"
 [moduleSocial_mediafire]
 	other = "Mediafire"
+[moduleSocial_bluesky]
+	other = "Bluesky"
 
 [moduleSocial_reply]
 	other = "Re: {{ .Name }}"
