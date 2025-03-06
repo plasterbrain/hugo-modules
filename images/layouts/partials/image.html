@@ -29,7 +29,7 @@
 							Assumes you are not already supplying a `style` value in `.ImgAtts`.
 */}}
 {{- $image := .Image -}}
-{{- $alt := .Alt | htmlUnescape | safeHTML | plainify -}}
+{{- $alt := .Alt | htmlEscape | safeHTML | htmlUnescape | plainify -}}
 {{- $lazy := .Lazy | default true -}}
 {{- $class := .Class | default slice -}}
 {{- $imgClass := .ImgClass | default slice -}}
