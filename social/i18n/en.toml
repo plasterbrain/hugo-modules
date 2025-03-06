@@ -1,9 +1,9 @@
 [moduleSocial_microSharePost]
-	other = "Share this post"
+	other = "Share this post:"
 [moduleSocial_shareDefault]
 	other = "Share"
 [moduleSocial_shareBluesky]
-	other = "Skypost"
+	other = "Share on Bluesky"
 [moduleSocial_shareFacebook]
 	other = "Share on Facebook"
 [moduleSocial_shareMastodon]
@@ -15,27 +15,35 @@
 [moduleSocial_shareTwitter]
 	other = "Tweet"
 
-# @TODO
-[moduleSocial_spotify]
-	other = "Spotify"
+
 [moduleSocial_applemusic]
 	other = "Apple Music"
 [moduleSocial_bandcamp]
 	other = "Bandcamp"
-[moduleSocial_youtube]
-	other = "YouTube"
-[moduleSocial_soundcloud]
-	other = "SoundCloud"
-[moduleSocial_patreon]
-	other = "Patreon"
-[moduleSocial_tumblr]
-	other = "Tumblr"
-[moduleSocial_freesound]
-	other = "Freesound.org"
-[moduleSocial_mediafire]
-	other = "Mediafire"
 [moduleSocial_bluesky]
 	other = "Bluesky"
+[moduleSocial_freesound]
+	other = "Freesound.org"
+[moduleSocial_itch]
+	other = "itch.io"
+[moduleSocial_mediafire]
+	other = "Mediafire"
+[moduleSocial_patreon]
+	other = "Patreon"
+[moduleSocial_rss]
+	other = "RSS feed"
+[moduleSocial_soundcloud]
+	other = "SoundCloud"
+[moduleSocial_spotify]
+	other = "Spotify"
+[moduleSocial_steam]
+	other = "Steam"
+[moduleSocial_tumblr]
+	other = "Tumblr"
+[moduleSocial_website]
+	other = "Website"
+[moduleSocial_youtube]
+	other = "YouTube"
 
 [moduleSocial_reply]
 	other = "Re: {{ .Name }}"
