@@ -1,16 +1,21 @@
 {{- with partial "module-social/functions/get-shareLinks.html" . -}}
-<span class="sr-only">{{- i18n "moduleSocial_microSharePost" -}}</span>
-	<p class="gap-2 items-center md:flex post--meta font-button post--share">
+	<p class="flex gap-2 items-center post--meta skyscraper">
+		<span class="md:sr-only font-cursive">{{- i18n "moduleSocial_microSharePost" -}}</span>
 		{{- range . -}}
+			{{- $labelClass := ` class="sr-only md:not-sr-only"` -}}
 			{{- if ne .Link "" -}}
-				<a href="{{- .Link | safeURL -}}" rel="nofollow noopener noreferrer" target="popup" onclick="{{- .JS | safeJS -}}" class="opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
+				<a href="{{- .Link | safeURL -}}" rel="nofollow noopener noreferrer" target="popup" onclick="{{- .JS | safeJS -}}" class="opacity-hover button-social gap-1 bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
 					{{- .Icon | safeHTML -}}
-					<span class="ml-1">{{- .Label | safeHTML }}</span>
+					<span {{- $labelClass | safeHTMLAttr -}}>
+						{{- .Label | htmlUnescape | safeHTML -}}
+					</span>
 				</a>
 			{{- else -}}
 				<button data-kind="share" type="button" typeonclick="{{- .JS | safeJS -}}" class="js-only hidden opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
 					{{- .Icon | safeHTML -}}
-					<span class="ml-1">{{- .Label | safeHTML }}</span>
+					<span {{- $labelClass | safeHTMLAttr -}}>
+						{{- .Label | htmlUnescape |safeHTML -}}
+					</span>
 				</button>
 			{{- end -}}
 		{{- end -}}
