@@ -8,7 +8,7 @@
 	- .Icon		Icon basename, ex. "twitter" for "twitter.svg"
 */ -}}
 
-{{- $svg := false -}}
+{{- $svg := "" -}}
 {{- $path := site.Params.Images.Icons.Path | default "assets/images/icons/%s.svg" -}}
 {{- with resources.GetMatch (printf $path .Icon) -}}
 	{{- $svg = . | resources.ExecuteAsTemplate "icon.svg" . -}}
