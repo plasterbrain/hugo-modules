@@ -57,7 +57,7 @@
 							{{- . | safeHTML -}}
 						{{- end -}}
 						<a class="u-url link u-category h-card" href="{{- .url | safeURL -}}">
-							<span class="p-name" role="text">{{- .name | htmlUnescape | safeHTML -}}</span>
+							<span class="p-name">{{- .name | htmlUnescape | safeHTML -}}</span>
 						</a>
 					</li>
 				{{- end -}}
@@ -92,7 +92,7 @@
 				"repost" "u-repost-of" -}}
 			{{- $class = index $class $kind -}}
 
-			{{- $name := printf `<a class="%s" href="%s"><span role="text">%s</span></a>` $class .url .name -}}
+			{{- $name := printf `<a class="%s" href="%s">%s</a>` $class .url .name -}}
 
 			{{- $author := "" -}}
 			{{- with .author -}}

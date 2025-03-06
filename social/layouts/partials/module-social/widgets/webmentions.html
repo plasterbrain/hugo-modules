@@ -74,9 +74,7 @@
 	{{- $link := ne $slug "like-of" -}}
 	{{- $titleId := print $slug "--title" -}}
 	<h3 id="{{- $titleId -}}">
-		<span role="text">
-			{{- i18n (print "moduleSocial_" $slug) (len $data) | htmlUnescape | safeHTML -}}
-		</span>
+		{{- i18n (print "moduleSocial_" $slug) (len $data) | htmlUnescape | safeHTML -}}
 	</h3>
 	<ul class="flex flex-wrap gap-2" role="list" aria-labelledby="{{- $titleId -}}">
 		{{- range (where $data "wm-private" "ne" true) -}}
@@ -144,9 +142,7 @@
 	{{- $data := (.Data | first 3) -}}
 	{{- $titleId := "replies--title" -}}
 	<h3 id="{{- $titleId -}}">
-		<span role="text">
-			{{- i18n "moduleSocial_replies" (len $data) | htmlUnescape | safeHTML -}}
-		</span>
+		{{- i18n "moduleSocial_replies" (len $data) | htmlUnescape | safeHTML -}}
 	</h3>
 	<ol class="space-y-4" role="list" aria-labelledby="{{- $titleId -}}">
 		{{- range $data -}}
