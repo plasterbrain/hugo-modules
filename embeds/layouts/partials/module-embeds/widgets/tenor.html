@@ -2,15 +2,20 @@
 	MODULE: EMBEDS
 	Shortcode: Tenor Gif
 	---
+	@NOTE Gifs have IDs so they can be used to describe the Tenor attribution link for screenreaders.
+	Don't call this template with the same gif more than once on the same page or you'll have duplicate IDs.
+
 	@link https://developers.google.com/tenor/guides/quickstart
 	---
 	Params:
 	- .		Tenor image/post ID (int)
 */ -}}
-{{- $id := . -}}
+{{- $id := .ID -}}
+{{- $alt := .Alt -}}
 {{- $key := site.Params.Api.Tenor -}}
 {{- $url := "" -}}
-{{- $alt := "" -}}
+{{- $alt := .Alt | default "" -}}
+{{- $caption := .Caption | default "" -}}
 {{- $image := "" -}}
 {{- $source := "" -}}
 {{- $width := 100 -}}
@@ -32,7 +37,7 @@
 				{{- with .results -}}
 					{{- with (index . 0) -}}
 						{{- $url = .itemurl -}}
-						{{- $alt = .content_description -}}
+						{{- $alt = $alt | default .content_description -}}
 						{{- with (index .media_formats "gif") -}}
 							{{- $image = .url -}}
 							{{- $width = (index .dims 0) -}}
@@ -51,7 +56,6 @@
 {{ end }}
 
 {{- $cacheKey := print "tenor-" $id -}}
-<a href="{{- $url | safeURL -}}" rel="nofollow noreferrer">
 	<figure class="embed embed-tenor">
 		{{- partialCached "image.html" (dict
 			"Image" $image
@@ -60,14 +64,18 @@
 			"Alt" $alt
 			"Width" $width
 			"Height" $height
-			"ImgAtts" (slice `class="w-full"`)
+			"ImgAtts" (slice `class="w-full"` (printf `id="%s"` $cacheKey))
 		) $cacheKey -}}
-		<figcaption class="ml-auto text-sm">
-			{{- with partialCached "functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
+		<figcaption class="flex justify-between ml-auto text-sm font-cursive">
+			{{- with $caption -}}
 				{{- . | safeHTML -}}
-			{{- else -}}
-				{{- i18n "tenorVia" | safeHTML -}}
 			{{- end -}}
+			<a href="{{- $url | safeURL -}}" rel="nofollow noreferrer" aria-describedby="{{- $cacheKey -}}">
+				{{- with partialCached "functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
+					{{- . | safeHTML -}}
+				{{- else -}}
+					{{- i18n "tenorVia" | safeHTML -}}
+				{{- end -}}
+			</a>
 		</figcaption>
 	</figure>
-</a>
