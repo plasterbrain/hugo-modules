@@ -19,13 +19,13 @@
 		{{- $id := index $params.v 0 -}}
 
 		{{- /* Hacky way to get all non-video (?v=) query params */ -}}
-		{{- $_params := dict -}}
+		{{- $_params := "" -}}
 		{{- range $k, $v := $params -}}
 			{{- if ne $k "v" -}}
-			{{- $_params = $_params | merge (dict $k (delimit $v ",")) -}}
+				{{- $_params = print $_params (printf `%s=%s` $k (delimit $v ",")) "&" -}}
 			{{- end -}}
 		{{- end -}}
-		{{- $params := $_params -}}
+		{{- $params = strings.TrimSuffix "&" $_params -}}
 
 		{{- partialCached "module-embeds/widgets/youtube/markup.html" (dict
 			"Id" $id
@@ -43,12 +43,11 @@
 	{{- $data := .Data -}}
 	{{- $url := .Url -}}
 	{{- $params := .Params -}}
-
 	{{- $thumbnail := resources.GetRemote $data.thumbnail_url -}}
 	{{- $thumbnail = resources.Copy (printf "assets/images/thumbnails/%s.jpg" $id) $thumbnail -}}
 	{{- $style := printf `style="background-image:url('%s');"` $thumbnail.RelPermalink -}}
 
-	<lite-youtube class="js-only" videoid="{{- $id -}}" {{- with $params }} params="{{ querify . }}"{{- end }} {{ $style | safeHTMLAttr }}>
+	<lite-youtube class="js-only" videoid="{{- $id -}}" {{- with $params }} params="{{- . -}}"{{- end }} {{ $style | safeHTMLAttr }}>
 		<button class="js-only lty-playbtn" type="button">
 			<span class="sr-only lty-title" role="presentation">
 				{{- i18n "moduleEmbeds_play" $data.title | htmlUnescape | safeHTML -}}
