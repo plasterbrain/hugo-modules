@@ -1,3 +1,9 @@
+{{- /*
+	MODULE: SEO
+	Function: get-ogCoverTemplateOverlay
+	---
+	---
+*/ -}}
 {{- $image := false -}}
 {{- with site.Params.Seo.OGCoverTemplate.Image -}}
 	{{- with resources.Get . -}}
