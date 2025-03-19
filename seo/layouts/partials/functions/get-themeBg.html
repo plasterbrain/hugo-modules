@@ -12,13 +12,14 @@
 
 {{- $return := false -}}
 {{- $temp := "partials/functions/%s.html" -}}
+{{- $size := string site.Params.seo.OGCoverTemplate.Size | default "1200x630" -}}
 {{- $pixel := resources.Get "1x1.png" -}}
 {{- if or
 	(not $pixel)
 	(not (templates.Exists (printf $temp "hexToRGB")))
 	(not (templates.Exists (printf $temp "rgbToHSL"))) -}}
 {{- else -}}
-	{{- $pixel = $pixel.Resize "1200x630 jpg" -}}
+	{{- $pixel = $pixel.Resize (print $size " jpg") -}}
 	{{- $hsl := false -}}
 	{{- with site.Params.Seo.ThemeColor -}}
 		{{- $key := . -}}

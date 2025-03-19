@@ -33,6 +33,7 @@ backgroundColor = "#fff"	# Browser fill color when PWA loads
 [params.seo.OGCoverTemplate]
 enabled = true
 image = ""
+size = "1200x630"
 
 [params.seo.ai]
 block = true
