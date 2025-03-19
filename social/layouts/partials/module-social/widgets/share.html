@@ -11,7 +11,7 @@
 					</span>
 				</a>
 			{{- else -}}
-				<button data-kind="share" type="button" typeonclick="{{- .JS | safeJS -}}" class="js-only hidden opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
+				<button data-kind="share" type="button" onclick="{{- .JS | safeJS -}}" class="js-only hidden opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
 					{{- .Icon | safeHTML -}}
 					<span {{- $labelClass | safeHTMLAttr -}}>
 						{{- .Label | htmlUnescape |safeHTML -}}
