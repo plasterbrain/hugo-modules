@@ -2,23 +2,21 @@
 	MODULE: IMAGES
 	Image
 	---
-	Turns an image resource into a `picture` element with LQIP, webp and PNG fallback,
+	Turns an image resource into a `picture` element with LQIP, WEBp and PNG/JPEG fallback,
 	plus still image fallback to make gifs accessible. Accepts URLs too but you won't get
 	alternate formats/fallback.
 
-	Note this template is SLOW, so maybe don't use it for every image on your site.
+	@TODO Save/process external URLs as resources, fix clamp to crop instead of using object-fit
 
-	@TODO Save/process external URLs as resources
-	@TODO Why aren't height/width added automatically
 	---
 	Params:
 	- .Image		The image to show. Hugo Image or path as a string.
 	- .Alt			Alt text, default blank.
 	- .Lazy			Whether to lazy load the image, default true.
-	- .Name
+	- .Name			Name for image file(s) made from conversions/cropping.
 	- .Class		Class attribute value for the `picture` as a slice of values (eg. `slice "class1" "class2"`).
 	- .ImgClass Ditto but for the image inside.
-	- .ImgAtts			Additional atts for `<img>`, a slice of full name/value attribute markup.
+	- .ImgAtts	Additional atts for `<img>`, a slice of full name/value attribute markup.
 	- .Width		Width of the image, default `.Width` if `.Image` is a resource. If
 							specified without .Height, the aspect ratio is preserved.
 	- .Height		Height of the image, default `.Height` if `.Image` is a resource. If
@@ -31,6 +29,7 @@
 {{- $image := .Image -}}
 {{- $alt := .Alt | htmlEscape | safeHTML | htmlUnescape | plainify -}}
 {{- $lazy := .Lazy | default true -}}
+{{- $lqip := .Lqip | default false -}}
 {{- $class := .Class | default slice -}}
 {{- $imgClass := .ImgClass | default slice -}}
 {{- $name := .Name | default false -}}
@@ -49,14 +48,20 @@
 
 	{{- $filetype := ".png" -}}
 
+	{{- $newSources := slice -}}
+	{{- range $sources -}}
+		{{- /* https://help.accusoft.com/PrizmViewer/v10.1/Config/MIME_Types.html */ -}}
+		{{- $ext := path.Ext . -}}
+		{{- $newSources = $newSources | append (dict
+			"RelPermalink" .
+			"MediaType" (dict "Type" (print "image/" $ext))) -}}
+		{{- $sources = $newSources -}}
+	{{- end -}}
+
 	{{- $isResource := eq (printf "%T" .) "*resources.resourceAdapter" -}}
 	{{- if $isResource -}}
-		{{- $imgSrc = .RelPermalink -}}
-		{{- $ieSrc = .RelPermalink -}}
-
 		{{- $filetype = path.Ext .RelPermalink -}}
 
-		{{- $newImage := $image -}}
 		{{- if or $width $height -}}
 			{{- $width = string ($width | default "") -}}
 			{{- $height = string ($height | default "") -}}
@@ -66,34 +71,43 @@
 		{{- end -}}
 
 		{{- $filename := $name -}}
-		{{- if not $name -}}
+		{{- if $name -}}
+			{{- $image = $image | resources.Copy (print $filename $filetype) -}}
+		{{- else -}}
 			{{- $filename = path.Clean .RelPermalink -}}
 			{{- $filename = strings.TrimSuffix $filetype $filename -}}
 		{{- end -}}
 
-		{{- $path := .RelPermalink -}}
+		{{- $image.Publish -}}
+
+		{{- $imgSrc = $image.Permalink -}}
+		{{- $ieSrc = $image.RelPermalink -}}
+
+		{{- if $lqip -}}
+			{{- /* LQIP */ -}}
+			{{- $imgSrc = partialCached "functions/get-placeholder.html" (dict "Image" $image) .RelPermalink -}}
+		{{- end -}}
 
 		{{- $filetypes := slice "webp" "png" -}}
-		{{- if $lazy -}}
-			{{- /* LQIP */ -}}
-			{{- $imgSrc = partialCached "functions/get-placeholder.html" (dict "Image" .) .RelPermalink -}}
+		{{- if eq $filetype "jpg" -}}
+			{{- /* If original is jpg don't bother getting a png version */ -}}
+			{{- $filetypes = $filetypes | symdiff (slice "png") -}}
 		{{- else -}}
-			{{- if eq $filetype "jpg" -}}
-				{{- /* If original is jpg don't bother getting a png version */ -}}
-				{{- $filetypes = $filetypes | symdiff (slice "png") -}}
-			{{- else -}}
-				{{- $filetypes = $filetypes | symdiff (slice (strings.TrimPrefix "." $filetype)) -}}
+			{{- $filetypes = $filetypes | symdiff (slice (strings.TrimPrefix "." $filetype)) -}}
+		{{- end -}}
+
+		{{- $newImage := $image -}}
+		{{- if eq 0 (len $sources) -}}
+			{{- $sources = cond (eq $filetype ".avif") (slice $image) (slice) -}}
+			{{- range $filetypes -}}
+				{{- $ext := . -}}
+				{{- with $newImage.Resize (print $width "x" $height " " $ext) -}}
+					{{- $newImage = . | resources.Copy (print $filename "." $ext) -}}
+					{{- $sources = $sources | append $newImage -}}
+				{{- end -}}
 			{{- end -}}
 		{{- end -}}
 
-		{{- $sources = cond (eq $filetype ".avif") (slice $image) (slice) -}}
-		{{- range $filetypes -}}
-			{{- $ext := . -}}
-			{{- with $newImage.Resize (print $width "x" $height " " $ext) -}}
-				{{- $newImage = . | resources.Copy (print $filename "." $ext) -}}
-				{{- $sources = $sources | append $newImage -}}
-			{{- end -}}
-		{{- end -}}
 		{{- /* Update dimensions in case one was auto */ -}}
 		{{- $width = string $newImage.Width -}}
 		{{- $height = string $newImage.Height -}}
@@ -101,16 +115,6 @@
 		{{- $imgSrc = . -}}
 		{{- $ieSrc = . -}}
 		{{- $filetype = path.Ext $imgSrc -}}
-
-		{{- $newSources := slice -}}
-		{{- range $sources -}}
-			{{- /* https://help.accusoft.com/PrizmViewer/v10.1/Config/MIME_Types.html */ -}}
-			{{- $ext := path.Ext . -}}
-			{{- $newSources = $newSources | append (dict
-				"RelPermalink" .
-				"MediaType" (dict "Type" (print "image/" $ext))) -}}
-			{{- $sources = $newSources -}}
-		{{- end -}}
 	{{- end -}}
 
 	{{- $isGif := eq $filetype ".gif" -}}
