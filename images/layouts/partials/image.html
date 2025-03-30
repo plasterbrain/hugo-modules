@@ -8,6 +8,8 @@
 
 	@TODO Save/process external URLs as resources, fix clamp to crop instead of using object-fit
 
+	@NOTE Image size works but images get cached so you might have to restart to see changes.
+
 	---
 	Params:
 	- .Image		The image to show. Hugo Image or path as a string.
@@ -170,7 +172,7 @@
 
 	<picture{{ with $pictureAtts }} {{ delimit . " " | safeHTMLAttr }}{{- end -}}>
 		{{- range $sources }}
-			<source srcset="{{- .RelPermalink | safeURL -}}" type="{{- .MediaType.Type -}}" {{ if $isGif -}}media="prefers-reduced-motion"{{- end -}}>
+			<source srcset="{{- .RelPermalink | safeURL -}}" {{ if $isGif -}}media="(prefers-reduced-motion: reduce)"{{- else -}}type="{{- .MediaType.Type -}}"{{- end -}}>
 		{{- end -}}
 		<img{{ with $imgAtts }} {{ delimit . " " | safeHTMLAttr -}}{{- end -}}>
 	</picture>
