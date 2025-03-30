@@ -79,9 +79,9 @@
     {{- range where $pages "Draft" "ne" true }}
     <item>
 			{{- $title := .Title -}}
-			{{- with .CurrentSection -}}
+			{{- with .FirstSection -}}
 				{{- if not .IsHome -}}
-					{{- $section := .LinkTitle -}}
+					{{- $section := .Title -}}
 					{{- $title = i18n "feedPostTitleFormat" (dict "Section" $section "Title" $title) -}}
 				{{- end -}}
 			{{- end -}}
