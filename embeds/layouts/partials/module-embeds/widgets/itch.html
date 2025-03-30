@@ -17,24 +17,23 @@
 {{- $key := site.Params.Api.Itch -}}
 {{- if $key -}}
 	{{- /* Get game ID from game url using the public "/data.json" endpoint */ -}}
-	{{- $api1 := print $url "/data.json" -}}
-	{{- with resources.GetRemote $api1 -}}
+	{{- $api1 := urls.JoinPath $url "/data.json" -}}
+	{{- with try (resources.GetRemote $api1) -}}
 		{{ with .Err }}
 			{{- /* API 1 lookup unsuccessful? */ -}}
 			{{- warnf "Embeds: %s" . }}
-		{{- else }}
+		{{- else with .Value }}
 			{{- $data := . | transform.Unmarshal -}}
 			{{- $id := $data.id -}}
-
 			{{- /* Get game information from ID using restricted server API */ -}}
-			{{- $api2 := print "https://api.itch.io/games/" $id -}}
+			{{- $api2 := urls.JoinPath "https://api.itch.io/games/" $id -}}
 			{{- $opts := (dict
 				"headers" (dict "Authorization" (print "Bearer " $key) )) -}}
-			{{- with resources.GetRemote $api2 $opts -}}
+			{{- with try (resources.GetRemote $api2 $opts) -}}
 				{{ with .Err }}
 					{{- /* API 2 lookup unsuccessful */ -}}
 					{{ warnf "Embeds: %s" . }}
-				{{ else }}
+				{{ else with .Value }}
 					{{- $data = . | transform.Unmarshal -}}
 					{{- partial "module-embeds/widgets/itch/markup.html" (dict
 						"Data" $data
