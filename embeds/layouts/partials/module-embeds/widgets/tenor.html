@@ -5,77 +5,123 @@
 	@NOTE Gifs have IDs so they can be used to describe the Tenor attribution link for screenreaders.
 	Don't call this template with the same gif more than once on the same page or you'll have duplicate IDs.
 
+	With site.Params.Embeds.Tenor.UseVideo set to true (default), it will use video format.
+
+	@NOTE Video uses lozad.js (from Image Module) to lazy load.
+
 	@link https://developers.google.com/tenor/guides/quickstart
+	@link http://kb.daisy.org/publishing/docs/html/video.html
+	@link https://web.dev/articles/lazy-loading-video
 	---
 	Params:
-	- .		Tenor image/post ID (int)
+	- .ID		Tenor image/post ID (int)
+	- .Alt
+	- .Caption
+	- .Class
 */ -}}
 {{- $id := .ID -}}
-{{- $alt := .Alt -}}
-{{- $key := site.Params.Api.Tenor -}}
-{{- $url := "" -}}
 {{- $alt := .Alt | default "" -}}
 {{- $caption := .Caption | default "" -}}
+{{- $class := "" -}}
+{{- with .Class -}}
+	{{- $class = (print " " .) | htmlEscape | safeHTML | htmlUnescape | plainify -}}
+{{- end -}}
+
+{{- $key := site.Params.Api.Tenor -}}
+{{- $isVideo := site.Params.embeds.tenor.UseVideo | default true -}}
+
+{{- $url := "" -}}
+{{- $title := "" -}}
 {{- $image := "" -}}
-{{- $source := "" -}}
+{{- $videos := dict -}}
+{{- $preview := "" -}}
 {{- $width := 100 -}}
 {{- $height := 100 -}}
+{{- $mediaFilter := cond $isVideo "mp4,webm,preview" "gif,preview" -}}
 {{- with $key -}}
 	{{- $params := querify
 		"ids" $id
 		"key" .
-		"media_filter" "gif,preview"
+		"media_filter" $mediaFilter
 	-}}
 	{{- $remote := print "https://tenor.googleapis.com/v2/posts?" $params -}}
 
-	{{ with resources.GetRemote $remote }}
+	{{ with try (resources.GetRemote $remote) }}
 		{{ with .Err }}
 			{{ warnf "%s" . }}
-		{{ else }}
+		{{ else with .Value }}
 			{{ $data := . | transform.Unmarshal }}
-			{{- with $data -}}
-				{{- with .results -}}
-					{{- with (index . 0) -}}
-						{{- $url = .itemurl -}}
-						{{- $alt = $alt | default .content_description -}}
-						{{- with (index .media_formats "gif") -}}
-							{{- $image = .url -}}
+			{{- with $data -}}{{- with .results -}}{{- with (index . 0) -}}
+				{{- $url = .itemurl -}}
+				{{- /* Might need more checks, idk if tags can return blank or not a slice */ -}}
+				{{- $title = .title | default (i18n "tenor_gif_title" (title (delimit (first 2 .tags) " "))) -}}
+				{{- $alt = $alt | default .content_description -}}
+				{{- if $isVideo -}}
+					{{- $_vid := . -}}
+					{{- range (slice "webm" "mp4") -}}
+						{{- $format := . -}}
+						{{- with (index $_vid.media_formats $format) -}}
+							{{- $videos = $videos | merge (dict $format .url) -}}
 							{{- $width = (index .dims 0) -}}
 							{{- $height = (index .dims 1) -}}
-						{{ end }}
-						{{- with (index .media_formats "preview") -}}
-							{{- $source = .url -}}
-						{{ end }}
-					{{ end }}
-				{{ end }}
-			{{ end }}
+						{{- end -}}
+					{{- end -}}
+
+				{{- else -}}
+					{{- with (index .media_formats "gif") -}}
+						{{- $image = .url -}}
+						{{- $width = (index .dims 0) -}}
+						{{- $height = (index .dims 1) -}}
+					{{- end -}}
+				{{- end -}}
+
+				{{- with (index .media_formats "preview") -}}
+					{{- $preview = .url -}}
+				{{- end -}}
+			{{- end -}}{{- end -}}{{- end -}}
 		{{- end -}}
 	{{ else }}
-		{{ warnf "Unable to get remote resource %q" $url }}
-	{{ end }}
-{{ end }}
+		{{ warnf "Unable to get Tenor resource %q" $url }}
+	{{- end -}}
+{{- end -}}
 
-{{- $cacheKey := print "tenor-" $id -}}
-	<figure class="embed embed-tenor">
+{{- /* @NOTE: Do not trim whitespace from the below line: */ -}}
+{{ $cacheKey := print "tenor-" $id }}
+<figure class="embed embed-tenor{{- $class | safeHTMLAttr -}}" style="max-width: {{ $width | safeHTMLAttr -}}px;">
+	{{- if $isVideo -}}
+		<video id="{{- $cacheKey -}}" aria-label="{{- $title | htmlEscape | safeHTML | htmlUnescape | plainify -}}" class="mb-2 rounded-md lozad" width="{{- $width -}}" height="{{- $height -}}" controls autoplay muted playsinline loop controlsList="nofullscreen noremoteplayback noplaybackrate nodownload" disablePictureInPicture aria-details="{{- $cacheKey -}}--det"{{- with $preview }} poster="{{- . -}}"{{- end -}}>
+			{{- range $format, $url := $videos -}}
+				<source data-src="{{- $url -}}" type="video/{{- $format -}}">
+			{{- end -}}
+			<a href="{{- $url | safeURL -}}">{{- $title | htmlUnescape | safeHTML -}}</a>
+		</video>
+		<div id="{{- $cacheKey -}}--det" class="sr-only">
+			{{- $alt | htmlUnescape | safeHTML -}}
+		</div>
+	{{- else -}}
 		{{- partialCached "image.html" (dict
 			"Image" $image
-			"Sources" (slice $source)
+			"Sources" (slice $preview)
 			"Lazy" true
 			"Alt" $alt
 			"Width" $width
 			"Height" $height
 			"ImgAtts" (slice `class="w-full"` (printf `id="%s"` $cacheKey))
 		) $cacheKey -}}
-		<figcaption class="flex justify-between ml-auto text-sm font-cursive">
+	{{- end -}}
+	<figcaption class="flex justify-between ml-auto font-cursive">
+		<span>
 			{{- with $caption -}}
 				{{- . | safeHTML -}}
 			{{- end -}}
-			<a href="{{- $url | safeURL -}}" rel="nofollow noreferrer" aria-describedby="{{- $cacheKey -}}">
-				{{- with partialCached "functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
-					{{- . | safeHTML -}}
-				{{- else -}}
-					{{- i18n "tenorVia" | safeHTML -}}
-				{{- end -}}
-			</a>
-		</figcaption>
-	</figure>
+		</span>
+		{{- /* https://tenor.com/gifapi/documentation#attribution */ -}}
+		<a href="{{- $url | safeURL -}}" rel="nofollow noreferrer" aria-describedby="{{- $cacheKey -}}" class="min-w-max opacity-hover">
+			{{- with partialCached "functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
+				{{- . | safeHTML -}}
+			{{- else -}}
+				{{- i18n "tenorVia" | safeHTML -}}
+			{{- end -}}
+		</a>
+	</figcaption>
+</figure>
