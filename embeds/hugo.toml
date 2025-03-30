@@ -4,8 +4,15 @@
 
 [params.embeds]
 [params.embeds.youtube]
-showCaptions = true
+	showCaptions = true
 
-[params.api] # Add this to a separate params.toml file
-itch = ""
-spotifyAccess = ""
+[params.embeds.tenor]
+	useVideo = true
+
+[params.api] # Add this to a separate params.toml file that is gitignored
+	itch = ""
+	spotifyAccess = ""
+
+[module.hugoVersion]
+	extended = true
+	min = "0.141.0"

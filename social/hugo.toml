@@ -44,3 +44,7 @@ home = [ "HTML", "RSS", "webfinger"]
 	mediatype = "application/octet-stream"
 	path = ".well-known"
 	notAlternative = true
+
+[module.hugoVersion]
+	extended = true
+	min = "0.141.0"
