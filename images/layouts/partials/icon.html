@@ -9,10 +9,11 @@
 	- .Icon		Icon slug.
 	- .i18n		Slug for i18n string.
 */}}
+
 {{- $class := "" -}}
 {{- with (partialCached "functions/get-icon.html" (dict "Icon" .Icon) .Icon) -}}
 	{{ . | safeHTML -}}
-	{{- $class = ` class="sr-reader-only"` -}}
+	{{- $class = ` class="sr-only"` -}}
 {{- end -}}
 <span {{- $class | safeHTMLAttr -}}>
 	{{- i18n .i18n | htmlUnescape | safeHTML -}}
