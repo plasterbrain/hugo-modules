@@ -40,10 +40,10 @@
 		{{- $kinds := slice "like-of&wm-property[]=repost-of&wm-property[]=bookmark-of&wm-property[]=mention-of" -}}
 
 		{{- range $kind := $kinds -}}
-			{{- with resources.GetRemote (print $api $kind) -}}
+			{{- with try (resources.GetRemote (print $api $kind)) -}}
 				{{- with .Err -}}
 					{{- warnf "%s" . -}}
-				{{- else -}}
+				{{- else with .Value -}}
 					{{- $data := . | transform.Unmarshal -}}
 					{{- $data := $data.children -}}
 					{{- if gt (len $data) 0 -}}

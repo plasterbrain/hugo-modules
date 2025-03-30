@@ -8,11 +8,11 @@
 	"format" "json"
 	"url" $url) -}}
 
-{{- with resources.GetRemote $api -}}
+{{- with try (resources.GetRemote $api) -}}
 	{{- with .Err -}}
 		{{- /* API lookup unsuccessful */ -}}
 		{{- warnf "Embeds: %s" . -}}
-	{{- else -}}
+	{{- else with .Value -}}
 		{{- $data := . | transform.Unmarshal -}}
 
 		{{- $params := (urls.Parse $url).Query -}}

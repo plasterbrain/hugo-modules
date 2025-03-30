@@ -17,11 +17,11 @@
 	"auto_play" "false"
 	"maxheight" "81") -}}
 
-{{- with resources.GetRemote $api -}}
+{{- with try (resources.GetRemote $api) -}}
 	{{- with .Err -}}
 		{{- /* API 1 lookup unsuccessful? */ -}}
 		{{- warnf "Embeds: %s" . -}}
-	{{- else -}}
+	{{- else with .Value -}}
 		{{- with . | transform.Unmarshal -}}
 
 			{{- $iframe := .html -}}

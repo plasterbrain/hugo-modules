@@ -5,11 +5,11 @@
 {{- $api := print "https://store.steampowered.com/api/appdetails?"
 	(querify "appids" $id) -}}
 
-{{- with resources.GetRemote $api -}}
+{{- with try (resources.GetRemote $api) -}}
 	{{- with .Err -}}
 		{{- /* API 1 lookup unsuccessful? */ -}}
 		{{- warnf "Embeds: %s" . -}}
-	{{- else -}}
+	{{- else with .Value -}}
 		{{- $data := . | transform.Unmarshal -}}
 		{{- with index $data $id -}}
 			{{- $data = .data -}}
@@ -38,7 +38,7 @@
 
 	{{- $platformIcons := dict "windows" "windows" "mac" "osx" "linux" "steam" -}}
 
-	<figure class="overflow-visible relative p-4 card embed-steam not-prose">
+	<figure class="overflow-visible relative p-4 mb-12 card embed-steam not-prose">
 		<figcaption class="flex justify-between items-start mb-2">
 			<div role="presentation">
 				<span class="text-lg leading-none embed-steam--title">

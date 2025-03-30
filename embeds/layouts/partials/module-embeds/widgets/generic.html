@@ -13,11 +13,11 @@
 	"url" $url
 	"filter" "image,title,publisher,description,date,logo") -}}
 
-{{- with resources.GetRemote $api -}}
+{{- with try (resources.GetRemote $api) -}}
 	{{ with .Err }}
 	{{- /* API lookup unsuccessful */ -}}
 		{{- warnf "Embeds: %s" . }}
-	{{- else }}
+	{{- else with .Value }}
 		{{- $data := . | transform.Unmarshal -}}
 		{{- partialCached "module-embeds/widgets/generic/_markup.html" (dict
 			"Data" $data.data
