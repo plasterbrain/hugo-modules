@@ -42,6 +42,9 @@
 {{- with $darkTheme }}
 		<meta name="theme-color" content="{{- . | htmlUnescape | safeHTML | plainify -}}" {{ if $darkTheme -}}media="(prefers-color-scheme: dark)"{{- end -}}>
 {{- end }}
+{{- with site.Params.Seo.ColorScheme }}
+		<meta name="color-scheme" content="{{- . | htmlEscape | safeHTML | htmlUnescape | plainify -}}">
+{{- end }}
 
 {{- /* Browser config can also be discovered automatically but we're fancy */ -}}
 {{- with site.Home.OutputFormats.Get "webappmanifest" }}
