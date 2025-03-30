@@ -1,5 +1,6 @@
 # ---
 # MODULE: EMBEDS
+# @NOTE Linked wordmark alts and the like probably shouldn't even be localized.
 # ---
 
 [clickToLoad]
@@ -51,8 +52,10 @@
 [steamTitle]
 	other = "Buy {{ . }} on Steam"
 
-[tenorVia] # https://tenor.com/gifapi/documentation#attribution
+[tenor_wordmark_alt]
 	other = "Via Tenor"
+[tenor_gif_title] # Following Tenor's own format for untitled posts
+	other = "{{ . }} Gif" # . = First two tags
 
 [moduleEmbeds_youtube]
 	other = "YouTube"
@@ -72,7 +75,7 @@
 
 # Goes after license description with link
 [licenseMore]
-	other = "Read more &rarr;"
+	other = 'Read more<span aria-hidden="true"> &rarr;</span>'
 [cc]
 	other = "Creative Commons"
 [cc0]

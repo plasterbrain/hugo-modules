@@ -28,7 +28,7 @@
 				{{- $url := printf .url (site.Language.Lang | anchorize) -}}
 				{{- print "&#32;" | safeHTML -}}
 				<a rel="license" href="{{- $url | safeURL -}}" class="license--link link">
-					{{- i18n "licenseMore" | htmlUnescape | safeHTML -}}
+					{{- i18n "microReadMore" | htmlUnescape | safeHTML -}}
 				</a>
 			{{- end -}}
 		{{- end -}}
