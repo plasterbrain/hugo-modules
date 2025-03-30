@@ -71,7 +71,7 @@
       {{- define "canonical" }}{{- "" -}}{{- end }}
       ```
 
-## TODO
+## @SPICY
 - Potentially more tags:
   - https://pwa.nuxtjs.org/meta/
   - https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
@@ -79,6 +79,7 @@
 - article:publisher
 - `site.Params.Author` vs `site.Author` -- also multiple authors?
 - User-agent: archive.org_bot
+- Include sensible default titles/desc for archive pages
 - Potential bot-blocking fun:
   - https://paste.melanie.lol/no-ai--next.config.js
   - https://www.jeremiak.com/blog/block-bots-netlify-edge-functions/
