@@ -14,43 +14,47 @@
 	Returns
 	- [string]	Path to the page's generated OG cover image
 */ -}}
-{{- $cover := .Cover -}}
-{{- $coverSet := false -}}
 {{- $page := .Page -}}
+{{- $cover := .Cover -}}
+{{- $useCover := and $cover (eq (printf "%T" $cover) "*resources.resourceAdapter") -}}
+{{- $size := string site.Params.seo.OGCoverTemplate.Size | default "1200x630" -}}
 
-{{- with partialCached "functions/get-ogCoverTemplateOverlay.html" . "default" -}}
-	{{- /* Overlay template on our cover image, if any */ -}}
-	{{- $overlay := . -}}
+{{- $bg := partialCached "functions/get-themeBg.html" . "default" -}}
 
-	{{- if and $cover (eq (printf "%T" $cover) "*resources.resourceAdapter") -}}
+{{- /* Overlay template on our cover image, if any */ -}}
+{{- $overlay := partialCached "functions/get-ogCoverTemplateOverlay.html" . "default" -}}
+
+{{- if $useCover -}}
+	{{- with $overlay -}}
 		{{- $cover = $cover.Filter (images.Overlay $overlay 0 0) -}}
-	{{- else -}}
-		{{- $cover = $overlay -}}
 	{{- end -}}
 {{- else -}}
-	{{- /* Theme color bg with text. */ -}}
-	{{- $bg := partialCached "functions/get-themeBg.html" . "default" -}}
-	{{- with $bg -}}
-		{{- $textColor := "#ffffff" -}}
-		{{- with site.Params.Seo.ThemeColor -}}
-			{{- $textColor = partialCached "functions/get-wcagBW.html"
-			(dict "Color" .) . -}}
+	{{- with resources.Get site.Params.Seo.OGCover -}}
+		{{- $cover = . -}}
+	{{- else -}}
+		{{- /* Theme color bg with text. */ -}}
+		{{- with $bg -}}
+			{{- $textColor := "#ffffff" -}}
+			{{- with site.Params.Seo.ThemeColor -}}
+				{{- $textColor = partialCached "functions/get-wcagBW.html"
+				(dict "Color" .) . -}}
+			{{- end -}}
+			{{- $title := $page.LinkTitle | plainify -}}
+			{{- $cover = $bg.Filter (images.Text (string $title) (dict
+				"color" $textColor
+				"size" 60
+				"linespacing" 2
+				"x" (div $bg.Width 3)
+				"y" (div $bg.Height 2.5)
+			)) -}}
 		{{- end -}}
-		{{- $title := $page.LinkTitle | plainify -}}
-		{{- $cover = $bg.Filter (images.Text (string $title) (dict
-			"color" $textColor
-			"size" 60
-			"linespacing" 2
-			"x" (div $bg.Width 3)
-			"y" (div $bg.Height 2.5)
-		)) -}}
 	{{- end -}}
 {{- end -}}
 
-{{ $cover = $cover.Crop "1200x630 topleft" }}
+{{- $cover = $cover.Crop (print $size " topleft") -}}
 
 {{- /* Rename the image */ -}}
-{{- $permalink := printf "assets/images/og/%s.jpg" ($page.LinkTitle | anchorize) -}}
+{{- $permalink := printf "assets/images/cover/%s.jpg" ($page.LinkTitle | anchorize) -}}
 {{- $cover = resources.Copy $permalink $cover -}}
 
 {{- return $cover -}}

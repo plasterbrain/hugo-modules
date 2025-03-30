@@ -14,7 +14,7 @@
 	- .	Page context
 */ -}}
 
-{{- $cover := .Params.OGCover.Image | default .Params.Cover.Image | default site.Params.Seo.OGCover -}}
+{{- $cover := .Params.OGCover.Image | default .Params.Cover.Image -}}
 {{- $page := . -}}
 
 {{- with $cover -}}
