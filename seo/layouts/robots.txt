@@ -32,10 +32,10 @@
 
 {{- if site.Params.Seo.Ai.Block -}}
 	{{- $url := "https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/main/robots.json" -}}
-	{{- with resources.GetRemote $url -}}
+	{{- with try (resources.GetRemote $url) -}}
 		{{- with .Err -}}
 			{{- warnf "SEO: %s" . -}}
-		{{- else -}}
+		{{- else with .Value -}}
 			{{- $robots := unmarshal .Content -}}
 			{{- range $botname, $_ := $robots }}
 				{{- if not (in site.Params.Seo.Ai.Whitelist $botname) }}
