@@ -31,7 +31,7 @@
 		<title>{{- $title -}}</title>
 		<meta property="og:title" content="{{- $ogTitle -}}">
 		{{- with $.Scratch.Get "Canonical" }}
-		<meta name="og:url" content="{{- . -}}">
+		<meta property="og:url" content="{{- . -}}">
 		<link rel="canonical" href="{{- . -}}">
 		{{- end -}}
 		{{- with $description }}

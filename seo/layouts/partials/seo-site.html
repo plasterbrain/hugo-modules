@@ -6,7 +6,7 @@
 */ -}}
 
 {{- with site.Params.Seo.OGSite }}
-		<meta property="og:site" content="{{- . | htmlUnescape | safeHTML | plainify -}}">
+		<meta property="og:site_name" content="{{- . | htmlUnescape | safeHTML | plainify -}}">
 {{- end }}
 		<meta property="og:locale" content="{{- site.LanguageCode -}}">
 {{- partialCached "seo-favicon.html" . "default" -}}
