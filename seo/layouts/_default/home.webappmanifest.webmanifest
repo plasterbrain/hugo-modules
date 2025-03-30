@@ -13,12 +13,13 @@
 {{- $json := dict
 	"name" (site.Title | htmlUnescape | safeHTML | plainify | safeJS)
 	"lang"	(site.LanguageCode)
+	"display" (site.Params.Seo.wmDisplay | htmlUnescape | safeHTML | plainify | safeJS)
 -}}
 
 {{- $icons := slice -}}
 {{- $favPath := site.Params.Seo.FaviconPath | default "" -}}
 {{- with resources.Match
-	(path.Join $favPath `**android-chrome*.png`) -}}
+	(path.Join $favPath site.Params.Seo.faviconWMGlob) -}}
 	{{- range . -}}
 		{{- $icons = $icons | append (dict
 			"src" .RelPermalink
@@ -31,12 +32,20 @@
 "icons" $icons
 ) -}}
 
-{{- with .Site.Params.Seo.SiteShortName -}}
+{{- with .Site.Params.Seo.wmShortName -}}
 	{{- $short := . | htmlUnescape | safeHTML | plainify | safeJS -}}
 	{{- $json = merge $json (dict
 		"short_name" $short
 	) -}}
 {{- end -}}
+
+{{- $url := .Site.BaseURL -}}
+{{- with site.GetPage (.Site.Params.Seo.wmStartPage) -}}
+	{{- $url = .Permalink -}}
+{{- end -}}
+{{- $json = merge $json (dict
+	"start_url" $url
+) -}}
 
 {{- with .Site.Params.Seo.ThemeColor -}}
 	{{- $color := . | htmlUnescape | safeHTML | plainify | safeJS -}}

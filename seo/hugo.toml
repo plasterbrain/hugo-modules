@@ -27,8 +27,15 @@ searchPageLayout = ""		# Layout used for your search page if any. Used for JSON-
 paywallClass = ""				# CSS class name (with the dot) containing paywalled content.
 themeColor = "#fff"				# Browser toolbar color
 #themeColorDark = "#000"	# Browser toolbar color with dark OS theme
+colorScheme = "light" # color-scheme CSS/meta tag value
+
+faviconPath = "favicons/"
+
+wmStartPage = ""
+#wmShortName = ""
+faviconWMGlob = "**web-app-manifest-*.png" #"**android-chrome*.png"
 backgroundColor = "#fff"	# Browser fill color when PWA loads
-#faviconPath = "favicon/"
+wmDisplay = "standalone" # Webappmanifest display mode
 
 [params.seo.OGCoverTemplate]
 enabled = true
@@ -58,3 +65,7 @@ home = [ "HTML", "RSS", "webappmanifest", "ai", "humans"]
   mediaType = "text/plain"
 	notAlternative = true
   isPlainText = true
+
+[module.hugoVersion]
+	extended = true
+	min = "0.141.0"
