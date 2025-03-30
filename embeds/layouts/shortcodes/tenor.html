@@ -2,15 +2,19 @@
 	MODULE: EMBEDS
 	(Shortcode) Tenor Embed
 	---
-  Tenor
+  @NOTE This is cached per image ID, so if you use the same image in various contexts
+	you'll need to override this template.
 	---
 	Params:
   - 0			The post ID of the gif.
 	- [1]		Alt text
 	- [2]		Caption
+	- [3]		Class attribute for the embed figure element, as a string.
 */ -}}
 
 {{- $id := .Get 0 | default (.Get "src") -}}
 {{- $alt := .Get 1 | default (.Get "alt") -}}
 {{- $caption := .Get 2 | default (.Get "caption") -}}
-{{- partialCached "module-embeds/widgets/tenor.html" (dict "ID" $id "Alt" $alt "Caption" $caption) $id -}}
+{{- $class := .Get 3 | default (.Get "class") -}}
+
+{{- (partialCached "module-embeds/widgets/tenor.html" (dict "ID" $id "Alt" $alt "Caption" $caption "Class" $class) $id) -}}
