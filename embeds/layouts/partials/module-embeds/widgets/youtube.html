@@ -46,8 +46,10 @@
 	{{- $thumbnail := resources.GetRemote $data.thumbnail_url -}}
 	{{- $thumbnail = resources.Copy (printf "assets/images/thumbnails/%s.jpg" $id) $thumbnail -}}
 	{{- $style := printf `style="background-image:url('%s');"` $thumbnail.RelPermalink -}}
+	{{- $class := site.Params.Embeds.Youtube.Class | default "js-only" -}}
+	{{- $class = delimit (uniq (split $class " ")) " " -}}
 
-	<lite-youtube class="js-only" videoid="{{- $id -}}" {{- with $params }} params="{{- . -}}"{{- end }} {{ $style | safeHTMLAttr }}>
+	<lite-youtube class="{{- $class -}}" videoid="{{- $id -}}" {{- with $params }} params="{{- . -}}"{{- end }} {{ $style | safeHTMLAttr }}>
 		<button class="js-only lty-playbtn" type="button">
 			<span class="sr-only lty-title" role="presentation">
 				{{- i18n "moduleEmbeds_play" $data.title | htmlUnescape | safeHTML -}}
