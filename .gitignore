@@ -1,3 +1,8 @@
 node_modules/
 resources/
 public/
+
+# WIP
+oembed/
+patreon-auth0/
+goatcounter/
