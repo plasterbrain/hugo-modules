@@ -5,6 +5,7 @@
 [params.embeds]
 [params.embeds.youtube]
 	showCaptions = true
+	class = "js-only"
 
 [params.embeds.tenor]
 	useVideo = true
