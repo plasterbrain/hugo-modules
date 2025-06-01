@@ -16,6 +16,7 @@ There's no exhaustive srcset formatting bc I don't like it
     [[module.imports]]
     path = "github.com/plasterbrain/hugo-modules/images"
     ```
+1. Ensure you have a class called `.sr-reader-only`! This hides accessible icon labels from screen readers *without* removing them from browser Reader View.
 
 ## SPICY
 - https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
