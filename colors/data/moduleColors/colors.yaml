@@ -1,3 +1,5 @@
+# https://webaim.org/resources/contrastchecker/
+
 applemusic: "#880A51" #"#FA2D48"
 bandcamp: "#0687f5"
 bluesky: "#0075b7" #"#1084fd"
@@ -8,12 +10,12 @@ hn: "#FF6600"
 itch: "#ff8888"
 kofi: "#29abe0"
 mastodon: "#5759fc" #"#6364FF"
-mediafire: "#0070F0"
+mediafire: "#0070F0" # WCAG AA Large
 patreon: "#155c6c" #"#ff424d"
 patreon_old: "#e64413"
 reddit: "#ff945e" #"#FF5700"
 rss: "#ee802f"
-soundcloud: "#D24606" #"#FF621A"
+soundcloud: "#CC4100" # WCAG AA Large #"#FF621A"
 spotify: "#008622" #"#1db954"
 tumblr: "#34526f"
 twitter: "#1da1f2"
