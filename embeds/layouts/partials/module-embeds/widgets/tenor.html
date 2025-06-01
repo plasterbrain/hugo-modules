@@ -27,7 +27,7 @@
 	{{- $class = (print " " .) | htmlEscape | safeHTML | htmlUnescape | plainify -}}
 {{- end -}}
 
-{{- $key := site.Params.Api.Tenor -}}
+{{- $key := site.Params.Embeds.Api.Tenor -}}
 {{- $isVideo := site.Params.embeds.tenor.UseVideo | default true -}}
 
 {{- $url := "" -}}
@@ -95,7 +95,8 @@
 			{{- end -}}
 			<a href="{{- $url | safeURL -}}">{{- $title | htmlUnescape | safeHTML -}}</a>
 		</video>
-		<div id="{{- $cacheKey -}}--det" class="sr-only">
+		{{- /* @NOTE For some reason Reader View was still picking this up using just "sr-only" */ -}}
+		<div id="{{- $cacheKey -}}--det" class="sr-only skyscraper">
 			{{- $alt | htmlUnescape | safeHTML -}}
 		</div>
 	{{- else -}}

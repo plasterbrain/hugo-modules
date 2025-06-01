@@ -8,7 +8,7 @@
 	and get an OAuth access token from Spotify's Web API console to use before
 	building your Hugo site. (The token lasts an hour.)
 
-	You should set `site.Params.Api.SpotifyAccess` to your token value.
+	You should set `site.Params.Embeds.Api.SpotifyAccess` to your token value.
 
   @link https://developer.spotify.com/console/get-track/
   @link https://developer.spotify.com/documentation/embeds/guides/creating-an-embed/
@@ -23,7 +23,7 @@
 {{- /* Change e.g. "track/" to "tracks/". API endpoints use plural nouns. */ -}}
 {{- $apiTarget := path.Join (print $type "s") (path.Base $path) -}}
 
-{{- $bearer := print "Bearer " site.Params.Api.SpotifyAccess -}}
+{{- $bearer := print "Bearer " site.Params.Embeds.Api.SpotifyAccess -}}
 
 {{- with getJSON (print
 	"https://api.spotify.com/v1" $apiTarget) (dict

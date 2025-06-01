@@ -3,17 +3,22 @@
 #---
 
 [params.embeds]
+imageDir = "assets/images/remote"
+jsDir = "assets/js"
+cssDir = "assets/css"
+
 [params.embeds.youtube]
-	showCaptions = true
-	class = "js-only"
+showCaptions = true
+class = "js-only"
 
 [params.embeds.tenor]
-	useVideo = true
+useVideo = true
 
-[params.api] # Add this to a separate params.toml file that is gitignored
-	itch = ""
-	spotifyAccess = ""
+[params.embeds.api] # Add this to a separate params.toml file that is gitignored
+itch = ""
+spotifyAccess = ""
+logodev = ""
 
 [module.hugoVersion]
-	extended = true
-	min = "0.141.0"
+extended = true
+min = "0.141.0"
