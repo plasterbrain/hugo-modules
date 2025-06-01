@@ -18,13 +18,6 @@ There's no exhaustive srcset formatting bc I don't like it
     ```
 1. Ensure you have a class called `.sr-reader-only`! This hides accessible icon labels from screen readers *without* removing them from browser Reader View.
 
-## SPICY
-- https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
-
 ## Known issues
-- get-placeholder gave some DNE error using placeholder.content that went away after server restart
-- icon.html uses "sr-reader-only" which is a wrapper for Tailwind "sr-only" that doesn't get picked up by browser reader view.
-
-## Read more
-- [Hugo forums discussion on possible LQIP approaches](https://discourse.gohugo.io/t/low-quality-image-placeholder-lqip-pipes/20259)
-- https://github.com/golang/go/issues/62421
+- get-placeholder gave some DNE error using placeholder.Content that went away after server restart
+- icon.html uses `.sr-reader-only` which is a wrapper for Tailwind `.sr-only` that doesn't get picked up by browser reader view.

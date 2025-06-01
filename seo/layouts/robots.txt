@@ -5,11 +5,11 @@
 	What it says on the tin. Note site.Params.Seo.IsPrivate is handled by robots
 	tags on each page rather than here. Non-production environments disallow all
 	as a blanket "safety" measure, but you should probably block access to your
-	staging website with a password or firewall!
+	live staging website with a password or firewall.
 
-	@link https://www.searchenginejournal.com/how-to-block-google-staging-site/327697/
 	@link https://runtimeterror.dev/dynamic-robots-txt-hugo-external-data-sources/
 */ -}}
+
 # ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡇⠀⢸⣗⠲⣖⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 # ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⠇⠀⠀⢼⡏⠀⠀⠉⠲⡽⡀⠀⠀⠀⢀⢀⣠⣤⣄⡀⡀⢰⣶⣶⣶⣶⣶⣾⣿⡇
 # ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡏⠀⠀⠀⡇⣇⠀⠀⠀⠀⢸⣇⠀⠀⡐⡟⡻⠒⠙⢯⡿⡊⠀⠛⠛⡛⣿⡟⠋⠉⠁
@@ -20,12 +20,11 @@
 # ⠈⣿⣆⠀⣴⡗⠁⠀⠀⠀⠀⠀⠀⢀⡇⣯⠀⠀⠀⣠⣶⣿⠏⠀⠛⣯⡯⡿⠋⠁⠀⠀⠀⠀⠀⠀⣯⣿⠇⠀⠀⠀
 # ⠀⠘⣿⣟⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⣸⡿⠛⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠘⠀⠀⠀
 # ⠀⠀⠘⠻⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+
 {{- /* Comment everything out by changing this to "#" */ -}}
-
-
 {{ $n := "" -}}
 
-{{ if not hugo.IsProduction }}
+{{ if hugo.IsDevelopment }}
 {{$n}}User-agent: *
 {{$n}}Disallow: /
 {{- end -}}
