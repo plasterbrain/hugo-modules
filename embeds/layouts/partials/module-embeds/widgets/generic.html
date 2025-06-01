@@ -22,44 +22,91 @@
 		{{- partialCached "module-embeds/widgets/generic/_markup.html" (dict
 			"Data" $data.data
 			"Url" $url
-		) -}}
-	{{- end }}
+		) $url -}}
+	{{- end -}}
 {{ else }}
 	{{- /* API 1 bad URL? */ -}}
-	{{- warnf "Embeds: failed to embed itch url %q" $url -}}
+	{{- warnf "Embeds: failed to embed url %q" $url -}}
 {{- end -}}
 
 {{- define "partials/module-embeds/widgets/generic/_markup.html" -}}
 {{- $data := .Data -}}
 {{- $url := .Url -}}
-<figure class="flex mb-4 card not-prose">
-	<a href="{{- $url | safeURL }}">
-		<img src="{{- $data.image.url | safeURL -}}" alt="" width="200" height="155" class="card--thumbnail">
-	</a>
-	<figcaption class="flex flex-col p-4 pl-6 flex-2">
-		<a href="{{- $url | safeURL -}}"
-			class="card--title line-clamp-2 opacity-hover">
-			{{- /* Page title minus the site name */ -}}
-			{{- replace $data.title (print $data.publisher " - ") "" -}}
-		</a>
-		<p class="my-2 text-sm card--desc line-clamp-2">
-			{{- $data.description | truncate 125 -}}
-		</p>
+{{- $parsedUrl := urls.Parse $url -}}
+{{- $host := $parsedUrl.Hostname -}}
 
-		{{- $pubLogo := resources.GetRemote $data.logo.url -}}
-		<span class="text-sm{{- if $pubLogo }} flex items-center {{- end -}}">
-			{{- if $pubLogo -}}
-				<img src="{{- $data.logo.url | safeURL -}}" width="22" height="22" alt="" class="mr-1"/>
+{{- $imageDir := site.Params.Embeds.ImageDir | default "assets" -}}
+
+<a href="{{- $url | safeURL }}" class="opacity-hover not-prose bg-[#fff]">
+	<figure class="mb-4 rounded-md border md:flex border-gray">
+		<div style="width:200px;" class="mx-auto">
+		{{- /* Pretend we are a browser to bypass anti-scraping measures 🤓
+		@link https://stackoverflow.com/questions/61835224/getting-the-remote-server-returned-an-error-403-forbidden-error-whatever-i */ -}}
+		{{- $opts := dict
+			"headers" (dict
+				"User-Agent" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0"
+				"Accept-Encoding" "gzip, deflate, br, zstd"
+				"Accept" "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+				"Accept-Charset" "ISO-8859-1"
+			) -}}
+		{{- $hadImage := false -}}
+		{{- with try (resources.GetRemote $data.image.url $opts) -}}
+			{{- with .Err -}}
+				{{- warnf "Embeds: %s" . -}}
+			{{- else with .Value -}}
+				{{- /* In case Images module DNE */ -}}
+				{{- with try (partialCached "image.html" (dict
+					"Image" .
+					"Width" 200
+					"Height" 155
+					"ImgClass" (slice "object-cover h-full")
+					"IsAlpha" false
+					"Name" (path.Join $imageDir .Name)
+				) .Name) -}}
+					{{- with .Err -}}
+						{{ warnf "Embeds: %s" . }}
+					{{- else -}}
+						{{- .Value | safeHTML -}}
+						{{- $hadImage = true -}}
+					{{- end -}}
+				{{- end -}}
 			{{- end -}}
+		{{- end -}}
+		{{- if not $hadImage -}}
+			<img src="{{- $data.image.url -}}" alt="" width="200" height="155" class="object-cover h-full">
+		{{- end -}}
+	</div>
+		<figcaption class="flex flex-col p-4 pl-6 flex-2">
+			<p class="text-lg font-semibold leading-relaxed line-clamp-2 text-ellipsis">
+				{{- /* Page title minus the site name */ -}}
+				{{- replace $data.title (print $data.publisher " - ") "" -}}
+			</p>
+			<p class="my-2 mb-2 text-sm leading-relaxed card--desc line-clamp-2 text-ellipsis">
+				{{- $data.description | truncate 125 -}}
+			</p>
 
-			<a href="{{- $url | safeURL -}}" class="underline opacity-hover">
+			{{- $pubLogo := $data.logo.url -}}
+			{{- $logodev := site.Params.Embeds.Api.logodev -}}
+			{{- if $logodev -}}
+				{{- with try (resources.GetRemote (printf "https://img.logo.dev/%s?token=%s" $host $logodev)) -}}
+					{{- with .Err -}}
+						{{- . -}}
+					{{- else with .Value -}}
+						{{- with resources.Copy (path.Join $imageDir .Name) . -}}
+							{{- $pubLogo = .RelPermalink -}}
+						{{- end -}}
+					{{- end -}}
+				{{- end -}}
+			{{- end -}}
+			<span class="text-sm{{- if $pubLogo }} flex items-center {{- end -}}">
+				<img src="{{- $pubLogo -}}" width="22" height="22" alt="" class="mr-1"/>
 				{{- $data.publisher -}}
-			</a>
-			<span aria-hidden="true">&nbsp;&middot;&nbsp;</span>
-			<time datetime="{{- $data.date -}}">
-				{{- time.Format ":date_long" $data.date -}}
-			</time>
-		</span>
-	</figcaption>
-</figure>
+				<span aria-hidden="true">&nbsp;&middot;&nbsp;</span>
+				<time datetime="{{- $data.date -}}">
+					{{- time.Format ":date_long" $data.date -}}
+				</time>
+			</span>
+		</figcaption>
+	</figure>
+</a>
 {{- end -}}

@@ -1,0 +1,30 @@
+{{- /*
+	MODULE: SEO
+	Function: paginate
+	---
+	We need to call paginate to set proper titles/canonical URLs, but calling pagination
+	anywhere (i.e., in the head, before even getting to the part of your template handling
+	pagination) sets it in stone for the rest of the page load.
+
+	Use this to define whether and how pages should be paginated.
+
+	@NOTE If you do not set up a default return it seems to call Paginate anyway. God help us all
+
+	DO NOT CACHE CALLS TO THIS PARTIAL.
+	---
+	Params:
+	- .	Page context
+	---
+	Returns:
+	- Paginator if it worked, otherwise false
+*/ -}}
+
+{{- $return := false -}}
+
+{{- $pages := cond site.BuildDrafts .Pages (where .Pages "Draft" "ne" true) -}}
+
+{{- if (partial "module-seo/functions/shouldPaginate.html" .) -}}
+	{{- $return = .Paginate $pages -}}
+{{- end -}}
+
+{{- return $return -}}

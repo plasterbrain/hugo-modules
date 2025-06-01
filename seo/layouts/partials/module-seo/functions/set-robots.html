@@ -2,12 +2,14 @@
 	MODULE: SEO
 	Function: set-robots
 	---
-	Sets site.Scratch field "Robots" to the content value of a robots meta tag.
+	Sets site.Scratch field "Robots" to the content value for a robots meta tag.
   If the site is not set to private, it will look to see if this page has
   `noindex` and `nofollow` parameters enabled.
 
-	The best way to override this on a per-layout basis is to use cascades with
-	the `noindex` and `nofollow` parameters rather than override this template.
+	The best way to override this is through frontmatter boolean params:
+	- `noindex`
+	- `nofollow`
+	...and cascades thereof, rather than overriding this template. But go off I guess
 
 	@link https://gohugo.io/content-management/front-matter/#front-matter-cascade
 	@link https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
@@ -20,10 +22,14 @@
 {{- $follow := "nofollow" -}}
 {{- $previews := slice -}}
 {{- if not site.Params.Seo.IsPrivate }}
-  {{- if and (not .Page.Params.noindex) (ne .Kind "section") -}}
-    {{- $index = "index" -}}
+	{{- /* Index if:
+		`noindex` is explicitly *false*
+		`noindex` is not set and it's not a */ -}}
+	{{- $shouldIndex := partial "module-seo/functions/should-index.html" . -}}
+  {{- if or (and (isset .Page.Params "noindex") (not .Page.Params.noindex)) $shouldIndex -}}
+		{{- $index = "index" -}}
 		{{- $previews = slice "max-snippet:-1" "max-image-preview:large" "max-video-preview:-1" -}}
-  {{- end -}}
+	{{- end -}}
   {{- if not .Page.Params.nofollow -}}
     {{- $follow = "follow" -}}
   {{- end -}}
@@ -31,9 +37,7 @@
 {{- /* Note: Make sure $index is the first item */ -}}
 {{- $value := slice $index $follow -}}
 
-{{- if site.Params.Seo.Ai.Block -}}
-	{{- $value = $value | append "Ai.Block" "noimageai" -}}
-{{- end -}}
+{{- $value = partial "module-seo/functions/add-robots-ai.html" $value -}}
 
 {{- $value = $value | append $previews -}}
 

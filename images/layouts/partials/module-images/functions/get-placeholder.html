@@ -20,6 +20,6 @@
 {{- $placeholder := $image.Resize "40x" -}}
 {{- $placeholder = $placeholder.Filter (images.GaussianBlur 20) -}}
 {{- if $returnString -}}
-	{{- $placeholder = printf `data:%s;base64,%s` $image.MediaType ($image.Content | base64Encode) -}}
+	{{- $placeholder = printf `data:%s;base64,%s` $placeholder.MediaType ($placeholder.Content | base64Encode) -}}
 {{- end -}}
 {{- return $placeholder -}}
