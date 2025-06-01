@@ -5,7 +5,7 @@
 	Sets site.Scratch field "OGCover" to the social media cover image. It will search in the order:
 	1. `params.OGCover.Image`
 	1. `params.Cover.Image`
-	1. `site.Seo.OGCover`
+	1. `site.Params.Seo.OGCover`
 
 	Depending on `.Params.OGCoverTemplate.Enabled` and `site.Params.Seo.OGCoverTemplate.Enabled`,
 	it will either use the image as-is (enabled = false) or generate a cover using get-ogCover.
@@ -14,19 +14,25 @@
 	- .	Page context
 */ -}}
 
-{{- $cover := .Params.OGCover.Image | default .Params.Cover.Image -}}
 {{- $page := . -}}
+{{- $cover := .Params.OGCover.Image | default .Params.Cover.Image -}}
+{{- $hasCover := false -}}
 
 {{- with $cover -}}
 	{{ with ($page.Resources.Get .) | default (resources.Get .) -}}
+		{{- $hasCover = true -}}
 		{{- $cover = . -}}
+		{{- if and site.Params.Seo.OGCoverTemplate.Enabled (ne .Params.OGCover.template.enabled false) -}}
+			{{- $.Scratch.Set "OGCover" (partial "functions/get-ogCover.html" (dict "Cover" $cover "Page" $page)) -}}
+		{{- else -}}
+			{{- $.Scratch.Set "OGCover" . -}}
+		{{- end -}}
 	{{- end -}}
 {{- end -}}
 
-{{- if and site.Params.Seo.OGCoverTemplate.Enabled (ne .Params.OGCover.template.enabled false) -}}
-	{{- $.Scratch.Set "OGCover" (partial "functions/get-ogCover.html" (dict "Cover" $cover "Page" $page)) -}}
-{{- else -}}
-	{{- with $cover -}}
+{{- if not $hasCover -}}
+	{{- $cover = site.Params.Seo.OGCover -}}
+	{{ with ($page.Resources.Get $cover) | default (resources.Get $cover) -}}
 		{{- $.Scratch.Set "OGCover" . -}}
 	{{- else -}}
 		{{- $.Scratch.Set "OGCover" "" -}}
