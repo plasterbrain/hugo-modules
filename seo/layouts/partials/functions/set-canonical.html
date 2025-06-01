@@ -11,9 +11,12 @@
 */ -}}
 
 {{- $canonical := .Params.Canonical | default .Permalink -}}
-{{- if .IsNode -}}{{- /* For pagination */ -}}
-	{{- with (partial "functions/paginate.html" .) -}}
+
+{{- /* Handle pagination */ -}}
+{{- if (partial "module-seo/functions/shouldPaginate.html" .) -}}
+	{{- with (partial "module-seo/functions/paginate.html" .) -}}
 		{{- $canonical = urls.JoinPath site.BaseURL .URL -}}
 	{{- end -}}
 {{- end -}}
+
 {{- $.Scratch.Set "Canonical" $canonical -}}

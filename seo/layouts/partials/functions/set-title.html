@@ -16,14 +16,13 @@
 
 {{- $title := .Title -}}
 {{- $og := .Page.Params.OGTitle | default .Title -}}
-{{- if .IsNode -}}
-	{{- with (partial "functions/paginate.html" .) -}}
-		{{ if ne .PageNumber 1 -}}
-			{{- $title = i18n "moduleSeo_titlePagination" (dict
-				"Title" $title "Page" .PageNumber) -}}
-			{{- $og = i18n "moduleSeo_titlePagination" (dict
-				"Title" $og "Page" .PageNumber) -}}
-		{{- end -}}
+{{- $pag := partial "module-seo/functions/paginate.html" . -}}
+{{- with $pag -}}
+	{{ if ne .PageNumber 1 -}}
+		{{- $title = i18n "moduleSeo_titlePagination" (dict
+			"Title" $title "Page" .PageNumber) -}}
+		{{- $og = i18n "moduleSeo_titlePagination" (dict
+			"Title" $og "Page" .PageNumber) -}}
 	{{- end -}}
 {{- end -}}
 {{- $.Scratch.Set "Title" (slice $title site.Title) -}}

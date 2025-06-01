@@ -1,0 +1,22 @@
+{{- /*
+	MODULE: SEO
+	Function: add-RobotsAI
+	---
+	Adds the proper robots meta tags to block AI scrapers.
+
+	@link https://www.bing.com/webmasters/help/which-robots-metatags-does-bing-support-5198d240
+	---
+	Params:
+*/ -}}
+
+{{- $robots := . -}}
+{{- if site.Params.Seo.Ai.Block -}}
+	{{- /* @TODO I had "Ai.Block" here but I don't remember what that is */ -}}
+	{{- $robots = $robots | append "noai" "noimageai" -}}
+	{{- if site.Params.Seo.Ai.bingAllowSnippet -}}
+		{{- $robots = $robots | append "nocache" -}}
+	{{- else -}}
+		{{- $robots = $robots | append "noarchive" -}}
+	{{- end -}}
+{{- end -}}
+{{- return $robots -}}

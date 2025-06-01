@@ -1,0 +1,26 @@
+{{- /*
+	MODULE: SEO
+	Function: shouldPaginate
+	---
+	Calling pagination on pages that don't need it seems to make extra redundant page templates
+	show up in `public`. Additionally calling .Paginate just tentatively on the wrong kind of page
+	will throw an error.
+
+	Use this to define whether the current page should be paginated.
+	---
+	Params:
+	- .	Page context
+	---
+	Return:
+	- boolean, whether to paginate
+*/ -}}
+
+{{- $return := false -}}
+{{- if (site.Params.Seo.Paginate | default false) -}}
+	{{- if and .IsNode (ne .Kind "404") -}}
+		{{- if or site.Params.Seo.PaginateHome (ne .Kind "home") -}}
+			{{- $return = true -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+{{- return $return -}}

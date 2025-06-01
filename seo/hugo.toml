@@ -7,11 +7,13 @@ name = "Author"
 
 [params.seo]
 isPrivate = false # Hide site from search engines
-isPaginated = true
 
 titleSeparator = " | "
 OGSite = "" 							# Used for OG:Site
 #OGCover = ""
+
+paginate = false # Whether your site uses pagination
+paginateHome = false # Whether homepage uses pagination (if `paginate` is true)
 
 # https://moz.com/learn/seo/title-tag
 maxTitleChars = 60
@@ -31,7 +33,8 @@ colorScheme = "light" # color-scheme CSS/meta tag value
 
 faviconPath = "favicons/"
 
-wmStartPage = ""
+# --- Web Manifest
+wmStartPage = "" # Start page
 #wmShortName = ""
 faviconWMGlob = "**web-app-manifest-*.png" #"**android-chrome*.png"
 backgroundColor = "#fff"	# Browser fill color when PWA loads
@@ -41,10 +44,15 @@ wmDisplay = "standalone" # Webappmanifest display mode
 enabled = true
 image = ""
 size = "1200x630"
+imageDir = "assets/images/covers"
 
 [params.seo.ai]
 block = true
 whitelist = []
+# Use `nocache` over `noarchive`, allowing Microsoft AI to use page title, snippet, and link, but not content
+# @link https://www.bing.com/webmasters/help/which-robots-metatags-does-bing-support-5198d240
+# @link https://blogs.bing.com/webmaster/september-2023/Announcing-new-options-for-webmasters-to-control-usage-of-their-content-in-Bing-Chat
+bingAllowSnippet = false
 
 [outputs]
 home = [ "HTML", "RSS", "webappmanifest", "ai", "humans"]

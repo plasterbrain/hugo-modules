@@ -1,0 +1,15 @@
+{{- /*
+	MODULE: SEO
+	Function: should-index
+	---
+	Override this template to customize which templates should have the robot meta tag
+	`index` by default if .Page.Params.Noindex is not set.
+	---
+	Params:
+	- .	Page context
+	---
+	Returns
+	- boolean
+*/ -}}
+
+{{- return or (eq .Kind "page") (eq .Kind "home") -}}
