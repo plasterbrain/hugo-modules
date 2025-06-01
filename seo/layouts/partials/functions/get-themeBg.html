@@ -4,13 +4,14 @@
 	@requires hugo-modules/colors
 	---
 	Creates a solid-color background image based on `site.Params.ThemeColor` to be
-	used when generating OG banners. It's saved as "images/og/_og-bg.jpg".
+	used when generating OG banners. It's saved as site.Params.OGCoverTemplate.ImageDir + "_og-bg.jpg".
 	---
 	Returns
 	- [resource]	Cover background
 */ -}}
 
 {{- $return := false -}}
+{{- $imageDir := site.Params.OGCoverTemplate.ImageDir | default "" -}}
 {{- $temp := "partials/functions/%s.html" -}}
 {{- $size := string site.Params.seo.OGCoverTemplate.Size | default "1200x630" -}}
 {{- $pixel := resources.Get "1x1.png" -}}
@@ -31,6 +32,6 @@
 	{{- with $hsl -}}
 		{{- $pixel = $pixel.Filter (images.Colorize (index . 0) (mul (index . 1) 100.0) 100) -}}
 	{{- end -}}
-	{{- $return = resources.Copy "assets/images/og/_og_bg.jpg" $pixel -}}
+	{{- $return = resources.Copy (path.Join $imageDir "_og_bg.jpg") $pixel -}}
 {{- end -}}
 {{- return $return -}}

@@ -1,4 +1,29 @@
-{{ $css := resources.Get "module-embeds/css/lite-yt-embed.css" }}
+{{- /*
+	MODULE: EMBEDS
+	Styles
+	---
+	For use in `<head>` to load necessary embed styles.
+
+	@NOTE This does not include .HasShortcode logic. Add that in your own template
+	around the partial call so you can cache this partial!
+
+	Example:
+	```
+	{{- if .HasShortcode "youtube" -}}
+		{{- partialCached "module-embeds/style-embeds.html" . "default" -}}
+	{{- end -}}
+	```
+	---
+	Params:
+	- .		Page context
+*/ -}}
+
+{{- $cssDir := site.Params.Embeds.cssDir | default "css" -}}
+{{- $css := resources.Get "module-embeds/css/lite-yt-embed.css" -}}
 {{- with ($css | resources.Minify) -}}
-	<link rel="stylesheet" href="{{ .RelPermalink | safeURL -}}" type="text/css">
+	{{- $css = . -}}
+	{{- if ne $cssDir "" -}}
+		{{- $css = resources.Copy (path.Join $cssDir $css) . -}}
+	{{- end -}}
+	<link rel="stylesheet" href="{{ $css.RelPermalink | safeURL -}}" type="text/css">
 {{- end -}}

@@ -1,6 +1,27 @@
-{{- with resources.Get "js/lite-yt-embed.js" -}}
+{{- /*
+	MODULE: EMBEDS
+	Footer Scripts
+	---
+	For use at the end of `<body>` to load necessary embed scripts.
+
+	@NOTE This does not include .HasShortcode logic. Add that in your own template
+	around the partial call so you can cache this partial!
+
+	Example:
+	```
+	{{- if .HasShortcode "youtube" -}}
+		{{- partialCached "module-embeds/script-embeds.html" . "default" -}}
+	{{- end -}}
+	```
+	---
+	Params:
+	- .		Page context
+*/ -}}
+
+{{- $jsDir := site.Params.Embeds.jsDir | default "js" -}}
+{{- with resources.Get "module-embeds/js/lite-yt-embed.js" -}}
 	{{- $js := . | js.Build (dict
-		"targetPath" "js/embeds.min.js"
+		"targetPath" (path.Join $jsDir "lite-yt-embed.min.js")
 		"minify" true
 		"params" (dict
 			"lang" site.Language.Lang

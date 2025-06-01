@@ -6,6 +6,12 @@
 	---
 */ -}}
 
-{{- with (resources.Get "module-images/js/lozad.min.js") }}
-		<script defer src="{{- .RelPermalink -}}"></script>
+{{- $script := "lozad.min.js" -}}
+{{- $jsDir := site.Params.Images.jsDir | default "js" -}}
+{{- with resources.Get (path.Join "module-images/js/" $script) -}}
+	{{- $script = . -}}
+	{{- if ne $jsDir "" -}}
+		{{- $script = resources.Copy (path.Join $jsDir $script) . -}}
+	{{- end -}}
+	<script defer src="{{- $script.RelPermalink -}}"></script>
 {{- end -}}
