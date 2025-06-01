@@ -2,5 +2,9 @@
 # MODULE: Images
 #---
 
+[params.images]
+pathPrefix = "assets"
+jsDir = "assets/js"
+
 [params.images.icons]
-path = "images/icons/%s.svg"
+path = "assets/images/icons/%s.svg"

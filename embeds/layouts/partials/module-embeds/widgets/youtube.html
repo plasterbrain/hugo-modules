@@ -1,5 +1,11 @@
 {{- /*
+	MODULE: EMBEDS
+	YouTube embed
+	---
 	@link https://github.com/paulirish/lite-youtube-embed?tab=readme-ov-file
+	---
+	Params:
+	- .		Video URL to embed. Params go on the end of the url.
 */ -}}
 
 {{- $url := . -}}
@@ -39,13 +45,17 @@
 {{- end -}}
 
 {{- define "partials/module-embeds/widgets/youtube/markup.html" -}}
+	{{- $imageDir := site.Params.Embeds.ImageDir | default "assets" -}}
+
 	{{- $id := .Id -}}
 	{{- $data := .Data -}}
 	{{- $url := .Url -}}
 	{{- $params := .Params -}}
 	{{- $thumbnail := resources.GetRemote $data.thumbnail_url -}}
-	{{- $thumbnail = resources.Copy (printf "assets/images/thumbnails/%s.jpg" $id) $thumbnail -}}
-	{{- $style := printf `style="background-image:url('%s');"` $thumbnail.RelPermalink -}}
+	{{- /* @NOTE Image template below will copy resource and make this a real permalink: */ -}}
+	{{- $filename := path.Join $imageDir $id -}}
+	{{- $style := printf `style="background-image:url('%s');"`
+		(relURL (path.Join (print $filename ".jpeg"))) -}}
 	{{- $class := site.Params.Embeds.Youtube.Class | default "js-only" -}}
 	{{- $class = delimit (uniq (split $class " ")) " " -}}
 
@@ -61,8 +71,9 @@
 		<div class="relative aspect-video">
 			{{- partialCached "image.html" (dict
 				"Image" $thumbnail
+				"Name" $filename
 				"Class" (slice "aspect-video")
-				"Width" 560 "Height" 315
+				"IsAlpha" false
 				"ImgClass" (slice "mx-auto rounded-md")
 				"Clamp" true) $data.thumbnail_url -}}
 
