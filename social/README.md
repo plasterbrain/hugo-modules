@@ -1,11 +1,14 @@
-# Hugo Modules: Social
-- Privacy-friendly share links for Facebook, Hacker News, Mastodon (using Toot on kytta.dev), Reddit, Tumblr, and Twitter, which you can use to set up social share buttons.
-- WebShare API share button
+# Cool Hugo Modules: Social Links
+Adds `rel` links, basic IndieWeb integration, and privacy-friendly share links generator.
+
+## Features
+- Privacy-friendly share links for Facebook, Hacker News, Mastodon (using Toot on kytta.dev), Reddit, Tumblr, and Twitter, which you can use to set up social share buttons
+  - WebShare API share button
 - Basic IndieWeb/Webmentions integration
 - `rel="me"` tags for verification on Mastodon, IndieAuth login, etc.
-- Webfinger template to [use your domain as a Mastodon alias](https://guide.toot.as/guide/use-your-own-domain/#5-static-files)
+- Webfinger template to [use your domain as a Mastodon alias](https://guide.toot.as/guide/use-your-own-domain/#5-static-files). IDK if it works tho!!!
 
-## Install
+## Installation
 1. **Import** this module by adding an entry to your site's config file(s):
     ```toml
     [modules]
@@ -21,7 +24,7 @@
       ```
 1. Take a look at the partials included and stick the ones you like into your site code.
 
-### Connecting to activitypub on Netlify (untested)
+### Connecting to `activitypub` on Netlify (untested)
 If you're hosting on Netlify, you can make your website a fediverse account in and of itself, using Bridgy Fed.
 
 1. Add the redirects in *exampleSite/netlify.toml* to your site Netlify config.

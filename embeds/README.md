@@ -1,29 +1,35 @@
 # Hugo Module: Embeds
-Various shortcodes to turn URLs into embed widgets.
-- Generic website card
-- Bandcamp
-- itch\.io
-- Steam
-- SoundCloud
-- Spotify
-- YouTube
+Adds shortcodes for privacy-friendly embed widgets.
 
-However, rather than simply plugging the URL into an iframe or script source, each shortcode fetches data from the platform's API to recreate the third-party widget in plain, privacy-respectin' HTML.
+Rather than simply plugging the URL into an iframe or script, most shortcodes fetch data from the platform's API and recreates the third-party widget in plain HTML.
 
-Generic embeds use the Microlink API, which is limited to 50 free calls per day.
+## Features
+- Generic website card (using Microlink)
+- itch\.io and Steam widgets
+- Tenor gifs (as accessible videos)
+- YouTube (using lite-youtube-embed)
+- Shortcode for showing (e.g., Creative Commons) license info
 
-It also includes a widget for showing license info.
+## Installation
+1. **Import** this module by adding an entry to your site's config file(s):
+    ```toml
+    [modules]
+    [[module.imports]]
+    path = "github.com/plasterbrain/hugo-modules/embeds"
+    ```
+1. **Set** API keys in a separate file, e.g., *config/_default/params.toml*. If your site is not using folders for configuration, see Hugo's page on [setting up a configuration directory](https://gohugo.io/configuration/introduction/#configuration-directory). Then add keys to the file, like this:
+    ```toml
+    [embeds.api]
+    itch = ""
+    logodev = ""
+    spotifyAccess = ""
+    ```
+    Add this file to your *.gitignore* so it doesn't get shared publically:
+    ```
+    config/**/params.toml
+    ```
+1. Other settings can be overridden as needed in *config/\*/hugo.toml*.
 
-## Install
-Follow general module install instructions.
-
-If using the itch\.io shortcode, you'll need [an itch API key](https://itch.io/api-keys). Put it a separate *config/_default/params.toml* file, like this:
-
-```toml
-[api]
-itch = "{abcd1234}"
-```
-
-Set your *gitignore* to exclude this file.
-
-Notes that using embeds can impact build time if third-party or APIs are slow to respond.
+## Notes
+- Generic embeds use the Microlink API, which is limited to 50 free calls per day.
+- Using embeds can impact build time if third-party APIs are slow to respond.

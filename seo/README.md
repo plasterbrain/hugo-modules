@@ -1,11 +1,15 @@
 # Hugo Modules: SEO
+Adds partials for SEO, favicons, and Open Graph support.
+
+## Features
 - Open Graph/social media tags
-- JSON-LD Schema
+- JSON-LD structured data
 - Favicons
-- Robot tags, *robots.txt, ai.txt*
+- *robots.txt* and *ai.txt*
+- AI-blocking features
 - Sitemap
 
-## Install
+## Installation
 1. **Import** this module by adding an entry to your site's config file(s):
     ```toml
     [modules]
@@ -73,13 +77,13 @@
       ```
 
 ## Notes
-- OG:URL is used as JSON-LD "series root" for paginated archives.
+- OG:URL is used as the JSON-LD "series root" for paginated archives.
 - JSON-LD templates assume your search page uses `q` as the search term query parameter (ex. "coolfoods.com/search?q=hotdogs")
 - Does not support multiple sitemaps
 - Assumes OG title does *not* include site title
-- Does not support titles/canonical for paginated posts if you've somehow set those up
-- Custom OG images will increase your build time
+- Does not support titles/canonical for posts with multiple pages if you've somehow set that up -- only paginated Sections
+- Custom OG images will increase your build time 😔
 
 ## Known issues
-- Giving some error where $title is template.html
+- Giving some error where `$title` is `template.html`
 - Hugo sometimes caches the custom OG images, so if you're editing *get-ogCover.html*, you'll have to clear the generated resources folder to see changes on existing pages.

@@ -14,10 +14,12 @@ class = "js-only"
 [params.embeds.tenor]
 useVideo = true
 
-[params.embeds.api] # Add this to a separate params.toml file that is gitignored
-itch = ""
+# ⚠ API Keys ⚠
+# Move these to a separate, gitignored file. See README for help.
+[params.embeds.api]
+itch = "" 						# For itch.io widget - @link https://itch.io/api-keys
+logodev = "" 					# For generic site favicons
 spotifyAccess = ""
-logodev = ""
 
 [module.hugoVersion]
 extended = true

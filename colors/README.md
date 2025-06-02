@@ -1,4 +1,7 @@
-# Hugo Modules: Colors
+# Cool Hugo Modules: Colors
+Adds some color data/utilities for other modules.
+
+## Features
 - Data file with some common branding colors
 - Some color-conversion utilities, useful for e.g., getting WCAG-compliant contrast colors.
 
