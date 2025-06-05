@@ -2,7 +2,7 @@
 Adds partials and functions for responsive, accessible, performant image loading.
 
 ## Features
-- Lazy loading with Lozad.js
+- Browser lazy loading
 - Automatic WebP, PNG/JPG fallback
 - Low-quality image placeholders (LQIP) using native Hugo functions
 - WCAG-safe color for text overlays (using the Colors module)
