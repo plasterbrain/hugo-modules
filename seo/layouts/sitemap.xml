@@ -4,8 +4,6 @@
 	---
 	What it says on the tin.
 
-	@TODO Localized links are throwing an error
-
 	@link https://www.sitemaps.org/protocol.html
 	@link https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap
 	---
@@ -15,9 +13,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	{{- if not site.Params.Seo.IsPrivate -}}
 	{{- range (where site.Pages "Sitemap.Disable" "ne" true) -}}
-	{{- if and .Permalink (not .Params.Noindex) }}
+	{{- if not .Params.Noindex }}
 	<url>
-		<loc>{{- .Permalink -}}</loc>
+		{{- $link := (partialCached "module-seo/functions/get-canonical.html" . .RelPermalink) }}
+		<loc>{{ absURL $link }}</loc>
 		{{- if not .Lastmod.IsZero }}
 		<lastmod>{{- .Lastmod.Format "2006-01-02T15:04:05-07:00" | safeHTML -}}</lastmod>
 		{{- end }}
@@ -27,12 +26,12 @@
 		{{- if ge .Sitemap.Priority 0.0 -}}
 		<priority>{{ .Sitemap.Priority }}</priority>
 		{{- end }}
-		{{- /* if .IsTranslated }}
+		{{- if .IsTranslated }}
 		<xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" />
 		{{- range .Translations -}}
 		<xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
 		{{- end }}
-		{{- end */ -}}
+		{{- end }}
 	</url>
 	{{- end }}
 	{{- end }}
