@@ -7,8 +7,6 @@
 
 	With site.Params.Embeds.Tenor.UseVideo set to true (default), it will use video format.
 
-	@NOTE Video uses lozad.js (from Image Module) to lazy load.
-
 	@link https://developers.google.com/tenor/guides/quickstart
 	@link http://kb.daisy.org/publishing/docs/html/video.html
 	@link https://web.dev/articles/lazy-loading-video
@@ -89,9 +87,9 @@
 {{ $cacheKey := print "tenor-" $id }}
 <figure class="embed embed-tenor{{- $class | safeHTMLAttr -}}" style="max-width: {{ $width | safeHTMLAttr -}}px;">
 	{{- if $isVideo -}}
-		<video id="{{- $cacheKey -}}" aria-label="{{- $title | htmlEscape | safeHTML | htmlUnescape | plainify -}}" class="mb-2 rounded-md lozad" width="{{- $width -}}" height="{{- $height -}}" controls autoplay muted playsinline loop controlsList="nofullscreen noremoteplayback noplaybackrate nodownload" disablePictureInPicture aria-details="{{- $cacheKey -}}--det"{{- with $preview }} poster="{{- . -}}"{{- end -}}>
+		<video id="{{- $cacheKey -}}" aria-label="{{- $title | htmlEscape | safeHTML | htmlUnescape | plainify -}}" class="mb-2 rounded-md" width="{{- $width -}}" height="{{- $height -}}" controls autoplay muted playsinline loop controlsList="nofullscreen noremoteplayback noplaybackrate nodownload" disablePictureInPicture aria-details="{{- $cacheKey -}}--det"{{- with $preview }} poster="{{- . -}}"{{- end -}}>
 			{{- range $format, $url := $videos -}}
-				<source data-src="{{- $url -}}" type="video/{{- $format -}}">
+				<source src="{{- $url -}}" type="video/{{- $format -}}">
 			{{- end -}}
 			<a href="{{- $url | safeURL -}}">{{- $title | htmlUnescape | safeHTML -}}</a>
 		</video>
@@ -100,15 +98,23 @@
 			{{- $alt | htmlUnescape | safeHTML -}}
 		</div>
 	{{- else -}}
-		{{- partialCached "image.html" (dict
+		{{- $imageOpts :=  (dict
 			"Image" $image
 			"Sources" (slice $preview)
 			"Lazy" true
 			"Alt" $alt
 			"Width" $width
 			"Height" $height
-			"ImgAtts" (slice `class="w-full"` (printf `id="%s"` $cacheKey))
-		) $cacheKey -}}
+			"ImgClass" (slice "w-full")
+			"ImgAtts" (dict "id" $cacheKey)
+		) -}}
+		{{- with try (partial "partials/module-images/url-to-image.html" $imageOpts) -}}
+			{{- with .Err -}}
+				{{- warnf "Embeds: Image Module not installed!" -}}
+			{{- else -}}
+				{{- .Value | safeHTML -}}
+			{{- end -}}
+		{{- end -}}
 	{{- end -}}
 	<figcaption class="flex justify-between ml-auto font-cursive">
 		<span>
