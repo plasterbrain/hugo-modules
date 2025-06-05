@@ -1,0 +1,43 @@
+{{- /*
+	MODULE: CONSTANTS
+	Function: sanitize-attr-string
+	---
+	Cleans out HTML-breaking garbage from strings meant to be used as attribute
+	values (e.g., meta content, alt text).
+
+	...Sanitize is probably the wrong word, but it's distinct from Hugo's "escape"
+	vs. "unescape" vs. "safe" vs...
+
+	@NOTE This works as-is for meta tags (based on my testing), but for image
+	`alt` it needs an additional `htmlEscape` on the output.
+
+	@link https://spot.colorado.edu/~sniderc/howtos/htmlEntities.html
+	@link https://www.compart.com/en/unicode/html
+	---
+	Params:
+	- .		String to sanitize
+	---
+	Returns:
+	- string
+ */ -}}
+
+{{- $string := . -}}
+{{- $string = trim $string "\n\t\r" -}}
+{{- /* Yeet linefeed characters added explicitly */ -}}
+{{- $string = replace $string "&#10;" " " -}}
+{{- $string = replace $string "&#13;" " " -}}
+{{- $string = replace $string "&#xA;" " " -}}
+{{- /* Remove HTML, then expose additional hidden linefeed characters */ -}}
+{{- $string = $string | plainify | transform.XMLEscape -}}
+{{- /* This linefeed entity will show up in multi-paragraph auto-generated
+			 `.Summary`. For some reason it needs transform.XMLEscape. */ -}}
+{{- $string = replace $string "&#xA;" " " -}}
+{{- $string = $string | htmlUnescape -}}
+{{- /* LMAO */ -}}
+{{- $string = replace $string "&quot;" "\u0022" -}}
+{{- $string = replace $string "&apos;" "\u2019" -}}
+{{- $string = replace $string "&lsquo;" "\u2018" -}}
+{{- $string = replace $string "&rsquo;" "\u2019" -}}
+{{- $string = replace $string "&ldquo;" "\u201C" -}}
+{{- $string = replace $string "&rdquo;" "\u201D" -}}
+{{- return $string -}}
