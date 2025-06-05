@@ -55,7 +55,7 @@
 	{{- /* @NOTE Image template below will copy resource and make this a real permalink: */ -}}
 	{{- $filename := path.Join $imageDir $id -}}
 	{{- $style := printf `style="background-image:url('%s');"`
-		(relURL (path.Join (print $filename ".jpeg"))) -}}
+		(relURL (path.Join (print $filename ".jpg"))) -}}
 	{{- $class := site.Params.Embeds.Youtube.Class | default "js-only" -}}
 	{{- $class = delimit (uniq (split $class " ")) " " -}}
 
@@ -69,13 +69,20 @@
 	{{- /* Humman noscript version for JS haters */ -}}
 	<noscript data-nosnippet="true">
 		<div class="relative aspect-video">
-			{{- partialCached "image.html" (dict
+			{{- $imageOpts := (dict
 				"Image" $thumbnail
 				"Name" $filename
 				"Class" (slice "aspect-video")
-				"IsAlpha" false
 				"ImgClass" (slice "mx-auto rounded-md")
-				"Clamp" true) $data.thumbnail_url -}}
+				"IsAlpha" false
+			) -}}
+			{{- with try (partial "partials/module-images/picture.html" $imageOpts) -}}
+				{{- with .Err -}}
+					{{- warnf "Embeds: Image Module not installed!" -}}
+				{{- else -}}
+					{{- .Value | safeHTML -}}
+				{{- end -}}
+			{{- end -}}
 
 			<div class="absolute inset-0 p-4 w-full h-full bg-black bg-opacity-70 centered">
 				{{- partialCached "icon.html" (dict
