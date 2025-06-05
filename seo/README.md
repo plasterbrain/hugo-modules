@@ -36,44 +36,8 @@ Adds partials for SEO, favicons, and Open Graph support.
     - *baseof.html*:
       Add this in your site's `<head>`:
       ```golang
-      {{- /* Block: Title */ -}}
-      {{- block "title" . -}}
-        {{- partial "functions/set-title.html" . -}}
-      {{- end -}}
-
-      {{- /* Block: Description */ -}}
-      {{- block "description" . -}}
-        {{- partial "functions/set-description.html" . -}}
-      {{- end -}}
-
-      {{- /* Block: Cover */ -}}
-      {{- block "cover" . -}}
-        {{- partial "functions/set-ogCover.html" . -}}
-      {{- end -}}
-
-      {{- /* Block: Canonical */ -}}
-      {{- block "canonical" . -}}
-        {{- partial "functions/set-canonical.html" . -}}
-      {{- end -}}
-
-      {{- /* Block: Robots */ -}}
-      {{- block "robots" . -}}
-        {{- partial "module-seo/functions/set-robots.html" . -}}
-      {{- end -}}
-
-      {{- /* Block: Schema - Delete if you don't want to use JSON-LD */ -}}
-      {{- block "schema" . -}}
-        {{- partial "functions/set-schema.html" . -}}
-      {{- end -}}
-
-      {{- partialCached "seo-site.html" . "default" -}}
-      {{- partial "seo-page.html" . -}}
-      ```
-    - *404.html*:
-      Our 404 page shouldn't have a robots directive or canonical tag.
-      ```golang
-      {{- define "robots" }}{{- "" -}}{{- end }}
-      {{- define "canonical" }}{{- "" -}}{{- end }}
+      {{- partialCached "module-seo/seo-site.html" . "default" -}}
+		  {{- partial "module-seo/seo-page.html" . -}}
       ```
 
 ## Notes

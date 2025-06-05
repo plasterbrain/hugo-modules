@@ -24,7 +24,7 @@ maxDescChars = 155
 # https://ogtester.com/blog/what-is-maximum-length-of-og-title-and-og-description
 maxOGDescChars = 85
 
-siteAlternateName = ""	# For certain Google JSON-LD schema
+siteAlternateName = ""	# For certain Google JSON-LD schema. Can also be a slice
 searchPageLayout = ""		# Layout used for your search page if any. Used for JSON-LD
 paywallClass = ""				# CSS class name (with the dot) containing paywalled content.
 themeColor = "#fff"				# Browser toolbar color
@@ -58,6 +58,7 @@ bingAllowSnippet = false
 home = [ "HTML", "RSS", "webappmanifest", "ai", "humans"]
 
 [outputFormats]
+# @NOTE webappmanifest is built into Hugo
 [outputFormats.browserconfig]
 	name = "browserconfig"
 	baseName = "browserconfig"

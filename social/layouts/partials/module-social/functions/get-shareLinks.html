@@ -33,8 +33,7 @@
 {{- $title = $title | htmlUnescape | safeHTML | plainify -}}
 {{- $description := $.Scratch.Get "OGDescription" | default .Description -}}
 {{- $description = $description | htmlUnescape | safeHTML | plainify -}}
-{{- $permalink := $.Scratch.Get "Canonical" | default .Permalink -}}
-{{- $permalink = strings.TrimRight "/" $permalink -}}
+{{- $permalink := strings.TrimRight "/" .Permalink -}}
 {{- $white := "#fff" -}}
 {{- $black := "#000" -}}
 
