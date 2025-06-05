@@ -9,16 +9,16 @@
 */ -}}
 
 {{- $id := .Permalink -}}
+{{- $titles := (partialCached "module-seo/functions/get-title.html" . .RelPermalink) -}}
 {{- $json := (dict
 	"@type" "WebPage"
 	"@id" $id
-	"url" ($.Scratch.Get "Canonical")
-	"name" ($.Scratch.Get "Title")
+	"url" (partialCached "module-seo/functions/get-canonical.html" . .RelPermalink)
+	"name" $titles.Title
 	"isPartOf" (dict
-		"@id" (print site.Home.Permalink "#website"))
+		"@id" (print site.BaseURL "#website"))
 	"datePublished" (.PublishDate.Format "2006-01-02T15:04:05Z0700")
 	"dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z0700")
-	"inLanguage" site.LanguageCode
 	"potentialAction" (slice (dict
 		"@type" "ReadAction"
 		"target" $id)))

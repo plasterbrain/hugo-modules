@@ -20,10 +20,10 @@
 {{- $useCover := and $cover (eq (printf "%T" $cover) "*resources.resourceAdapter") -}}
 {{- $size := string site.Params.seo.OGCoverTemplate.Size | default "1200x630" -}}
 
-{{- $bg := partialCached "functions/get-themeBg.html" . "default" -}}
+{{- $bg := partialCached "module-seo/functions/ogimage/get-themeBg.html" . "default" -}}
 
 {{- /* Overlay template on our cover image, if any */ -}}
-{{- $overlay := partialCached "functions/get-ogCoverTemplateOverlay.html" . "default" -}}
+{{- $overlay := partialCached "module-seo/functions/ogimage/get-ogImageOverlay.html" . "default" -}}
 
 {{- if $useCover -}}
 	{{- with $overlay -}}

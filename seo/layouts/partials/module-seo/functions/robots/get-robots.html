@@ -23,10 +23,11 @@
 {{- $previews := slice -}}
 {{- if not site.Params.Seo.IsPrivate }}
 	{{- /* Index if:
-		`noindex` is explicitly *false*
-		`noindex` is not set and it's not a */ -}}
-	{{- $shouldIndex := partial "module-seo/functions/should-index.html" . -}}
-  {{- if or (and (isset .Page.Params "noindex") (not .Page.Params.noindex)) $shouldIndex -}}
+		- Page kind matches logic set in `should-index`
+		- `.Params.noindex` is not set or is explicitly *false*  */ -}}
+	{{- $indexTypeOk := partial "module-seo/functions/robots/should-index.html" . -}}
+	{{- $indexParamOk := cond (isset .Page.Params "noindex") (not .Page.Params.noindex) true -}}
+  {{- if and $indexTypeOk $indexParamOk -}}
 		{{- $index = "index" -}}
 		{{- $previews = slice "max-snippet:-1" "max-image-preview:large" "max-video-preview:-1" -}}
 	{{- end -}}
@@ -35,10 +36,10 @@
   {{- end -}}
 {{- end }}
 {{- /* Note: Make sure $index is the first item */ -}}
-{{- $value := slice $index $follow -}}
+{{- $robots := slice $index $follow -}}
 
-{{- $value = partial "module-seo/functions/add-robots-ai.html" $value -}}
+{{- $robots = partial "module-seo/functions/robots/add-robots-ai.html" $robots -}}
 
-{{- $value = $value | append $previews -}}
+{{- $robots = $robots | append $previews -}}
 
-{{- $.Scratch.Set "Robots" (delimit $value ", ") -}}
+{{- return (delimit $robots ", ") -}}

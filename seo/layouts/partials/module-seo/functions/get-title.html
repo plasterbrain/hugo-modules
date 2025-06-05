@@ -1,0 +1,40 @@
+{{- /*
+	MODULE: SEO
+	Function: get-title
+	---
+	Returns values for meta `title` and `og:title`.
+	---
+	Params:
+	- .	Page context
+	---
+	Returns
+	- dict
+		- .Title		For the browser tab and search engines.
+		- .OGTitle	Uses .Page.Params.OGTitle and is for social media.
+*/ -}}
+
+{{- $title := .Title -}}
+{{- $ogTitle := .Page.Params.OGTitle | default .Title -}}
+
+{{- $pag := partial "module-seo/functions/paginate.html" . -}}
+{{- with $pag -}}
+	{{ if ne .PageNumber 1 -}}
+		{{- $title = i18n "moduleSeo_titlePagination" (dict
+			"Title" $title
+			"Page" .PageNumber
+		) -}}
+		{{- $ogTitle = i18n "moduleSeo_titlePagination" (dict
+			"Title" $ogTitle
+			"Page" .PageNumber
+		) -}}
+	{{- end -}}
+{{- end -}}
+
+{{- /* e.g., "Top 10 Ways to Make Pie | plasterbrain". */ -}}
+{{- $separator := site.Params.Seo.TitleSep | default " | " -}}
+{{- $title = delimit (slice $title site.Title) $separator -}}
+
+{{- return (dict
+	"Title" $title
+	"OGTitle" $ogTitle
+) -}}

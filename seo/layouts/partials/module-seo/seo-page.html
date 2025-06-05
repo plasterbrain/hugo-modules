@@ -12,26 +12,25 @@
 */ -}}
 
 {{- $ellip := "..." -}}
-{{- $separator := site.Params.Seo.TitleSep | default " | " -}}
 
-{{- $_titles := slice ($.Scratch.Get "Title") ($.Scratch.Get "OGTitle") -}}
-{{- $titles := slice -}}
-{{- range $_titles -}}
-	{{- $title := cond (reflect.IsSlice .) . (slice .) -}}
-	{{- $title = delimit $title $separator -}}
-	{{- $title = $title | htmlUnescape | safeHTML | plainify -}}
-	{{- $titles = $titles | append $title -}}
-{{- end -}}
-{{- $title := (index $titles 0) | truncate (site.Params.Seo.MaxTitleChars | default 60) $ellip | chomp -}}
-{{- $ogTitle := (index $titles 1) | truncate (site.Params.Seo.MaxDescChars | default 70) | chomp -}}
+{{- $_titles := (partialCached "module-seo/functions/get-title.html" . .RelPermalink) -}}
+{{- $title := (partial "module-constants/functions/sanitize-attr-string.html" $_titles.Title) -}}
+{{- $title = $title | truncate (site.Params.Seo.MaxTitleChars | default 60) $ellip -}}
+{{- $ogTitle := (partial "module-constants/functions/sanitize-attr-string.html" $_titles.OGTitle) -}}
+{{- $ogTitle = $ogTitle | truncate (site.Params.Seo.MaxDescChars | default 70) -}}
 
-{{- $description := ($.Scratch.Get "Description") | htmlUnescape | safeHTML | plainify | truncate (site.Params.Seo.MaxDescChars | default 155) $ellip | chomp -}}
+{{- $_descs := (partialCached "module-seo/functions/get-description.html" . .RelPermalink) -}}
+{{- $description := $_descs.Description -}}
+{{- $description = partial "module-constants/functions/sanitize-attr-string.html" $description -}}
+{{- $description = $description | truncate (site.Params.Seo.MaxDescChars | default 155) $ellip -}}
 
-{{- $ogDescription := ($.Scratch.Get "OGDescription") | htmlUnescape | safeHTML | plainify | truncate (site.Params.Seo.MaxOGDescChars | default 85) $ellip | chomp }}
+{{- $ogDescription := $_descs.OGDescription -}}
+{{- $ogDescription = partial "module-constants/functions/sanitize-attr-string.html" $ogDescription -}}
+{{- $ogDescription = $ogDescription | truncate (site.Params.Seo.MaxOGDescChars | default 85) $ellip }}
 		<title>{{- $title -}}</title>
 		<meta property="og:title" content="{{- $ogTitle -}}">
-		{{- with $.Scratch.Get "Canonical" }}
-		<meta property="og:url" content="{{- . -}}">
+		{{- with (partialCached "module-seo/functions/get-canonical.html" . .RelPermalink) }}
+		<meta property="og:url" content="{{- absURL . -}}">
 		<link rel="canonical" href="{{- . -}}">
 		{{- end -}}
 		{{- with $description }}
@@ -40,7 +39,7 @@
 		{{- with $ogDescription }}
 		<meta property="og:description" content="{{- . -}}">
 		{{- end -}}
-{{- with $.Scratch.Get "OGCover" }}
+{{- with (partialCached "module-seo/functions/ogimage/get-ogImage.html" . .RelPermalink) }}
 		<meta property="og:image" content="{{- .Permalink -}}">
 		<meta property="og:image:type" content="{{- .MediaType -}}">
 		<meta property="og:image:width" content="{{- .Width -}}">
@@ -76,15 +75,15 @@
 		<meta name="twitter:data2" content='{{- $minutes -}}'>
 	{{- end }}
 {{- end -}}
-{{- with $.Scratch.Get "Robots" }}
+{{- with (partialCached "module-seo/functions/robots/get-robots.html" . .RelPermalink) }}
 		<meta name="robots" content="{{- . -}}">
 {{- end }}
 
-{{- with $.Scratch.Get "Graph" }}
+{{- with (partialCached "module-seo/functions/get-schema.html" . .RelPermalink) }}
 	{{- $schema := dict
 		"@context" "https://schema.org"
 		"@graph" . -}}
-		{{/* For pretty print, add `(dict "indent" "	")` */}}
+	{{- /* For pretty print, use `jsonify (dict "indent" "	")` */ -}}
 	<script type="application/ld+json">
 		{{ $schema | jsonify | safeJS }}
 	</script>

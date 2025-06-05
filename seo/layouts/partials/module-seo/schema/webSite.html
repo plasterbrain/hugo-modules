@@ -9,23 +9,22 @@
 	You should set `site.Params.Pages.Search` set to the relative link to your
 	search results page and use "q" as the name of your search query parameter.
 
-	@link https://developers.google.com/search/docs/appearance/structured-data/sitelinks-searchbox
 	@link https://developers.google.com/search/docs/appearance/site-names
-
-	@TODO alternateName should support lists (ex. ["name", "name2"])
+	@link https://developers.google.com/search/docs/appearance/structured-data/sitelinks-searchbox
 	---
 	Params:
 	- .  Page context
+	---
+	Return
+	- dict
 */ -}}
 
-{{- $id := .Permalink -}}
 {{- $json := dict
 	"@type" "WebSite"
-	"@id" (print $id "#website")
-	"name" (site.Title | htmlUnescape | safeHTML | plainify)
-	"description" (site.Params.Description | htmlUnescape | safeHTML | plainify)
-	"url" ($.Scratch.Get "Canonical")
-	"inLanguage" site.LanguageCode
+	"@id" (print site.BaseURL "#website")
+	"name" site.Title
+	"description" site.Params.Description
+	"url" site.BaseURL
 -}}
 
 {{- with site.Params.Seo.SiteAlternateName -}}
@@ -34,7 +33,7 @@
 	) -}}
 {{- end -}}
 
-{{- with site.Params.Pages.Search -}}
+{{- with site.Params.Seo.Pages.Search -}}
   {{- with site.GetPage . -}}
     {{- $json := merge $json (dict
 			"potentialAction" (slice (dict

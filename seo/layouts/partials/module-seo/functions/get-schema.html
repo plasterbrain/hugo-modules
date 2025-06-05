@@ -1,0 +1,15 @@
+{{- /*
+	MODULE: SEO
+	Function: set-schema
+	---
+	Returns JSON-LD structured data dictionaries for the page's `@graph`.
+	---
+	Params:
+	- .	Page context
+*/ -}}
+
+{{- $graph := slice -}}
+{{- with partial "module-seo/schema/breadcrumbList.html" . }}
+	{{- $graph = $graph | append . -}}
+{{- end -}}
+{{- return $graph -}}

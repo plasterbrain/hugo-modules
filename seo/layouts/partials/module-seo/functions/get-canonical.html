@@ -1,0 +1,25 @@
+{{- /*
+	MODULE: SEO
+	Function: get-canonical
+	---
+	Gets canonical page link. Override this if you need more complex behavior.
+
+	@link https://developers.google.com/search/docs/specialty/ecommerce/pagination-and-incremental-page-loading#use-urls-correctly
+	---
+	Params:
+	- .	Page context
+*/ -}}
+
+{{- $canonical := false -}}
+
+{{- if ne .Kind "404" -}}
+	{{- $canonical = .Params.Canonical | default .Permalink -}}
+	{{- /* Handle pagination */ -}}
+	{{- if (partial "module-seo/functions/shouldPaginate.html" .) -}}
+		{{- with (partial "module-seo/functions/paginate.html" .) -}}
+			{{- $canonical = urls.JoinPath site.BaseURL .URL -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
+{{- return $canonical -}}

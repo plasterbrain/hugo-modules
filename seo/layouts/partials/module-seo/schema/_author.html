@@ -19,7 +19,7 @@
 	"name" $author
 ) -}}
 
-{{- with site.Params.Pages.About }}
+{{- with site.Params.Seo.Pages.About }}
   {{- $page := . }}
   {{- /* Can be internal or external */ -}}
   {{- with site.GetPage . -}}

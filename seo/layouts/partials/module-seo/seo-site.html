@@ -9,7 +9,7 @@
 		<meta property="og:site_name" content="{{- . | htmlUnescape | safeHTML | plainify -}}">
 {{- end }}
 		<meta property="og:locale" content="{{- site.LanguageCode -}}">
-{{- partialCached "seo-favicon.html" . "default" -}}
+{{- partialCached "module-seo/seo-favicon.html" . "default" -}}
 {{- if site.Params.Seo.Ai.Block }}
 		<meta name="CCBot" content="nofollow">
 {{- end -}}

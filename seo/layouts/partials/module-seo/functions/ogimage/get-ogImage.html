@@ -1,31 +1,36 @@
 {{- /*
 	MODULE: SEO
-	Function: set-ogCover
+	Function: get-ogImage
 	---
-	Sets site.Scratch field "OGCover" to the social media cover image. It will search in the order:
+	Returns URL for social media preview image. It will search for an image in:
 	1. `params.OGCover.Image`
 	1. `params.Cover.Image`
 	1. `site.Params.Seo.OGCover`
 
-	Depending on `.Params.OGCoverTemplate.Enabled` and `site.Params.Seo.OGCoverTemplate.Enabled`,
-	it will either use the image as-is (enabled = false) or generate a cover using get-ogCover.
+	Depending on the value(s) of `.Params.OGCoverTemplate.Enabled` (for page and
+	site), it will generate a cover with create-ogImage or return the image as-is.
 	---
 	Params:
 	- .	Page context
+	---
+	Returns:
+	- string
 */ -}}
 
 {{- $page := . -}}
 {{- $cover := .Params.OGCover.Image | default .Params.Cover.Image -}}
 {{- $hasCover := false -}}
 
+{{- $ogImage := "" -}}
+
 {{- with $cover -}}
 	{{ with ($page.Resources.Get .) | default (resources.Get .) -}}
 		{{- $hasCover = true -}}
 		{{- $cover = . -}}
 		{{- if and site.Params.Seo.OGCoverTemplate.Enabled (ne .Params.OGCover.template.enabled false) -}}
-			{{- $.Scratch.Set "OGCover" (partial "functions/get-ogCover.html" (dict "Cover" $cover "Page" $page)) -}}
+			{{- $ogImage = (partial "module-seo/functions/ogimage/create-ogImage.html" (dict "Cover" $cover "Page" $page)) -}}
 		{{- else -}}
-			{{- $.Scratch.Set "OGCover" . -}}
+			{{- $ogImage = . -}}
 		{{- end -}}
 	{{- end -}}
 {{- end -}}
@@ -33,8 +38,10 @@
 {{- if not $hasCover -}}
 	{{- $cover = site.Params.Seo.OGCover -}}
 	{{ with ($page.Resources.Get $cover) | default (resources.Get $cover) -}}
-		{{- $.Scratch.Set "OGCover" . -}}
+		{{- $ogImage = . -}}
 	{{- else -}}
-		{{- $.Scratch.Set "OGCover" "" -}}
+		{{- $ogImage = "" -}}
 	{{- end -}}
 {{- end -}}
+
+{{- return $ogImage -}}

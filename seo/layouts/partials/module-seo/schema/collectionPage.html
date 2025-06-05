@@ -9,13 +9,13 @@
 */ -}}
 
 {{- $id := .Permalink -}}
+{{- $descs := (partialCached "module-seo/functions/get-description.html" . .RelPermalink) -}}
 {{- $json := dict
 	"@id" $id
-	"url" ($.Scratch.Get "Canonical")
+	"url" (partialCached "module-seo/functions/get-canonical.html" . .RelPermalink)
 	"name" ($.Scratch.Get "OGTitle")
-	"description" ($.Scratch.Get "Description")
-	"isPartOf" (print site.Home.Permalink "#website")
-	"inLanguage" site.LanguageCode
+	"description" ($descs.Description)
+	"isPartOf" (print site.BaseURL "#website")
 -}}
 
 {{- $type := slice "CollectionPage" -}}
@@ -37,7 +37,7 @@
 		{{- $license = .Params.OGCover.License -}}
 		{{- $credit = .Params.OGCover.Credit -}}
 	{{- end -}}
-	{{- $image := partialCached "schema/_image.html" (dict
+	{{- $image := partialCached "module-seo/schema/_image.html" (dict
 		"Image" $cover
 		"License" $license
 		"Credit" $credit
