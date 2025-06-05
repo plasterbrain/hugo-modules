@@ -1,0 +1,52 @@
+{{/*
+	MODULE: IMAGES
+	URL to Image
+	---
+	Turns an image path into an `img` element without downloading/processing it.
+
+	---
+	Params:
+	- .Image			Path or URL of the image.
+	- [.Alt]			Alt text, default ""
+	- [.Width]		Image width as string. Loading hint -- the image is not resized.
+	- [.Height]		Image height as string. The image is not resized.
+	- [.ImgClass]	Class attribute value for the `img` as a slice of values.
+	- [.ImgAtts]	Additional atts for `img` as a dictionary
+	- [.Lazy]			Whether to lazy load the image, default true.
+*/}}
+
+{{- $lazy := ((index . "Lazy") | default true) -}}
+{{- $atts := dict
+	"src"			 .Image
+	"alt" 		 (.Alt | default "")
+-}}
+
+{{- with .Width -}}
+	{{- $atts = $atts | merge (dict "Width" .) -}}
+{{- end -}}
+{{- with .Height -}}
+	{{- $atts = $atts | merge (dict "Height" .) -}}
+{{- end -}}
+
+
+{{- if $lazy -}}
+	{{- $atts = $atts | merge (dict
+		"decoding" "async"
+		"loading" "lazy"
+	) -}}
+{{- end -}}
+
+{{- with .ImgClass -}}
+	{{- $atts = $atts | merge (dict
+		"class"  	(delimit (uniq .) " ")
+	) -}}
+{{- end -}}
+
+{{- $atts = $atts | merge (.ImgAtts | default dict) -}}
+
+{{- $attsStr := "" -}}
+{{- range $k, $v := $atts -}}
+	{{- $attsStr = printf `%s %s="%s"` $attsStr $k $v -}}
+{{- end -}}
+
+<img {{ $attsStr | safeHTMLAttr -}}>

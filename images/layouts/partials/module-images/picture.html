@@ -1,0 +1,197 @@
+{{/*
+	MODULE: IMAGES
+	Picture (from Resource)
+	---
+	Turns an image resource into a `picture` element with optional lazy-loading,
+	optional LQIP, multiple formats (WebP with PNG or JPEG fallback), and
+	`prefers-reduced-motion` alternative for GIFs.
+
+	@NOTE `Name` doesn't include an extension as most templates don't know the
+	extension of the image they're receiving.
+
+	@NOTE Resizing works but as images are often cached you may need to restart
+	the server to see changes.
+
+	- no download
+	- no clamp
+	- atts is dictionary
+	- picture has atts now
+	- isalpha default true
+
+	You can but don't need to cache this partial -- the part that processes the
+	image is cached by filename and dimensions.
+
+	@NOTE
+	---
+	Params:
+	- .Image			The image to show, as a Hugo resource.
+	- [.Name]			Name/path where images should publish, without file extension.
+								Default filename. Also used for the cache key.
+	- [.Alt]			Alt text, default ""
+	- [.Width]		If specified without .Height, the aspect ratio will be preserved.
+								Otherwise image will be squashed (crop your own images ffs)
+	- [.Height]		Ditto the above
+	- [.Class]		Class attribute value for the `picture` as a slice of values.
+	- [.ImgClass] Ditto but for the `img` inside.
+	- [.Atts]			Additional atts for `picture` as a dictionary
+	- [.ImgAtts]	Additional atts for `img` as a dictionary
+	- [.Lazy]			Whether to lazy load the image, default true.
+	- [.Lqip]			Whether to use LQIP, default true. Ignored if .Lazy is false.
+	- [.IsAlpha]	Whether image needs transparency, default true. This is to
+								decide whether to use PNG or JPEG as the second format.
+*/}}
+
+{{- if eq (printf "%T" .Image) "*resources.resourceAdapter" -}}
+	{{- $lazy := (index . "Lazy") | default true -}}
+	{{- $args := dict
+		"image" 	 (.Image)
+		"filename" (strings.TrimSuffix (path.Ext .Image.Name) (.Name | default .Image.Name))
+		"isAlpha"  ((index . "IsAlpha") | default true)
+		"width" 	 (.Width | string)
+		"height" 	 (.Height | string)
+	-}}
+
+	{{- $cacheKey := print $args.filename $args.width $args.height -}}
+
+	{{- $atts := dict
+		"alt" 		  	(.Alt | default "")
+		"class" 			(.Class | default slice)
+		"imgClass"  	(.ImgClass | default slice)
+		"pictureAtts"	(.Atts | default dict)
+		"imgAtts" 		(.ImgAtts | default dict)
+		"isLazy" 			$lazy
+		"useLqip"			(and ((index . "Lqip") | default true) $lazy)
+	-}}
+
+	{{- $finalArgs := partialCached "module-images/image/_get-image.html" $args $cacheKey -}}
+	{{- with $finalArgs -}}
+		{{- partial "module-images/image/_markup.html" (dict
+			"args" ($finalArgs | merge $atts)
+		) -}}
+	{{- end -}}
+{{- end -}}
+
+{{- /* Actual `picture` markup */ -}}
+{{- define "partials/module-images/image/_markup.html" -}}
+	{{- $args := .args -}}
+	{{- $sources := $args.sources -}}
+	{{- $image := last 1 $sources -}}
+
+	{{- $src := $args.image.Name -}}
+
+	{{- $alt := partial "module-constants/functions/sanitize-attr-string.html" $args.alt | htmlEscape -}}
+
+	{{- /* LQIP */ -}}
+	{{- $lqip := false -}}
+	{{- with $args.useLqip -}}
+		{{- $lqip = partialCached "module-images/functions/get-placeholder.html"
+		(dict "Image" $args.image) $args.image.Name -}}
+	{{- end -}}
+
+	{{- $pictureClass := $args.class -}}
+	{{- $pictureAtts := dict -}}
+	{{- $imgClass := $args.imgClass -}}
+	{{- $imgAtts := dict
+		"alt" $alt
+		"width" (string $args.image.Width)
+		"height" (string $args.image.Height)
+	-}}
+
+	{{- /* --- LAZY LOADING --- */ -}}
+	{{- if $args.isLazy -}}
+		{{- $imgAtts = $imgAtts | merge (dict
+			"decoding" "async"
+			"loading" "lazy"
+		) -}}
+	{{- else -}}
+		{{- with $lqip -}}{{- else -}}
+			{{- /* Last `source` is the `img`. No need to keep it in sources */ -}}
+			{{- $sources = complement $image $sources -}}
+		{{- end -}}
+	{{- end -}}
+
+	{{- /* --- CLASS --- */ -}}
+	{{- with $pictureClass -}}
+		{{- $pictureAtts = $pictureAtts | merge (dict
+			"class" (delimit (uniq $pictureClass) " ")
+		) -}}
+	{{- end -}}
+	{{- with $imgClass -}}
+		{{- $imgAtts = $imgAtts | merge (dict
+			"class" (delimit (uniq $imgClass) " ")
+		) -}}
+	{{- end -}}
+
+	{{- /* --- CUSTOM ATTRIBUTES --- */ -}}
+	{{- $pictureAtts = $pictureAtts | merge $args.pictureAtts -}}
+	{{- $imgAtts = $imgAtts | merge $args.imgAtts -}}
+
+	{{- /* --- ALL TOGETHER, NOW! --- */ -}}
+	{{- $pictureAttsStr := "" -}}
+	{{- range $k, $v := $pictureAtts -}}
+		{{- $pictureAttsStr = printf `%s %s="%s"` $pictureAttsStr $k $v -}}
+	{{- end -}}
+	{{- $imgAttsStr := "" -}}
+	{{- range $k, $v := $imgAtts -}}
+		{{- $imgAttsStr = printf `%s %s="%s"` $imgAttsStr $k $v -}}
+	{{- end -}}
+
+	<picture{{ $pictureAttsStr | safeHTMLAttr -}}>
+		{{- range $sources -}}
+			<source srcset="{{- .RelPermalink -}}" {{ if and $args.isGif (ne .MediaType.SubType "gif") -}}media="(prefers-reduced-motion: reduced)"{{- else -}}type="{{- .MediaType.Type -}}"{{- end -}}>
+		{{- end -}}
+
+		{{- with $lqip -}}
+			<img src="{{- . | safeURL -}}" {{ $imgAttsStr | safeHTMLAttr -}}>
+		{{- else -}}
+			{{- $image = index $image 0 -}}
+			<img src="{{- $image.RelPermalink -}}"{{ $imgAttsStr | safeHTMLAttr -}}>
+		{{- end -}}
+	</picture>
+{{- end -}}
+
+{{- define "partials/module-images/image/_get-image.html" -}}
+	{{- $args := . -}}
+
+	{{- /* --- DIMENSIONS --- */ -}}
+	{{- $width := string ($args.width | default "") -}}
+	{{- $height := string ($args.height | default "") -}}
+
+	{{- /* --- SOURCES --- */ -}}
+	{{- /* Hugo accepts bmp, gif, jpeg, jpg, png, tif, tiff, or webp. */ -}}
+	{{- $filetype := $args.image.MediaType.SubType -}}
+	{{- $isGif := eq $filetype "gif" -}}
+	{{- /* Order of priority: WebP, PNG (.IsAlpha) or JPEG */ -}}
+	{{- $formats := (slice "webp") | append (cond $args.isAlpha "png" "jpg") -}}
+	{{- /* @NOTE gif will be prioritized with media queries */ -}}
+	{{- if $isGif -}}
+		{{- $formats = $formats | append "gif" -}}
+	{{- end -}}
+
+	{{- $sources := slice -}}
+	{{- $realImage := $args.image -}}
+	{{- range $formats -}}
+		{{- $ext := . -}}
+		{{- $newImage := $args.image -}}
+		{{- if or $width $height -}}
+			{{- /* Resize if custom width and/or height was given. */ -}}
+			{{- $newImage = $args.image.Resize (print $width "x" $height " " $ext) -}}
+		{{- else if ne $ext $filetype -}}
+			{{- /* Otherwise just convert to the new filetype, if necessary. */ -}}
+			{{- $newImage = $args.image.Process $ext -}}}
+		{{- end -}}
+			{{- /* Rename and add the result. */ -}}
+		{{- $sources = $sources | append ($newImage | resources.Copy (print $args.filename "." $ext)) -}}
+
+		{{- if ne $ext $filetype -}}
+			{{- /* Since we renamed and maybe resized it. */ -}}
+			{{- $realImage = $newImage -}}
+		{{- end -}}
+	{{- end -}}
+
+	{{- return (dict
+		"sources" $sources
+		"image" $realImage
+		"isGif" $isGif
+	) -}}
+{{- end -}}
