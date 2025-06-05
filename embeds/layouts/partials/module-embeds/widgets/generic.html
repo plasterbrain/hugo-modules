@@ -55,16 +55,16 @@
 				{{- warnf "Embeds: %s" . -}}
 			{{- else with .Value -}}
 				{{- /* In case Images module DNE */ -}}
-				{{- with try (partialCached "image.html" (dict
+				{{- with try (partial "partials/module-images/picture.html" (dict
 					"Image" .
 					"Width" 200
 					"Height" 155
 					"ImgClass" (slice "object-cover h-full")
 					"IsAlpha" false
 					"Name" (path.Join $imageDir .Name)
-				) .Name) -}}
+				)) -}}
 					{{- with .Err -}}
-						{{ warnf "Embeds: %s" . }}
+						{{- warnf "Embeds: Image Module not installed!" -}}
 					{{- else -}}
 						{{- .Value | safeHTML -}}
 						{{- $hadImage = true -}}
@@ -90,7 +90,7 @@
 			{{- if $logodev -}}
 				{{- with try (resources.GetRemote (printf "https://img.logo.dev/%s?token=%s" $host $logodev)) -}}
 					{{- with .Err -}}
-						{{- . -}}
+						{{- warnf "Embeds: %s" . -}}
 					{{- else with .Value -}}
 						{{- with resources.Copy (path.Join $imageDir .Name) . -}}
 							{{- $pubLogo = .RelPermalink -}}

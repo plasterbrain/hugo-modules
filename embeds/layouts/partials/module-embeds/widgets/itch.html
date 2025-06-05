@@ -102,7 +102,13 @@
 		{{- /* --- THUMBNAIL --- */ -}}
 		<a href="{{- .Url | safeURL -}}" rel="{{- $rel -}}" aria-hidden="true"
 			class="p-2 opacity-hover" style="flex: 0 0 180px; border: 1px solid #dadada; border-radius: 3px; box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.3);">
-			{{- partialCached "image.html" $imageOpts $data.id -}}
+			{{- with try (partial "partials/module-images/url-to-image.html" $imageOpts) -}}
+				{{- with .Err -}}
+					{{- warnf "Embeds: Image Module not installed!" -}}
+				{{- else -}}
+					{{- .Value | safeHTML -}}
+				{{- end -}}
+			{{- end -}}
 		</a>
 		<figcaption class="flex flex-col items-start p-2" style="border-left: 1px solid #dadada;">
 			<div role="presentation" class="card--title line-clamp-2">
