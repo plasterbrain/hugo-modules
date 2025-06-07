@@ -79,6 +79,13 @@
 		<meta name="robots" content="{{- . -}}">
 {{- end }}
 
+{{- /* @link https://developers.google.com/search/docs/specialty/international/localized-versions */ -}}
+{{- if .IsTranslated -}}
+	{{- range .AllTranslations -}}
+		<link rel="alternate" hreflang="{{- .Language -}}" href="{{- .Permalink -}}">
+	{{- end -}}
+{{- end -}}
+
 {{- with (partialCached "module-seo/functions/get-schema.html" . .RelPermalink) }}
 	{{- $schema := dict
 		"@context" "https://schema.org"
