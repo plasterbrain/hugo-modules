@@ -27,8 +27,7 @@
 		<priority>{{ .Sitemap.Priority }}</priority>
 		{{- end }}
 		{{- if .IsTranslated }}
-		<xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" />
-		{{- range .Translations -}}
+		{{- range .AllTranslations -}}
 		<xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
 		{{- end }}
 		{{- end }}
