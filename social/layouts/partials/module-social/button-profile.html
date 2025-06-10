@@ -1,0 +1,28 @@
+{{- /*
+MODULE: SOCIAL
+Share links
+@uses Internals Module
+---
+---
+Params:
+- .Network
+- .Class
+- .RelMe
+- .Style
+*/ -}}
+
+{{- $networks := partialCached "module-social/functions/get-profileLinks.html" . "default" -}}
+{{- $network := index $networks .Network -}}
+
+{{- $relMe := .RelMe | default true -}}
+{{- $class := .Class | default (slice "flex" "flex-1" "justify-center" "opacity-hover") -}}
+{{- $class = delimit (uniq $class) " " -}}
+{{- $style := .Style | default $network.Style -}}
+{{- if eq false .Style -}}
+	{{- $style = "" -}}
+{{- end -}}
+
+<a href="{{- $network.Link -}}" {{- if $relMe }} rel="me"{{- end -}} {{- with $class }} class="{{- . | safeHTMLAttr -}}"{{- end -}} {{- $style | safeHTMLAttr -}}>
+	{{- $network.Icon | safeHTML -}}
+	<span class="sr-only">{{- $network.Label | htmlUnescape | safeHTML -}}</span>
+</a>

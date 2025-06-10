@@ -1,0 +1,53 @@
+{{- /*
+MODULE: SOCIAL
+(Function) get-profileLinks
+@uses Internals Module
+@uses Feed Module
+---
+---
+Returns:
+- dict
+	- .Network	Member of `site.Params.Social.Profiles`
+		- .Label 	Human-readable network name (`moduleSocial_{NETWORK}`)
+		- .Style 	Style tag with background/text colors for this button
+		- .Icon 	SVG markup of the network's icon
+		- .Link		Profile/follow link, value from `site.Params.Social.Profiles`
+*/ -}}
+
+{{- $return := dict -}}
+{{- $networks := site.Params.Social.Profiles -}}
+{{- range $network, $url := $networks -}}
+	{{- $return = partial "module-social/functions/_add-profileLink.html" (dict
+		"Network" $network
+		"Url" $url
+		"Return" $return) -}}
+{{- end -}}
+{{- /* --- RSS --- */ -}}
+{{- $feed := partialCached "module-feed/functions/get-RSS.html" . "default" -}}
+{{- $return = partial "module-social/functions/_add-profileLink.html" (dict
+	"Network" "rss"
+	"Url" $feed.RelPermalink
+	"Return" $return) -}}
+
+{{- return $return -}}
+
+{{- define "partials/module-social/functions/_add-profileLink.html" -}}
+	{{- $network := .Network -}}
+	{{- $url := .Url -}}
+	{{- $return := .Return -}}
+	{{- $color := partialCached "module-internals/functions/colors/get-color.html" $network $network -}}
+	{{- $style := printf ` style="background: %s; color: %s"` $color.Bg $color.Text -}}
+
+	{{- $icon := partialCached "module-images/functions/get-icon.html" (dict
+	"Icon" (path.Join "logos/" $network)
+	) (print "module-social-" $network) -}}
+
+	{{- $return = $return | merge (dict $network (dict
+		"Link" $url
+		"Icon" $icon
+		"Style" $style
+		"Colors" $color
+		"Label" (i18n (print "moduleSocial_" $network))
+	)) -}}
+	{{- return $return -}}
+{{- end -}}
