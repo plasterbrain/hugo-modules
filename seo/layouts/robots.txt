@@ -35,7 +35,7 @@
 		{{- with .Err -}}
 			{{- warnf "SEO: %s" . -}}
 		{{- else with .Value -}}
-			{{- $robots := unmarshal .Content -}}
+			{{- $robots := unmarshal .Content }}
 			{{- range $botname, $_ := $robots }}
 				{{- if not (in site.Params.Seo.Ai.Whitelist $botname) }}
 					{{- printf "%sUser-agent: %s\n" $n $botname }}
