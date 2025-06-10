@@ -9,8 +9,10 @@
 */ -}}
 
 {{- $feed := partialCached "module-feed/functions/get-RSS.html" . "default" -}}
-{{- $icon := "rss" -}}
+{{- $iconName := "rss" -}}
 {{- $class := "" -}}
 <a href="{{- $feed.RelPermalink | safeURL -}}" class="feed--link opacity-hover">
-	{{- partialCached "module-images/icon.html" (dict "Icon" $icon "i18n" "feedIconAlt") $icon -}}
+	{{- partialCached "module-images/icon.html" (dict
+		"Icon" (path.Join "logos/" $iconName)
+		"i18n" "feedIconAlt") $iconName -}}
 </a>

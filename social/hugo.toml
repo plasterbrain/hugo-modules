@@ -51,6 +51,8 @@ home = [ "HTML", "RSS", "webfinger"]
 
 [module]
 [[module.imports]]
+	path = "github.com/plasterbrain/hugo-modules/feed"
+[[module.imports]]
 	path = "github.com/plasterbrain/hugo-modules/images"
 [[module.imports]]
 	path = "github.com/plasterbrain/hugo-modules/internals"
