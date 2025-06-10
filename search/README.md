@@ -1,8 +1,6 @@
 # Hugo Modules: Search
 RUDIMENTARY UNDER CONSTRUCTION DO NOT EAT
 
-- Script partial to redirect
-
 ## Setup
 1. **Import** this module by adding an entry to your site's config file(s):
     ```toml
@@ -13,11 +11,3 @@ RUDIMENTARY UNDER CONSTRUCTION DO NOT EAT
 1. **Add**
 1. **Configure** your site in *hugo.toml*:
     - Set `"params.search.page"` to the relative URL of your search results page.
-1. **Update** your templates with the necessary markup:
-
-## TODO
-- Search form:
-  - Test with custom search icon
-  - Option to customize DDG colors
-  - Google option
-- OpenSearch favicon, languages

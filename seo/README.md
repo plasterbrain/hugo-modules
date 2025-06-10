@@ -3,10 +3,11 @@ Adds partials for SEO, favicons, and Open Graph support.
 
 ## Features
 - Open Graph/social media tags
-- JSON-LD structured data
-- Favicons
+- Generate Open Graph images from a template
+- JSON-LD structured data (just breadcrumbs implemented for now)
+- Favicons!!!
 - *robots.txt* and *ai.txt*
-- AI-blocking features
+- AI-blocking tags
 - Sitemap
 
 ## Installation
@@ -40,14 +41,5 @@ Adds partials for SEO, favicons, and Open Graph support.
 		  {{- partial "module-seo/seo-page.html" . -}}
       ```
 
-## Notes
-- OG:URL is used as the JSON-LD "series root" for paginated archives.
-- JSON-LD templates assume your search page uses `q` as the search term query parameter (ex. "coolfoods.com/search?q=hotdogs")
-- Does not support multiple sitemaps
-- Assumes OG title does *not* include site title
-- Does not support titles/canonical for posts with multiple pages if you've somehow set that up -- only paginated Sections
-- Custom OG images will increase your build time 😔
-
 ## Known issues
-- Giving some error where `$title` is `template.html`
-- Hugo sometimes caches the custom OG images, so if you're editing *get-ogCover.html*, you'll have to clear the generated resources folder to see changes on existing pages.
+- Hugo sometimes caches the custom OG images. If you're editing *get-ogCover.html*, you'll have to clear the generated resources folder to see changes on existing pages.

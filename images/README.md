@@ -17,7 +17,6 @@ It is designed for providing alternative formats (i.e., to save bandwidth by usi
     [[module.imports]]
     path = "github.com/plasterbrain/hugo-modules/images"
     ```
-1. In addition to Tailwind, you should also add a screen-reader class called `.sr-reader-only`. This hides accessible icon labels from screen readers *without* removing them from browser Reader View.
 
 ## Known issues
-- `get-placeholder` gave some DNE error using placeholder.Content that went away after server restart
+- `get-placeholder` gave some DNE error using `placeholder.Content` that went away after server restart
