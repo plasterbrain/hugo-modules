@@ -29,7 +29,7 @@
 	{{- $url := .Url -}}
 	{{- $data := .Data -}}
 
-	{{- $title := printf `<a class="text-white embed-steam--caption" style="text-decoration-color: white;" href="%s">%s</a>` $url $data.name -}}
+	{{- $title := printf `<a class="embed-steam--caption" style="color: white!important; text-decoration-color: white;" href="%s">%s</a>` $url $data.name -}}
 
 	{{- $tags := slice -}}
 	{{- range ($data.genres | append $data.categories) -}}
@@ -42,20 +42,23 @@
 		<figcaption class="flex justify-between items-start mb-2">
 			<div role="presentation">
 				<span class="text-lg leading-none embed-steam--title" style="color: #9e9e9e;">
-					{{- i18n "steamTitle" $title | safeHTML -}}
+					{{- i18n "moduleEmbeds_steamTitle" $title | safeHTML -}}
 				</span>
 				{{- /*
 				<span class="block text-sm uppercase" style="color: #bbb;">
 					{{- if $data.release_date.coming_soon -}}
-						{{- i18n "steamComingSoon" -}}
+						{{- i18n "moduleEmbeds_steamComingSoon" -}}
 					{{- else -}}
-						{{- i18n "steamByline" (dict "Author" (delimit $data.developers ", " "& ") "Date" $data.release_date.date) -}}
+						{{- i18n "moduleEmbeds_steamByline" (dict "Author" (delimit $data.developers ", " "& ") "Date" $data.release_date.date) -}}
 					{{- end -}}
 				</span>
 				*/ -}}
 			</div>
 			<span style="color: #9099A0; font-size:2em;">
-				{{- partialCached "module-images/icon.html" (dict "Icon" "steam" "i18n" "steam") "steam" -}}
+				{{- partialCached "module-images/icon.html" (dict
+					"Icon" "logos/steam"
+					"i18n" "moduleEmbeds_steam"
+				) "steam" -}}
 			</span>
 		</figcaption>
 		<div role="presentation" class="flex">
@@ -75,11 +78,14 @@
 				{{- end -}}
 			</ul>
 		{{- end */ -}}
-		<ul role="list" aria-label="{{- i18n `gamePlatforms` 3 -}}" class="inline text-white opacity-70 embed-steam--platforms list-inline">
+		<ul role="list" aria-label="{{- i18n `moduleEmbeds_gamePlatforms` 3 -}}" class="inline text-white opacity-70 embed-steam--platforms list-inline">
 			{{- range (slice "windows" "mac" "linux") -}}
 				{{- if (index $data.platforms .) -}}
 					{{- $icon := index $platformIcons . -}}
-					{{- with partialCached "module-images/icon.html" (dict "Icon" $icon "i18n" $icon) $icon -}}
+					{{- with partialCached "module-images/icon.html" (dict
+						"Icon" (path.Join "logos/" $icon)
+						"i18n" (print "moduleEmbeds_" $icon)
+					) $icon -}}
 						<li>{{- . | safeHTML -}}</li>
 					{{- end -}}
 				{{- end -}}
@@ -92,7 +98,7 @@
 				</span>
 				{{- /* --- Buy Button --- */ -}}
 				<a class="p-2 embed-steam--button button opacity-hover" href="{{ $url | safeURL }}" style="background-color: #6fa720; background: linear-gradient(to right,rgb(111, 167, 32) 5%,rgb(88, 138, 27) 95%); 2px 2px 10px rgba(0, 0, 0, 0.5); color: #fff; height: 34px; border-radius: 2px;text-shadow: 1px 1px 2px rgba( 0, 0, 0, 0.3 );">
-					{{- i18n "steamBuy" | safeHTML -}}
+					{{- i18n "moduleEmbeds_steamBuy" | safeHTML -}}
 				</a>
 			</div>
 		</div>

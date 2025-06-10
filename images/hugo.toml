@@ -7,7 +7,7 @@ pathPrefix = "assets"
 jsDir = "assets/js"
 
 [params.images.icons]
-path = "assets/images/icons/%s.svg"
+path = "assets/images/%s.svg"
 
 [module]
 [[module.imports]]

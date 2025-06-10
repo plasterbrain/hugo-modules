@@ -24,7 +24,7 @@
 	other = "Bluesky"
 [moduleSocial_freesound]
 	other = "Freesound.org"
-[moduleSocial_itch]
+[moduleSocial_itchio]
 	other = "itch.io"
 [moduleSocial_mediafire]
 	other = "Mediafire"

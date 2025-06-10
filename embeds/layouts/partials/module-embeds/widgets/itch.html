@@ -72,14 +72,14 @@
 
 	{{- $user := printf `<a class="font-semibold" href="%s">%s</a>`
 	$data.user.url $data.user.username -}}
-	{{- $byline := i18n "itchByline" $user -}}
+	{{- $byline := i18n "moduleEmbeds_itchByline" $user -}}
 
 	{{- $isHtml5 := ne (printf "%T" $data.embed) "<nil>" -}}
 	{{- $price := "" -}}
-	{{- $btnText := i18n "itchDownload" -}}
+	{{- $btnText := i18n "moduleEmbeds_itchDownload" -}}
 	{{- $btnLink := .Url -}}
 	{{- if $isHtml5 -}}
-		{{- $btnText = i18n "itchPlay" (dict "Itch" `<span class="font-bold">itch.io</span>`) -}}
+		{{- $btnText = i18n "moduleEmbeds_itchPlay" (dict "Itch" `<span class="font-bold">itch.io</span>`) -}}
 	{{- else -}}
 		{{- $btnLink = path.Join .Url "purchase?popup=1" -}}
 		{{- /* --- PRICE --- */ -}}
@@ -87,16 +87,19 @@
 		{{- if in $data.traits "can_be_bought" -}}
 			{{- $price = "$0.00 USD" -}}
 			{{- if gt $data.min_price 0 -}}
-				{{- $btnText = i18n "itchBuy" -}}
+				{{- $btnText = i18n "moduleEmbeds_itchBuy" -}}
 				{{- $price = (printf `$%.2f USD` (div $data.min_price 100)) -}}
 			{{- end -}}
 			{{- $price = printf `<span class="font-semibold">%s</span>` $price -}}
-			{{- $price = i18n "itchPrice" $price -}}
+			{{- $price = i18n "moduleEmbeds_itchPrice" $price -}}
 		{{- end -}}
 	{{- end -}}
 
-	{{- $wordmark := partialCached "module-images/icon.html"
-	(dict "Icon" "itchio-wordmark" "i18n" "itch") "itchio-wordmark" -}}
+	{{- $iconName := "itchio-wordmark" -}}
+	{{- $wordmark := partialCached "module-images/icon.html" (dict
+		"Icon" (path.Join "logos/" $iconName)
+		"i18n" "moduleEmbeds_itch"
+	) $iconName -}}
 
 	<figure class="flex relative card not-prose embed-itch" style="color: #222222; background: #fff; border: 1px solid #dadada; max-width: 552px;">
 		{{- /* --- THUMBNAIL --- */ -}}
@@ -111,16 +114,19 @@
 			{{- end -}}
 		</a>
 		<figcaption class="flex flex-col items-start p-2" style="border-left: 1px solid #dadada;">
-			<div role="presentation" class="card--title line-clamp-2">
+			<div role="presentation" class="card--title line-clamp-2 flex items-center gap-2">
 				{{- /* --- TITLE --- */ -}}
 				<a class="text-xl font-semibold opacity-hover" href="{{- .Url | safeURL -}}" rel="{{- $rel -}}">
 					{{- $data.title | htmlUnescape | safeHTML -}}
 				</a>
 				{{- /* --- PLATFORMS --- */ -}}
-				<ul role="list" aria-label="{{- i18n `gamePlatforms` 3 -}}" class="inline ml-2 embed-itch--platforms list-inline" style="color: #6c6c6c;">
+				<ul role="list" aria-label="{{- i18n `moduleEmbeds_gamePlatforms` 3 -}}" class="flex gap-1" style="color: #6c6c6c;">
 					{{- range (slice "windows" "linux" "osx") -}}
 						{{- if in $data.traits (print "p_" .) -}}
-							{{- with partialCached "module-images/icon.html" (dict "Icon" . "i18n" .) . -}}
+							{{- with partialCached "module-images/icon.html" (dict
+								"Icon" (path.Join "logos/" .)
+								"i18n" (print "moduleEmbeds_" .)
+							) . -}}
 								<li>{{- . | safeHTML -}}</li>
 							{{- end -}}
 						{{- end -}}

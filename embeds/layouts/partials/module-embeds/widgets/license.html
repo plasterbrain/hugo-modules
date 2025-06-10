@@ -12,8 +12,9 @@
 	<div class="flex gap-2 items-center p-2 text-lg font-bold bg-black license--title">
 		<span class="flex gap-1 items-center license--icons">
 		{{- range $svgs -}}
-			{{- $icon := partialCached "module-images/functions/get-icon.html" (dict "Icon" .) . -}}
-			{{- with $icon -}}
+			{{- with (partialCached "module-images/functions/get-icon.html" (dict
+				"Icon" (path.Join "icons/" .)
+			) .) -}}
 				{{- . | safeHTML -}}
 			{{- end -}}
 		{{- end -}}

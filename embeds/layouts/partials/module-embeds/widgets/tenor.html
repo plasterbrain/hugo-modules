@@ -124,10 +124,13 @@
 		</span>
 		{{- /* https://tenor.com/gifapi/documentation#attribution */ -}}
 		<a href="{{- $url | safeURL -}}" rel="nofollow noreferrer" aria-describedby="{{- $cacheKey -}}" class="min-w-max opacity-hover">
-			{{- with partialCached "module-images/functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
+			{{- $iconName := "tenor-via" -}}
+			{{- with partialCached "module-images/functions/get-icon.html" (dict
+				"Icon" (path.Join "logos/" $iconName)
+			) $iconName -}}
 				{{- . | safeHTML -}}
 			{{- else -}}
-				{{- i18n "tenorVia" | safeHTML -}}
+				{{- i18n "tenor_wordmark_alt" | safeHTML -}}
 			{{- end -}}
 		</a>
 	</figcaption>
