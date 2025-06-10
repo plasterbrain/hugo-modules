@@ -48,7 +48,7 @@
     <figcaption class="embed--caption">
       <a href="{{- $target -}}">
 				{{- $spotify := "spotify" -}}
-				{{- with partialCached "functions/get-icon.html"
+				{{- with partialCached "module-images/functions/get-icon.html"
 					(dict "Icon" $spotify) $spotify -}}
 					{{- . | safeHTML -}}
 				{{- end -}}
@@ -62,7 +62,7 @@
 		{{- "" -}}
     <button data-target="{{- .id -}}" class="embed--button player--button js-only has-text-right" style="background-image: url('{{- $cover.url | safeCSS -}}');" aria-label='{{- i18n "clickToLoad" (i18n "track" 1) -}}'>
       {{- $play := "play" -}}
-			{{- with partialCached "functions/get-icon.html"
+			{{- with partialCached "module-images/functions/get-icon.html"
 				(dict "Icon" $play) $play -}}
 				{{- . | safeHTML -}}
 			{{- end -}}

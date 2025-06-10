@@ -124,7 +124,7 @@
 		</span>
 		{{- /* https://tenor.com/gifapi/documentation#attribution */ -}}
 		<a href="{{- $url | safeURL -}}" rel="nofollow noreferrer" aria-describedby="{{- $cacheKey -}}" class="min-w-max opacity-hover">
-			{{- with partialCached "functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
+			{{- with partialCached "module-images/functions/get-icon.html" (dict "Icon" "tenor-via") "tenor-via" -}}
 				{{- . | safeHTML -}}
 			{{- else -}}
 				{{- i18n "tenorVia" | safeHTML -}}

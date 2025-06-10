@@ -12,5 +12,5 @@
 {{- $icon := "rss" -}}
 {{- $class := "" -}}
 <a href="{{- $feed.RelPermalink | safeURL -}}" class="feed--link opacity-hover">
-	{{- partialCached "icon.html" (dict "Icon" $icon "i18n" "feedIconAlt") $icon -}}
+	{{- partialCached "module-images/icon.html" (dict "Icon" $icon "i18n" "feedIconAlt") $icon -}}
 </a>

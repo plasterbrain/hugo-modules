@@ -17,7 +17,7 @@
 
 {{- $image := .Image -}}
 {{- $small := .Small | default false -}}
-{{- $placeholder := partialCached "functions/get-placeholder.html" (dict
+{{- $placeholder := partialCached "module-images/functions/get-placeholder.html" (dict
 	"Image" $image "Small" $small) (print .Image.RelPermalink (cond $small "-small" ""))
 -}}
 {{- $style := printf `style="background-color: %s; background-image: url('%s');"` (index $image.Colors 0) $placeholder -}}

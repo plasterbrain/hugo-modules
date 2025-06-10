@@ -1,0 +1,28 @@
+{{- /*
+	MODULE: IMAGES
+	Function: get-imageWCAGTextColor
+	---
+	@TODO
+	---
+*/ -}}
+
+{{- $image := .Image -}}
+{{- $useFull := .UseFull -}}
+{{- $options := .Options -}}
+{{- $result := "#000000" -}}
+{{- if $options -}}
+	{{- $result = index $options 0 -}}
+{{- end -}}
+
+{{- if not $useFull -}}
+	{{- $image = partial "module-images/functions/get-placeholder.html"
+		(dict "Image" .Image "AsString" false) -}}
+{{- end -}}
+{{- with $image -}}
+	{{- $color := first 1 .Colors -}}
+	{{- $color = delimit $color "" -}}
+	{{- $result = partialCached "module-internals/module-internals/functions/colors/get-wcagBW.html"
+		(dict "Color" $color "Options" $options) $color -}}
+{{- end -}}
+{{- return $result -}}
+

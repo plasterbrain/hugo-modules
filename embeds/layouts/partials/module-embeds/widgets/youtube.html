@@ -85,7 +85,7 @@
 			{{- end -}}
 
 			<div class="absolute inset-0 p-4 w-full h-full bg-black bg-opacity-70 centered">
-				{{- partialCached "icon.html" (dict
+				{{- partialCached "module-images/icon.html" (dict
 					"Icon" "youtube-wordmark" "i18n" "moduleEmbeds_youtube") "youtube-wordmark" -}}
 				<a href="{{- $url | safeURL -}}" class="p-2 mt-2 font-bold bg-black opacity-hover">
 					{{- $data.title | htmlUnescape | safeHTML -}}

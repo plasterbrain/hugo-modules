@@ -95,7 +95,7 @@
 		{{- end -}}
 	{{- end -}}
 
-	{{- $wordmark := partialCached "icon.html"
+	{{- $wordmark := partialCached "module-images/icon.html"
 	(dict "Icon" "itchio-wordmark" "i18n" "itch") "itchio-wordmark" -}}
 
 	<figure class="flex relative card not-prose embed-itch" style="color: #222222; background: #fff; border: 1px solid #dadada; max-width: 552px;">
@@ -120,7 +120,7 @@
 				<ul role="list" aria-label="{{- i18n `gamePlatforms` 3 -}}" class="inline ml-2 embed-itch--platforms list-inline" style="color: #6c6c6c;">
 					{{- range (slice "windows" "linux" "osx") -}}
 						{{- if in $data.traits (print "p_" .) -}}
-							{{- with partialCached "icon.html" (dict "Icon" . "i18n" .) . -}}
+							{{- with partialCached "module-images/icon.html" (dict "Icon" . "i18n" .) . -}}
 								<li>{{- . | safeHTML -}}</li>
 							{{- end -}}
 						{{- end -}}

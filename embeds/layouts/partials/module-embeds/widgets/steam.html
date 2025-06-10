@@ -55,7 +55,7 @@
 				*/ -}}
 			</div>
 			<span style="color: #9099A0; font-size:2em;">
-				{{- partialCached "icon.html" (dict "Icon" "steam" "i18n" "steam") "steam" -}}
+				{{- partialCached "module-images/icon.html" (dict "Icon" "steam" "i18n" "steam") "steam" -}}
 			</span>
 		</figcaption>
 		<div role="presentation" class="flex">
@@ -79,7 +79,7 @@
 			{{- range (slice "windows" "mac" "linux") -}}
 				{{- if (index $data.platforms .) -}}
 					{{- $icon := index $platformIcons . -}}
-					{{- with partialCached "icon.html" (dict "Icon" $icon "i18n" $icon) $icon -}}
+					{{- with partialCached "module-images/icon.html" (dict "Icon" $icon "i18n" $icon) $icon -}}
 						<li>{{- . | safeHTML -}}</li>
 					{{- end -}}
 				{{- end -}}

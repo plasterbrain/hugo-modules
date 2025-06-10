@@ -53,7 +53,7 @@
 			<ul role="list" class="flex gap-2 not-prose">
 				{{- range . -}}
 					<li class="flex gap-1 items-center">
-						{{- with partialCached "functions/get-icon.html" (dict "Icon" "person") "person" -}}
+						{{- with partialCached "module-images/functions/get-icon.html" (dict "Icon" "person") "person" -}}
 							{{- . | safeHTML -}}
 						{{- end -}}
 						<a class="u-url link u-category h-card" href="{{- .url | safeURL -}}">
