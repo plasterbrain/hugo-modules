@@ -9,9 +9,11 @@
 */ -}}
 
 {{- $svg := "" -}}
-{{- $path := site.Params.Images.Icons.Path | default "assets/images/icons/%s.svg" -}}
+{{- $path := site.Params.Images.Icons.Path | default "assets/images/%s.svg" -}}
 {{- with resources.GetMatch (printf $path .Icon) -}}
 	{{- $svg = . | resources.ExecuteAsTemplate "icon.svg" . -}}
 	{{- $svg = $svg.Content -}}
+{{- else -}}
+	{{- warnf "Images: Couldn't find icon `%s`" (printf $path .Icon) -}}
 {{- end -}}
 {{- return $svg -}}
