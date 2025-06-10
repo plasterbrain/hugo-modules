@@ -23,7 +23,7 @@
 
 {{- $pages := cond site.BuildDrafts .Pages (where .Pages "Draft" "ne" true) -}}
 
-{{- if (partial "module-seo/functions/shouldPaginate.html" .) -}}
+{{- if (partial "module-seo/functions/get-shouldPaginate.html" .) -}}
 	{{- $return = .Paginate $pages -}}
 {{- end -}}
 

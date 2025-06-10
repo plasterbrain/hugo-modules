@@ -15,7 +15,7 @@
 {{- if ne .Kind "404" -}}
 	{{- $canonical = .Params.Canonical | default .Permalink -}}
 	{{- /* Handle pagination */ -}}
-	{{- if (partial "module-seo/functions/shouldPaginate.html" .) -}}
+	{{- if (partial "module-seo/functions/get-shouldPaginate.html" .) -}}
 		{{- with (partial "module-seo/functions/paginate.html" .) -}}
 			{{- $canonical = urls.JoinPath site.BaseURL .URL -}}
 		{{- end -}}
