@@ -8,3 +8,7 @@ jsDir = "assets/js"
 
 [params.images.icons]
 path = "assets/images/icons/%s.svg"
+
+[module]
+[[module.imports]]
+	path = "github.com/plasterbrain/hugo-modules/internals"

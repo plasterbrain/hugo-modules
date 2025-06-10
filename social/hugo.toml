@@ -48,3 +48,9 @@ home = [ "HTML", "RSS", "webfinger"]
 [module.hugoVersion]
 	extended = true
 	min = "0.141.0"
+
+[module]
+[[module.imports]]
+	path = "github.com/plasterbrain/hugo-modules/images"
+[[module.imports]]
+	path = "github.com/plasterbrain/hugo-modules/internals"

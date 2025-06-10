@@ -3,8 +3,6 @@ module github.com/plasterbrain/hugo-modules/social
 go 1.20
 
 require (
-	github.com/plasterbrain/hugo-modules/images v.1.0.0
-	github.com/plasterbrain/hugo-modules/colors v.1.0.0
+	github.com/plasterbrain/hugo-modules/images v0.0.0-20250610002332-a55b98158a6f // indirect
+	github.com/plasterbrain/hugo-modules/internals v0.0.0-20250610002332-a55b98158a6f // indirect
 )
-
-replace github.com/plasterbrain/hugo-modules/social => ../social
