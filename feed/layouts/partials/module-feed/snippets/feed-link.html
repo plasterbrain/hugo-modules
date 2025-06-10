@@ -4,6 +4,7 @@
 	Main feed link element for `<head>`.
 	---
 */ -}}
+
 {{- with partialCached "module-feed/functions/get-RSS.html" . "default" -}}
 	{{- $title := i18n "moduleFeed_title" site.Title -}}
 	{{- /* @NOTE It's printf bc plain HTML was encoding rss+xml. */ -}}

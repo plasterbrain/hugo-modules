@@ -1,6 +1,6 @@
 {{- /*
 	MODULE: SOCIAL
-	(Partial) Share Buttons
+	(Function) get-shareLinks
 	@uses Internals Module
 	---
 	Returns everything you need to add share links/buttons to the current page.
@@ -9,20 +9,18 @@
 
 	@link https://developer.twitter.com/en/docs/twitter-for-websites/tweet-button/guides/web-intent
 	@link https://www.tumblr.com/docs/en/share_button
-
-	@IDEA Tumblr Post types
 	---
 	Params:
 	- .		Page context
-
-	Returns
-	- [buttons]
-		- "Network"	Slug of the social network this is for
-		- "Label"		Human-readable button label
-		- "Style"		Style tag with background/text colors for this button
-		- "Icon"		SVG markup of the network's icon
-		- "Link"		Share link, or blank for generic share button
-		- "JS"			Javascript `onclick` handler to open a pop-up of `Link`
+	---
+	Returns:
+	- slice[dict]
+		- .Network	Slug of the social network this is for
+		- .Label		Human-readable button label
+		- .Style		Style tag with background/text colors for this button
+		- .Icon			SVG markup of the network's icon
+		- .Link			Share link, or blank for generic share button
+		- .JS				Javascript `onclick` handler to open a pop-up of `Link`
 */ -}}
 
 {{- $useList := uniq site.Params.Social.ShareLinks -}}
@@ -122,12 +120,11 @@
 	{{- $label := i18n (print "moduleSocial_share" ($network | humanize)) | default (i18n "moduleSocial_shareDefault") -}}
 
 	{{- $icon := "" -}}
-	{{- if templates.Exists "partials/module-images/functions/get-icon.html" }}
-		{{- with partialCached "module-images/functions/get-icon.html"
-			(dict "Icon" $network) $network -}}
-			{{- $icon = . -}}
-		{{- end -}}
-	{{- end }}
+	{{- with partialCached "module-images/functions/get-icon.html" (dict
+		"Icon" (path.Join "logos/" $network)
+	) $network -}}
+		{{- $icon = . -}}
+	{{- end -}}
 
 	{{- $color := partialCached "module-internals/functions/colors/get-color.html" $network $network -}}
 	{{- $style := printf `style="background-color: %s; color: %s;"` $color.Bg $color.Text -}}
@@ -145,12 +142,11 @@
 {{- if site.Params.Social.ShowWebShareButton -}}
 	{{- $network := "share" -}}
 	{{- $icon := "" -}}
-	{{- if templates.Exists "partials/module-images/functions/get-icon.html" }}
-		{{- with partialCached "module-images/functions/get-icon.html"
-			(dict "Icon" $network) $network -}}
-			{{- $icon = . -}}
-		{{- end -}}
-	{{- end }}
+	{{- with partialCached "module-images/functions/get-icon.html" (dict
+		"Icon" (path.Join "icons/" $network)
+	) $network -}}
+		{{- $icon = . -}}
+	{{- end -}}
 
 	{{- $title = $title | plainify -}}
 	{{- $title = replace $title `"` `\u0022` -}}

@@ -1,3 +1,12 @@
+{{- /*
+	MODULE: SOCIAL
+	Share links
+	---
+	---
+	Params:
+	- . Page context
+*/ -}}
+
 {{- with partial "module-social/functions/get-shareLinks.html" . -}}
 	<p class="flex gap-2 items-center post--meta skyscraper">
 		<span class="md:sr-only font-cursive">{{- i18n "moduleSocial_microSharePost" -}}</span>
