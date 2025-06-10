@@ -24,32 +24,32 @@
 [bandcampTitleGeneric]
 	other = "Embedded Bandcamp content"
 
-[gamePlatforms]
+[moduleEmbeds_gamePlatforms]
 	one = "Platform"
 	other = "Platforms"
 
-[itch]
+[moduleEmbeds_itch]
 	other = "itch.io"
-[itchByline] # Phrase is lowercase, though username *may* be title case
+[moduleEmbeds_itchByline] # Phrase is lowercase, though username *may* be title case
 	other = "by {{ . }}"
-[itchBuy]
+[moduleEmbeds_itchBuy]
 	other = "Buy Now"
-[itchDownload]
+[moduleEmbeds_itchDownload]
 	other = "Download Now"
-[itchPlay]
+[moduleEmbeds_itchPlay]
 	other = "Play on {{ .Itch }}"
-[itchPrice]
+[moduleEmbeds_itchPrice]
 	other = "{{ . }} or more" # e.g. "$10.99 or more"
 
-[steam]
+[moduleEmbeds_steam]
 	other = "Steam"
-[steamBuy]
+[moduleEmbeds_steamBuy]
 	other = "Buy on Steam"
-[steamByline]
+[moduleEmbeds_steamByline]
 	other = "Released {{ .Date }} · {{ .Author }}"
-[steamComingSoon]
+[moduleEmbeds_steamComingSoon]
 	other = "Coming soon"
-[steamTitle]
+[moduleEmbeds_steamTitle]
 	other = "Buy {{ . }} on Steam"
 
 [tenor_wordmark_alt]
@@ -66,11 +66,11 @@
 [moduleEmbeds_ytNoscript]
 	other = "This video requires Javascript."
 
-[linux]
+[moduleEmbeds_linux]
 	other = "Linux"
-[osx]
+[moduleEmbeds_osx]
 	other = "macOS"
-[windows]
+[moduleEmbeds_windows]
 	other = "Windows"
 
 # Goes after license description with link
