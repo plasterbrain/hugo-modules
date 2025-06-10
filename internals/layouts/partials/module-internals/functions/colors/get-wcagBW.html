@@ -21,10 +21,10 @@
 {{- $options := .Options | default (slice site.Params.Colors.DefaultBlack site.Params.Colors.DefaultWhite) -}}
 
 {{- if not (reflect.IsSlice $color) -}}
-	{{- $color = partialCached "functions/hexToRGB.html" $color $color -}}
+	{{- $color = partialCached "module-internals/functions/colors/hexToRGB.html" $color $color -}}
 {{- end -}}
 {{- $key := delimit $color "" -}}
 
-{{- $lum := partialCached "functions/rgbToRL.html" $color $key -}}
+{{- $lum := partialCached "module-internals/functions/colors/rgbToRL.html" $color $key -}}
 {{- $choice := int (lt $lum 0.179) -}}
 {{- return index $options $choice -}}

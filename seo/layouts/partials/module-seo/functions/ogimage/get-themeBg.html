@@ -1,7 +1,7 @@
 {{- /*
 	MODULE: SEO
 	Function: get-themeBg
-	@requires hugo-modules/colors
+	@uses Internals Module
 	---
 	Creates a solid-color background image based on `site.Params.ThemeColor` to be
 	used when generating OG banners. It's saved as site.Params.OGCoverTemplate.ImageDir + "_og-bg.jpg".
@@ -24,9 +24,9 @@
 	{{- $hsl := false -}}
 	{{- with site.Params.Seo.ThemeColor -}}
 		{{- $key := . -}}
-		{{- $rgb := partialCached "functions/hexToRGB.html" . $key -}}
+		{{- $rgb := partialCached "module-internals/functions/colors/hexToRGB.html" . $key -}}
 		{{- $key = delimit $rgb "" -}}
-		{{- $hsl = partialCached "functions/rgbToHSL.html" $rgb $key -}}
+		{{- $hsl = partialCached "module-internals/functions/colors/rgbToHSL.html" $rgb $key -}}
 	{{- end -}}
 
 	{{- with $hsl -}}

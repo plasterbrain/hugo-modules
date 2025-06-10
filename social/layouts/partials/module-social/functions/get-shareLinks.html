@@ -1,7 +1,7 @@
 {{- /*
 	MODULE: SOCIAL
 	(Partial) Share Buttons
-	@requires hugo-modules/colors
+	@uses Internals Module
 	---
 	Returns everything you need to add share links/buttons to the current page.
 	Set `site.Params.Social.ShareLinks` to the names/order of networks you want
@@ -122,14 +122,14 @@
 	{{- $label := i18n (print "moduleSocial_share" ($network | humanize)) | default (i18n "moduleSocial_shareDefault") -}}
 
 	{{- $icon := "" -}}
-	{{- if templates.Exists "partials/functions/get-icon.html" }}
-		{{- with partialCached "functions/get-icon.html"
+	{{- if templates.Exists "partials/module-images/functions/get-icon.html" }}
+		{{- with partialCached "module-images/functions/get-icon.html"
 			(dict "Icon" $network) $network -}}
 			{{- $icon = . -}}
 		{{- end -}}
 	{{- end }}
 
-	{{- $color := partialCached "functions/get-color.html" $network $network -}}
+	{{- $color := partialCached "module-internals/functions/colors/get-color.html" $network $network -}}
 	{{- $style := printf `style="background-color: %s; color: %s;"` $color.Bg $color.Text -}}
 
 	{{- $shareLinks = $shareLinks | append (dict
@@ -145,8 +145,8 @@
 {{- if site.Params.Social.ShowWebShareButton -}}
 	{{- $network := "share" -}}
 	{{- $icon := "" -}}
-	{{- if templates.Exists "partials/functions/get-icon.html" }}
-		{{- with partialCached "functions/get-icon.html"
+	{{- if templates.Exists "partials/module-images/functions/get-icon.html" }}
+		{{- with partialCached "module-images/functions/get-icon.html"
 			(dict "Icon" $network) $network -}}
 			{{- $icon = . -}}
 		{{- end -}}

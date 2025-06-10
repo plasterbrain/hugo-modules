@@ -79,7 +79,7 @@
 
 	{{- $src := $args.image.Name -}}
 
-	{{- $alt := partial "module-constants/functions/sanitize-attr-string.html" $args.alt | htmlEscape -}}
+	{{- $alt := partial "module-internals/functions/sanitize-attr-string.html" $args.alt | htmlEscape -}}
 
 	{{- /* LQIP */ -}}
 	{{- $lqip := false -}}

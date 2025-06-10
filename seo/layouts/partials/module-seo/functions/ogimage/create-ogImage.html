@@ -1,7 +1,7 @@
 {{- /*
 	MODULE: SEO
 	Function: get-ogCover
-	@requires hugo-modules/colors
+	@uses Internals Module
 	---
 	Creates a basic Open Graph cover for the given page.
 
@@ -37,7 +37,7 @@
 		{{- with $bg -}}
 			{{- $textColor := "#ffffff" -}}
 			{{- with site.Params.Seo.ThemeColor -}}
-				{{- $textColor = partialCached "functions/get-wcagBW.html"
+				{{- $textColor = partialCached "module-internals/functions/colors/get-wcagBW.html"
 				(dict "Color" .) . -}}
 			{{- end -}}
 			{{- $title := $page.LinkTitle | plainify -}}

@@ -14,18 +14,18 @@
 {{- $ellip := "..." -}}
 
 {{- $_titles := (partialCached "module-seo/functions/get-title.html" . .RelPermalink) -}}
-{{- $title := (partial "module-constants/functions/sanitize-attr-string.html" $_titles.Title) -}}
+{{- $title := (partial "module-internals/functions/sanitize-attr-string.html" $_titles.Title) -}}
 {{- $title = $title | truncate (site.Params.Seo.MaxTitleChars | default 60) $ellip -}}
-{{- $ogTitle := (partial "module-constants/functions/sanitize-attr-string.html" $_titles.OGTitle) -}}
+{{- $ogTitle := (partial "module-internals/functions/sanitize-attr-string.html" $_titles.OGTitle) -}}
 {{- $ogTitle = $ogTitle | truncate (site.Params.Seo.MaxDescChars | default 70) -}}
 
 {{- $_descs := (partialCached "module-seo/functions/get-description.html" . .RelPermalink) -}}
 {{- $description := $_descs.Description -}}
-{{- $description = partial "module-constants/functions/sanitize-attr-string.html" $description -}}
+{{- $description = partial "module-internals/functions/sanitize-attr-string.html" $description -}}
 {{- $description = $description | truncate (site.Params.Seo.MaxDescChars | default 155) $ellip -}}
 
 {{- $ogDescription := $_descs.OGDescription -}}
-{{- $ogDescription = partial "module-constants/functions/sanitize-attr-string.html" $ogDescription -}}
+{{- $ogDescription = partial "module-internals/functions/sanitize-attr-string.html" $ogDescription -}}
 {{- $ogDescription = $ogDescription | truncate (site.Params.Seo.MaxOGDescChars | default 85) $ellip }}
 		<title>{{- $title -}}</title>
 		<meta property="og:title" content="{{- $ogTitle -}}">
