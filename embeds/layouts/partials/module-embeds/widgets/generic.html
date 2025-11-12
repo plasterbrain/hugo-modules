@@ -81,7 +81,7 @@
 				{{- /* Page title minus the site name */ -}}
 				{{- replace $data.title (print $data.publisher " - ") "" -}}
 			</p>
-			<p class="my-2 mb-2 text-sm leading-relaxed card--desc line-clamp-2 text-ellipsis">
+			<p class="my-2 mb-2 text-xs leading-relaxed card--desc line-clamp-2 text-ellipsis">
 				{{- $data.description | truncate 125 -}}
 			</p>
 
@@ -98,7 +98,7 @@
 					{{- end -}}
 				{{- end -}}
 			{{- end -}}
-			<span class="text-sm{{- if $pubLogo }} flex items-center {{- end -}}">
+			<span class="text-xs{{- if $pubLogo }} flex items-center {{- end -}}">
 				<img src="{{- $pubLogo -}}" width="22" height="22" alt="" class="mr-1"/>
 				{{- $data.publisher -}}
 				<span aria-hidden="true">&nbsp;&middot;&nbsp;</span>

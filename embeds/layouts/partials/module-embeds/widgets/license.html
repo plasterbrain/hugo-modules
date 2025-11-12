@@ -21,7 +21,7 @@
 		</span>
 		<span>{{- i18n $license | htmlUnescape | safeHTML -}}</span>
 	</div>
-	<div class="p-2 text-sm italic leading-relaxed">
+	<div class="p-2 text-xs italic leading-relaxed">
 		{{- i18n (print $license "desc") | htmlUnescape | safeHTML -}}
 
 		{{ with site.Data.moduleEmbeds.licenses }}
