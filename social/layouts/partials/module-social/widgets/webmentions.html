@@ -149,7 +149,7 @@
 		{{- range $data -}}
 			<li>
 				<article class="p-4 bg-white rounded-md border border-gray">
-					<header class="flex gap-2 items-center mb-4 text-sm space-between">
+					<header class="flex gap-2 items-center mb-4 text-xs space-between">
 						<div role="presentation" class="flex flex-1 gap-2 items-center">
 							{{- $name := .author.name | default (i18n "moduleSocial_anon") -}}
 							{{- partialCached "module-social/widgets/webmentions/_author-photo.html" (dict "Author" .author "Alt" "") .author.name -}}
@@ -163,7 +163,7 @@
 						<a href="{{- .url -}}">Reply</a>
 					</header>
 					{{- if and site.Params.Social.Webmentions.ShowReplies -}}
-						<div class="max-w-none text-sm prose">
+						<div class="max-w-none text-xs prose">
 							{{- $excerpt := .content.text | truncate 500 -}}
 							{{- if ne $excerpt .content.text -}}
 								{{- $excerpt = strings.TrimRight ",(-;[{… " (chomp $excerpt) -}}
