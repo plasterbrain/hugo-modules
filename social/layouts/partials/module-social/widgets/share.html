@@ -1,26 +1,43 @@
 {{- /*
 	MODULE: SOCIAL
-	Share links
+	Share Links
 	---
+	Shows a list of share links.
 	---
 	Params:
 	- . Page context
 */ -}}
 
-{{- with partial "module-social/functions/get-shareLinks.html" . -}}
+{{- $page := . -}}
+
+{{- with partial "module-social/functions/get-shareLinks.html" $page -}}
+	{{- $btnClass := delimit (uniq (split site.Params.Social.Share.buttonClasses " ")) " " -}}
 	<p class="flex gap-2 items-center post--meta skyscraper">
-		<span class="md:sr-only font-cursive">{{- i18n "moduleSocial_microSharePost" -}}</span>
+		<span class="{{- cond site.Params.Social.Share.ShowLabels `md:sr-only` `sr-only` -}}">
+			{{- T "moduleSocial_microSharePost" -}}
+		</span>
 		{{- range . -}}
-			{{- $labelClass := ` class="sr-only md:not-sr-only"` -}}
+			{{- $style := cond site.Params.Social.Share.UseColors (print " " .Style) "" -}}
+			{{- $labelClasses := slice -}}
+			{{- if .Icon -}}
+				{{- $labelClasses = slice "sr-only" -}}
+				{{- if site.Params.Social.Share.ShowLabels -}}
+					{{- $labelClasses = $labelClasses | append "md:not-sr-only" -}}
+				{{- end -}}
+			{{- end -}}
+			{{- $labelClass := printf ` class="%s"` (delimit $labelClasses " ") -}}
+			
+			{{- $btnClass = replace $btnClass "{$network}" .Network -}}
+
 			{{- if ne .Link "" -}}
-				<a href="{{- .Link | safeURL -}}" rel="nofollow noopener noreferrer" target="popup" onclick="{{- .JS | safeJS -}}" class="opacity-hover button-social gap-1 bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
+				<a href="{{- .Link | safeURL -}}" rel="nofollow noopener noreferrer" target="popup" onclick="{{- .JS | safeJS -}}" class="{{- $btnClass | safeHTMLAttr -}}" {{- $style | safeHTMLAttr -}}>
 					{{- .Icon | safeHTML -}}
 					<span {{- $labelClass | safeHTMLAttr -}}>
 						{{- .Label | htmlUnescape | safeHTML -}}
 					</span>
 				</a>
 			{{- else -}}
-				<button data-kind="share" type="button" onclick="{{- .JS | safeJS -}}" class="js-only hidden opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{ .Style | safeHTMLAttr -}}>
+				<button data-kind="share" type="button" onclick="{{- .JS | safeJS -}}" class="js-only hidden opacity-hover button-social bg-{{ .Network | safeHTMLAttr -}}" {{- $style | safeHTMLAttr -}}>
 					{{- .Icon | safeHTML -}}
 					<span {{- $labelClass | safeHTMLAttr -}}>
 						{{- .Label | htmlUnescape |safeHTML -}}

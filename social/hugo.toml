@@ -7,7 +7,15 @@ useOpenID = false
 
 # https://web.dev/articles/web-share
 showWebShareButton = true
-shareLinks = ["bluesky", "reddit", "mastodon"]
+
+# Settings for share links getter and built-in "Share this post" widget
+[params.social.share]
+links = ["bluesky", "reddit", "mastodon"]
+# Default Share Widget:
+useColors = true # Whether to use brand color backgrounds and black or white text
+showLabels = true # Whether to show button labels on medium and above breakpoints
+# Class value. Use `{$network}` to sub in the social media network name.
+buttonClasses = "opacity-hover button-social gap-1 bg-{$network}"
 
 [params.social.bridgy]
 useFed = false

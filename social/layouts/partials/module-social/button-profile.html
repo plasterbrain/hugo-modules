@@ -1,14 +1,14 @@
 {{- /*
-MODULE: SOCIAL
-Share links
-@uses Internals Module
----
----
-Params:
-- .Network
-- .Class
-- .RelMe
-- .Style
+	MODULE: SOCIAL
+	Profile Link Button
+	@uses Internals Module
+	---
+	---
+	Params:
+	- .Network
+	- .Class
+	- .RelMe
+	- .Style
 */ -}}
 
 {{- $networks := partialCached "module-social/functions/get-profileLinks.html" . "default" -}}
