@@ -68,6 +68,8 @@ Some of the modules use others as dependencies. If you are loading all the Cool 
 	ignoreImports = true
 ```
 
+@TODO Mounting instructions -- these look for assets under *double* "assets," i.e., an asset folder mounted/structured so that "assets" is part of the slug on your production site. (So in your project it might be "assets/assets/images/logos/reddit.svg.")
+
 ### Using local versions
 If you clone this repository to use a local copy of the mods in development, you can use a Go workspace (as of Hugo 0.109.0) to point to the local versions!
 

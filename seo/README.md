@@ -11,13 +11,13 @@ Adds partials for SEO, favicons, and Open Graph support.
 - Sitemap
 
 ## Installation
-1. **Import** this module by adding an entry to your site's config file(s):
+1. **Import** this module by adding an entry to your site's config file:
     ```toml
     [modules]
     [[module.imports]]
     path = "github.com/plasterbrain/hugo-modules/seo"
     ```
-1. **Add** your favicon files to a folder under *assets*. By default, this folder is called *favicon*. Set `site.Params.Seo.FaviconPath` in *hugo.toml* if you're using a different folder name.
+1. **Add** your favicon files to a folder under *assets*. By default, this folder is called *favicons*. Set `site.Params.Seo.FaviconPath` in *hugo.toml* if you're using a different folder name.
     - Default: Square (usually 32x32) *favicon.ico*
     - Another format:
       - Square *favicon.svg* OR

@@ -19,4 +19,4 @@ It is designed for providing alternative formats (i.e., to save bandwidth by usi
     ```
 
 ## Known issues
-- `get-placeholder` gave some DNE error using `placeholder.Content` that went away after server restart
+- `get-placeholder` gave some DNE error using `placeholder.Content` that went away after server restart. Happened when I tried to run two sites on different ports and then update, causing one to transform into the other.
