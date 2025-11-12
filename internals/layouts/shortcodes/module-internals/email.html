@@ -1,0 +1,19 @@
+{{- $email := .Get 0 -}}
+{{- if not $email -}}
+  {{- $author := "" -}}
+  {{- with site.Params.Authors -}}
+    {{- $author = index . 0 -}}
+  {{- else -}}
+    {{- with site.Params.Authors -}}
+      {{- $author = . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if reflect.IsMap $author -}}
+    {{- $email = $author.email -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $obf := time.Now.Unix | base64Encode -}}
+{{- $obf = printf `<span style="display:none;">%s</span>` $obf -}}
+{{- replace $email "@" (print "@" $obf) | safeHTML -}}
