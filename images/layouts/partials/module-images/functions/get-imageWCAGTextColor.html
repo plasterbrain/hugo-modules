@@ -21,7 +21,7 @@
 {{- with $image -}}
 	{{- $color := first 1 .Colors -}}
 	{{- $color = delimit $color "" -}}
-	{{- $result = partialCached "module-internals/module-internals/functions/colors/get-wcagBW.html"
+	{{- $result = partialCached "module-internals/functions/colors/get-wcagBW.html"
 		(dict "Color" $color "Options" $options) $color -}}
 {{- end -}}
 {{- return $result -}}
