@@ -1,0 +1,6 @@
+{{- $page := .Page -}}
+{{- $open := cond (.Open | default true) " open" "" -}}
+<details {{- $open | safeHTMLAttr -}}>
+  <summary>Debug</summary>
+  <pre>{{ debug.Dump $page }}</pre>
+</details>
