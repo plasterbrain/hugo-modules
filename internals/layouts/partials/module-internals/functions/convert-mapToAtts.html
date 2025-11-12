@@ -1,0 +1,21 @@
+{{- /*
+	MODULE: INTERNALS
+	Function: convert-mapToAtts
+	---
+	Turns a dictionary into a sanitized string of HTML attributes.
+	---
+	Params:
+	- .		Dictionary to convert
+	---
+	Returns:
+	- string
+ */ -}}
+
+{{- $atts := . -}}
+{{- $attString := "" -}}
+{{- range $k, $v := $atts -}}
+  {{- $k := partialCached "module-internals/functions/sanitize-attr-string.html" $k $k -}}
+  {{- $v := partialCached "module-internals/functions/sanitize-attr-string.html" $v $v -}}
+  {{- $attString = printf `%s%s="%s" ` $attString $k $v -}}
+{{- end -}}
+{{- return ($attString | chomp) -}}

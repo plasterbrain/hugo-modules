@@ -1,0 +1,23 @@
+{{- /*
+  MODULE: INTERNALS
+  Function: convert-sliceToMap
+  ---
+  Turns a slice into a map where each key is "n{i}". Ex:
+
+  slice -> slice "a" "b" "c"
+  map -> dict "n0" "a" "n1" "b" "n2" "c"
+  ---
+  Params:
+  - .   Slice to convert
+  ---
+  Returns:
+  - map
+*/ -}}
+
+{{- $return := dict -}}
+{{- $i := 0 -}}
+{{- range . -}}
+  {{- $return = $return | merge (dict (printf "n%d" $i) .) -}}
+  {{- $i = add $i 1 -}}
+{{- end -}}
+{{- return $return -}}
