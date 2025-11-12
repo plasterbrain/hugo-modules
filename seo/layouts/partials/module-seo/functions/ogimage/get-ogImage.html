@@ -18,7 +18,13 @@
 */ -}}
 
 {{- $page := . -}}
-{{- $cover := .Params.OGCover.Image | default .Params.Cover.Image -}}
+{{- $cover := false -}}
+{{- range (slice .Params.OGCover .Params.Cover) -}}
+	{{- if eq (printf "%T" .) "maps.Params" -}}
+		{{- $cover = index .Image -}}
+		{{- break -}}
+	{{- end -}}
+{{- end -}}
 {{- $hasCover := false -}}
 
 {{- $ogImage := "" -}}

@@ -23,13 +23,13 @@
 		- .JS				Javascript `onclick` handler to open a pop-up of `Link`
 */ -}}
 
-{{- $useList := uniq site.Params.Social.ShareLinks -}}
+{{- $useList := uniq (site.Params.Social.Share.Links | default site.Params.Social.ShareLinks) -}}
 {{- $page := . -}}
 
 {{- /* --- Format Post Data --- */ -}}
-{{- $title := $.Scratch.Get "OGTitle" | default .Title -}}
+{{- $title := .Params.OGTitle | default .Title -}}
 {{- $title = $title | htmlUnescape | safeHTML | plainify -}}
-{{- $description := $.Scratch.Get "OGDescription" | default .Description -}}
+{{- $description := .Params.OGDescription | default .Description -}}
 {{- $description = $description | htmlUnescape | safeHTML | plainify -}}
 {{- $permalink := strings.TrimRight "/" .Permalink -}}
 {{- $white := "#fff" -}}
@@ -120,22 +120,28 @@
 	{{- $label := i18n (print "moduleSocial_share" ($network | humanize)) | default (i18n "moduleSocial_shareDefault") -}}
 
 	{{- $icon := "" -}}
+	{{- $iconPath := (path.Join "logos/" $network) -}}
 	{{- with partialCached "module-images/functions/get-icon.html" (dict
-		"Icon" (path.Join "logos/" $network)
+		"Icon" $iconPath
 	) $network -}}
 		{{- $icon = . -}}
+	{{- else -}}
+		{{- /* If no Image Module */ -}}
+		{{- with resources.Get (printf "images/logos/%s.svg" $network) -}}
+			{{- $icon = .Content -}}
+		{{- end -}}
 	{{- end -}}
 
 	{{- $color := partialCached "module-internals/functions/colors/get-color.html" $network $network -}}
 	{{- $style := printf `style="background-color: %s; color: %s;"` $color.Bg $color.Text -}}
 
 	{{- $shareLinks = $shareLinks | append (dict
-	"Network" $network
-	"Label" $label
-	"Style" $style
-	"Icon" $icon
-	"Link" $url
-	"JS" $js
+		"Network" $network
+		"Label" $label
+		"Style" $style
+		"Icon" $icon
+		"Link" $url
+		"JS" $js
 	) -}}
 {{- end -}}
 
